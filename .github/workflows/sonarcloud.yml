@@ -25,3 +25,4 @@ jobs:
           args:
             -Dsonar.projectKey=SWE574-G3_Living-Stories-App 
             -Dsonar.organization=swe574-g3
+            -Dsonar.sources=front_end,living_stories
