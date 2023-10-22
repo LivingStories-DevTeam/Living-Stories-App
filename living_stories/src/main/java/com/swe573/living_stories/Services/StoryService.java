@@ -3,6 +3,7 @@ package com.swe573.living_stories.Services;
 import com.swe573.living_stories.Confrugation.DateParser;
 import com.swe573.living_stories.DTO.MediaDTO;
 import com.swe573.living_stories.Models.*;
+import com.swe573.living_stories.Repositories.LikeRepository;
 import com.swe573.living_stories.Repositories.StoryRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
 import com.swe573.living_stories.Requests.SearchRequest;
@@ -23,6 +24,8 @@ public class StoryService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LikeRepository likeRepository;
 
 
 
@@ -339,6 +342,10 @@ public class StoryService {
 
 
         return  result;
+    }
+    public List<Like> getAllLikesByUserId(final Long userId) {
+
+        return likeRepository.findByUserId(userId);
     }
 
 }

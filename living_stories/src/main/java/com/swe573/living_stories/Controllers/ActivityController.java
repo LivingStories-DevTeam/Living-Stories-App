@@ -1,6 +1,7 @@
 package com.swe573.living_stories.Controllers;
 
 import com.swe573.living_stories.Models.Comment;
+import com.swe573.living_stories.Models.Like;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Models.User;
 import com.swe573.living_stories.Repositories.UserRepository;
@@ -66,6 +67,32 @@ public class ActivityController {
         }
         return null;
     }
+
+    @GetMapping("/likes")
+    public List<Story> getLikesOfFollowedUsers(HttpServletRequest request) {
+        Long id = userService.isUserLoggedIn(request);
+        Optional<User> optionalUser = userRepository.findById(id);
+        List<Like> likes = new ArrayList<>();
+        if (optionalUser.isPresent()) {
+
+            User user = optionalUser.get();
+            List<Long> followingIds = user.getFollowing().stream().map(User::getId).collect(Collectors.toList());
+
+            for (Long followingId : followingIds) {
+                List<Like> likesByUserId = storyService.getAllLikesByUserId(followingId);
+                likes.addAll(likesByUserId);
+            }
+            List<Story> stories = new ArrayList<>();
+            for (Like like : likes) {
+                stories.add(like.getStory());
+            }
+
+            return stories;
+        }
+        return null;
+    }
+
+
 }
 
 
