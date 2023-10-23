@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,14 +34,33 @@ public class ActivityController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/stories")
-    public List<Story> getStoriesOfFollowedUsers(HttpServletRequest request){
+    @GetMapping
+    public List<Story> getActivityStream(HttpServletRequest request){
+        List<Story> storiesFromBase = getStoriesPostedBy(request);
+        List<Story> storiesFromComments = getStoriesCommentedBy(request);
+        List<Story> storiesFromLikes = getStoriesLikedBy(request);
+
+        Map<Long, Story> storyMap = new HashMap<>();
+        List<Story> uniqueStories = new ArrayList<>();
+
+        for (List<Story> stories : Arrays.asList(storiesFromBase, storiesFromComments, storiesFromLikes)) {
+            for (Story story : stories) {
+                if (!storyMap.containsKey(story.getId())) {
+                    storyMap.put(story.getId(), story);
+                    uniqueStories.add(story);
+                }
+            }
+        }
+
+        return uniqueStories;
+    }
+
+    public List<Story> getStoriesPostedBy(HttpServletRequest request){
         Long id = userService.isUserLoggedIn(request);
         return  storyService.getFollowingStories(id);
     }
 
-    @GetMapping("/comments")
-    public List<Story> getCommentsOfFollowedUsers(HttpServletRequest request) {
+    public List<Story> getStoriesCommentedBy(HttpServletRequest request) {
 
         Long id = userService.isUserLoggedIn(request);
         Optional<User> optionalUser = userRepository.findById(id);
@@ -68,31 +85,9 @@ public class ActivityController {
         return null;
     }
 
-    @GetMapping("/likes")
-    public List<Story> getLikesOfFollowedUsers(HttpServletRequest request) {
-        Long id = userService.isUserLoggedIn(request);
-        Optional<User> optionalUser = userRepository.findById(id);
-        List<Like> likes = new ArrayList<>();
-        if (optionalUser.isPresent()) {
-
-            User user = optionalUser.get();
-            List<Long> followingIds = user.getFollowing().stream().map(User::getId).collect(Collectors.toList());
-
-            for (Long followingId : followingIds) {
-                List<Like> likesByUserId = storyService.getAllLikesByUserId(followingId);
-                likes.addAll(likesByUserId);
-            }
-            List<Story> stories = new ArrayList<>();
-            for (Like like : likes) {
-                stories.add(like.getStory());
-            }
-
-            return stories;
-        }
+    public List<Story> getStoriesLikedBy(HttpServletRequest request) {
         return null;
     }
-
-
 }
 
 
