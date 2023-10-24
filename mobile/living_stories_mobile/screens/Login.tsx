@@ -1,14 +1,27 @@
 import { SafeAreaView, Button, Text, Alert } from "react-native";
 import axios from "axios";
 
-
 // @ts-ignore
 import * as CookieManager from "react-native-cookies";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthProvider, useAuth } from "../contexts/AuthContext";
 
 const Login = ({ navigation }: any) => {
-  const [jwtToken  , setJwtToken] = useState<string>()
-    // Define the request data
+  const { onLogin } = useAuth();
+  const email = "user1@gmail.com";
+  const password = "1";
+
+  const new_login = async () => {
+    const result = await onLogin!(email, password);
+    if (result && result.error) {
+      Alert.alert(result.msg);
+    }
+  };
+
+
+
+  const [jwtToken, setJwtToken] = useState<string>();
+  // Define the request data
   const requestData = {
     email: "user1@gmail.com",
     password: "1",
@@ -30,14 +43,13 @@ const Login = ({ navigation }: any) => {
             if (cookie.includes("jwt_Token=")) {
               // Extract the JWT token from the cookie
               jwttoken = cookie.split("jwt_Token=")[1].split(";")[0];
-              
             }
           });
         }
 
         if (jwttoken) {
           // Use the JWT token as needed
-          setJwtToken(jwttoken)
+          setJwtToken(jwttoken);
           Alert.alert("Jwt", jwtToken);
           console.log("JWT Token:", jwtToken);
         } else {
@@ -47,30 +59,29 @@ const Login = ({ navigation }: any) => {
       });
   };
 
-  const send  = async () =>{
-    
+  const send = async () => {
     const config = {
       headers: {
-        'Authorization': `Bearer ${jwtToken}`, // Add the JWT token in the "Authorization" header
+        Authorization: `Bearer ${jwtToken}`, // Add the JWT token in the "Authorization" header
       },
     };
-      try {
-        console.log("var" + jwtToken)
-        const response = await axios.get('http://104.155.147.249:8080/stories',config);
-        console.log(response.data)
-      } catch (error) {
-        console.error('Request failed:', error);
-        Alert.alert('Error', 'Failed to fetch data');
-      }
-      
-    
-         
-      }
-  
+    try {
+      console.log("var" + jwtToken);
+      const response = await axios.get(
+        "http://104.155.147.249:8080/stories",
+        config
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Request failed:", error);
+      Alert.alert("Error", "Failed to fetch data");
+    }
+  };
+
   return (
     <SafeAreaView>
-      <Button title="Login" onPress={() => login()} />
-      <Button title="Send" onPress={() => send()} />
+      <Button title="Login" onPress={ new_login}/>
+
       <Text> This is Login Screen!</Text>
     </SafeAreaView>
   );

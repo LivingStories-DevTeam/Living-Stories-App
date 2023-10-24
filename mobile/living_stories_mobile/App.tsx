@@ -5,35 +5,38 @@ import Home from "./screens/Home";
 import { createStackNavigator } from "@react-navigation/stack";
 import StoryPage from "./screens/StoryPage";
 import PostStory from "./screens/PostStory";
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 import React from "react";
 import Login from "./screens/Login";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="Story" component={StoryPage}></Stack.Screen>
-        <Stack.Screen  name="Login" component={Login}></Stack.Screen>
-
-
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <Layout></Layout>
+    </AuthProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export const Layout = () => {
+  const { authState, onLogout } = useAuth();
+
+  return (
+    <>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {authState?.authenticated ? (
+            <>
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Story" component={StoryPage}/>
+            </>
+          ) : (
+            <Stack.Screen name="Login" component={Login}/>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
+  );
+};
