@@ -4,7 +4,7 @@ import axios from "axios";
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
-  onRegister?: (email: string, password: string) => Promise<any>;
+  onRegister?: (email: string, password: string, name: string) => Promise<any>;
   onLogin?: (email: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
 }
@@ -44,9 +44,9 @@ export const AuthProvider = ({ children }: any) => {
     console.log( authState)
   } , []);
 
-  const register = async (email: string, password: string) => {
+  const register = async (email: string, password: string, name: string) => {
     try {
-      return await axios.post(`${API_URL}/users`, { email, password });
+      return await axios.post(`${API_URL}/users`, { email, password, name });
     } catch (e) {
       return { error: true, msg: (e as any).response.data.msg };
     }
