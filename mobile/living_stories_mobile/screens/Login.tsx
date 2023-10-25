@@ -25,27 +25,30 @@ const Login = ({ navigation }: any) => {
 
 
   return (
-    <SafeAreaView className="flex-1 items-center justify-center bg-white">
-      <View>
-        <Text className="text-3xl text-black mb-8 self-center">Login</Text>
-        <TextInput
-          className="w-64 p-2 mb-4 rounded border border-gray-400"
-          placeholder="Email"
-          onChangeText={(text) => setEmail(text)}
-        />
-        <TextInput
-          className="w-64 p-2 mb-4 rounded border border-gray-400"
-          placeholder="Password"
-          secureTextEntry
-          onChangeText={(text) => setPassword(text)}
-        />
+    <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+    <View>
+      <Text style={{ fontSize: 24, color: 'black', marginBottom: 8, alignSelf: 'center' }}>Login</Text>
+      <TextInput
+        style={{ width: 256, padding: 8, marginBottom: 16, borderRadius: 4, borderWidth: 1, borderColor: '#ccc' }}
+        placeholder="Email"
+        onChangeText={(text) => setEmail(text)}
+      />
+      <TextInput
+        style={{ width: 256, padding: 8, marginBottom: 16, borderRadius: 4, borderWidth: 1, borderColor: '#ccc' }}
+        placeholder="Password"
+        secureTextEntry
+        onChangeText={(text) => setPassword(text)}
+      />
 
-        <Button title="Login" onPress={new_login} />
-        <Text className=" text-black mt-8 self-center underline text-blue-600" onPress={() => navigation.navigate("Register")}>New User ? Register here !</Text>
-        
-
-      </View>
-    </SafeAreaView>
+      <Button title="Login" onPress={new_login} />
+      <Text
+        style={{ color: 'black', marginTop: 16, alignSelf: 'center', textDecorationLine: 'underline', color: 'blue' }}
+        onPress={() => navigation.navigate("Register")}
+      >
+        New User? Register here!
+      </Text>
+    </View>
+  </SafeAreaView>
   );
 };
 export default Login;
