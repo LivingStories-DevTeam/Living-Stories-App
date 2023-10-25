@@ -9,6 +9,7 @@ import "react-native-gesture-handler";
 import React from "react";
 import Login from "./screens/Login";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import Register from "./screens/Register";
 
 const Stack = createStackNavigator();
 
@@ -29,14 +30,24 @@ export const Layout = () => {
         <Stack.Navigator>
           {authState?.authenticated ? (
             <>
-              <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="Story" component={StoryPage}/>
+              <Stack.Screen name="Living Stories" component={Home} options={{ headerShown: true,  headerRight: () => (
+            <Button
+            onPress={() => onLogout!() }
+              title="Logout"
+              color="black"
+            />
+          ) } } />
+              <Stack.Screen name="Story" component={StoryPage} />
             </>
           ) : (
-            <Stack.Screen name="Login" component={Login}/>
+            <>
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Register" component={Register} />
+            </>
           )}
         </Stack.Navigator>
       </NavigationContainer>
+      
     </>
   );
 };
