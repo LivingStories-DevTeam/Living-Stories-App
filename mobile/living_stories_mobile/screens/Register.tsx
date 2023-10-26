@@ -26,30 +26,29 @@ import {
   
   
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-white">
-        <View>
-          <Text className="text-3xl text-black mb-8 self-center">Register</Text>
-          <TextInput
-            className="w-64 p-2 mb-4 rounded border border-gray-400"
-            placeholder="Name"
-            onChangeText={(text) => setName(text)}
-          />
-          <TextInput
-            className="w-64 p-2 mb-4 rounded border border-gray-400"
-            placeholder="Email"
-            onChangeText={(text) => setEmail(text)}
-          />
-          <TextInput
-            className="w-64 p-2 mb-4 rounded border border-gray-400"
-            placeholder="Password"
-            secureTextEntry
-            onChangeText={(text) => setPassword(text)}
-          />
-  
-          <Button title="Register" onPress={register} />
-  
-        </View>
-      </SafeAreaView>
+      <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+      <View>
+        <Text style={{ fontSize: 24, color: 'black', marginBottom: 8, alignSelf: 'center' }}>Register</Text>
+        <TextInput
+          style={{ width: 256, padding: 8, marginBottom: 16, borderRadius: 4, borderWidth: 1, borderColor: '#ccc' }}
+          placeholder="Name"
+          onChangeText={(text) => setName(text)}
+        />
+        <TextInput
+          style={{ width: 256, padding: 8, marginBottom: 16, borderRadius: 4, borderWidth: 1, borderColor: '#ccc' }}
+          placeholder="Email"
+          onChangeText={(text) => setEmail(text)}
+        />
+        <TextInput
+          style={{ width: 256, padding: 8, marginBottom: 16, borderRadius: 4, borderWidth: 1, borderColor: '#ccc' }}
+          placeholder="Password"
+          secureTextEntry
+          onChangeText={(text) => setPassword(text)}
+        />
+
+        <Button title="Register" onPress={register} />
+      </View>
+    </SafeAreaView>
     );
   };
   export default Register;

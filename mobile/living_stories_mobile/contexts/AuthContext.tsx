@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
+import { URL } from "@env";
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
@@ -10,7 +11,7 @@ interface AuthProps {
 }
 
 const TOKEN_KEY = "jtw_Token";
-export const API_URL = "http://104.155.147.249:8080";
+export const API_URL = `${URL}`;
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
@@ -18,8 +19,6 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: any) => {
-    
-
   const [authState, setAuthState] = useState<{
     token: string | null;
     authenticated: boolean | null;
@@ -41,8 +40,8 @@ export const AuthProvider = ({ children }: any) => {
       }
     };
     loadToken();
-    console.log( authState)
-  } , []);
+    console.log(authState);
+  }, []);
 
   const register = async (email: string, password: string, name: string) => {
     try {
@@ -53,13 +52,9 @@ export const AuthProvider = ({ children }: any) => {
   };
   const login = async (email: string, password: string) => {
     try {
-        console.log("request  happened!")
       const requestData = { email, password };
-      const response = await axios.post(
-        "http://104.155.147.249:8080/login",
-        requestData
-      );
-
+      const response = await axios.post(`${API_URL}/login`, requestData);
+      console.log(API_URL)
       const cookies = response.headers["set-cookie"];
       let jwtToken = null;
 
@@ -75,7 +70,7 @@ export const AuthProvider = ({ children }: any) => {
 
       if (jwtToken) {
         // Use the JWT token as needed
-       
+
         await SecureStore.setItemAsync(TOKEN_KEY, jwtToken);
         console.log("JWT Token:", jwtToken);
       } else {
