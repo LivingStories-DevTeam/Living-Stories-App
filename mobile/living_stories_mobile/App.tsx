@@ -10,6 +10,7 @@ import React from "react";
 import Login from "./screens/Login";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Register from "./screens/Register";
+import Profile from "./screens/Profile";
 
 const Stack = createStackNavigator();
 
@@ -30,14 +31,22 @@ export const Layout = () => {
         <Stack.Navigator>
           {authState?.authenticated ? (
             <>
-              <Stack.Screen name="Living Stories" component={Home} options={{ headerShown: true,  headerRight: () => (
-            <Button
-            onPress={() => onLogout!() }
-              title="Logout"
-              color="black"
-            />
-          ) } } />
-              <Stack.Screen name="Story" component={StoryPage} />
+              <Stack.Screen
+                name="Living Stories"
+                component={Home}
+                options={{
+                  headerShown: true,
+                  headerRight: () => (
+                    <Button
+                      onPress={() => onLogout!()}
+                      title="Logout"
+                      color="black"
+                    />
+                  ),
+                }}
+              />
+              <Stack.Screen name="Story" component={StoryPage}   />
+              <Stack.Screen name="Profile" component={Profile} />
             </>
           ) : (
             <>
@@ -47,7 +56,6 @@ export const Layout = () => {
           )}
         </Stack.Navigator>
       </NavigationContainer>
-      
     </>
   );
 };

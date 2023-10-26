@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Feather } from "@expo/vector-icons"; // Import the Feather Icons library
 import { Image } from "react-native";
 import { ScrollView } from "react-native";
@@ -83,18 +83,18 @@ const Card: React.FC<CardProps> = ({
         </Text>
 
         <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 8 }}>
-        <ScrollView
-  horizontal={true}
-  showsHorizontalScrollIndicator={false}
-  style={{ marginTop: 8 }}
->
-          {labels &&
-            labels.map((label, index) => (
-              <View key={index} style={styles.tag}>
-                <Text style={styles.tagText}>{label}</Text>
-              </View>
-            ))}
-  </ScrollView>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            style={{ marginTop: 8 }}
+          >
+            {labels &&
+              labels.map((label, index) => (
+                <View key={index} style={styles.tag}>
+                  <Text style={styles.tagText}>{label}</Text>
+                </View>
+              ))}
+          </ScrollView>
         </View>
       </View>
       <View style={{ flex: 0.2, marginLeft: 8, alignItems: "center" }}>
