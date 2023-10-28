@@ -48,7 +48,7 @@ const Home = ({ navigation }: any) => {
       <Tab.Screen
         name="My Profile"
         component={MyProfile}
-        options={{
+        options={{ 
           tabBarIcon: ({ focused, color, size }) => (
             <Ionicons
               name={focused ? "ios-person" : "ios-person-outline"}
