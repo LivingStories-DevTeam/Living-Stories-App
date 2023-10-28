@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   Alert,
   Image,
   ImageBackground,
@@ -21,7 +20,7 @@ const Login = ({ navigation }: any) => {
   const new_login = async () => {
     const result = await onLogin!(email, password);
     if (result && result.error) {
-      Alert.alert(result.msg);
+      Alert.alert("Something went wrong! Try again!", "If the error persists, contact the developers!");
     }
   };
 
@@ -57,6 +56,16 @@ const Login = ({ navigation }: any) => {
       textShadowRadius: 2,
       textDecorationLine: "underline",
     },
+    loginText: {
+      fontSize:25,
+      color: "green",
+      marginTop: 16,
+      alignSelf: "center",
+      textShadowColor: "black",
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 2,
+    },
+
     logoContainer: {
       alignItems: "center",
       alignContent: "center",
@@ -117,7 +126,10 @@ const Login = ({ navigation }: any) => {
             onChangeText={(text) => setPassword(text)}
           />
 
-          <Button title="Login" onPress={new_login} />
+          <Text style={styles.loginText} onPress={new_login}>
+            {" "}
+            Login
+          </Text>
           <Text
             style={styles.registerText}
             onPress={() => navigation.navigate("Register")}

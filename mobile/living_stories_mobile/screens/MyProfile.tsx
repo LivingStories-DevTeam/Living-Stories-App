@@ -28,6 +28,7 @@ interface Story {
     likes: number[];
   }[];
   labels: string[];
+  decade?: string;
 }
 
 interface User {
@@ -100,7 +101,9 @@ const MyProfile = ({ navigation }: any) => {
     },
   });
   return (
+    <ScrollView >
     <SafeAreaView style={styles.container}>
+      
       <View style={styles.back}>
         <View style={styles.avatarContainer}>
           <Image
@@ -133,8 +136,8 @@ const MyProfile = ({ navigation }: any) => {
           </Text>
         </View>
         <View style={{ marginTop: 10, backgroundColor: "white" }}>
-          <ScrollView
-            contentContainerStyle={{ paddingBottom: 100 }} // without this scrolling bounces back up when releasing your finger
+          <View
+            
           >
             <Card
               title="The Removal of Lenin's Statu from the center of Baku"
@@ -161,7 +164,13 @@ const MyProfile = ({ navigation }: any) => {
                 <Card
                   key={index}
                   title={item.header}
-                  date={item.startDate + " - " + item.endDate}
+                  date={
+                    item.decade
+                      ? item.decade
+                      : item.endDate
+                      ? item.startDate + " - " + item.endDate
+                      : item.startDate
+                  }
                   location={
                     item.locations
                       ?.map((location) => location.country)
@@ -169,15 +178,17 @@ const MyProfile = ({ navigation }: any) => {
                   }
                   labels={item.labels}
                   name={user.name}
-                  likes={2}
-                  comments={4}
+                  likes={item.likes.length}
+                  comments={item.comments.length}
                 /></TouchableOpacity>
               </>
             ))}
-          </ScrollView>
+          </View>
         </View>
       </View>
+    
     </SafeAreaView>
+    </ScrollView>
   );
 };
 

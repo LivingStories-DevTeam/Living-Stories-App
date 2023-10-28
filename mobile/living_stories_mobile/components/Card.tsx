@@ -60,10 +60,11 @@ const Card: React.FC<CardProps> = ({
       fontSize: 14,
       fontWeight: "bold",
       textAlign: "center",
+      
     },
     likesAndComments: {
       flexDirection: "row",
-      marginTop: 5,
+      marginTop: 12,
     },
     titleText: {
       fontSize: 18,

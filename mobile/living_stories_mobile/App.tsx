@@ -43,19 +43,25 @@ export const Layout = () => {
                   ),
                 }}
               />
-              <Stack.Screen name="Story" component={StoryPage}   />
+              <Stack.Screen name="Story" component={StoryPage} />
               <Stack.Screen name="Profile" component={Profile} />
             </>
           ) : (
             <>
-              <Stack.Screen name="Login" component={Login}
+              <Stack.Screen
+                name="Login"
+                component={Login}
                 options={{
                   headerShown: false,
-                }} />
-              <Stack.Screen name="Register" component={Register}
-               options={{
-                headerShown: true,
-              }} />
+                }}
+              />
+              <Stack.Screen
+                name="Register"
+                component={Register}
+                options={{
+                  headerShown: false,
+                }}
+              />
             </>
           )}
         </Stack.Navigator>

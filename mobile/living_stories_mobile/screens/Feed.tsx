@@ -14,42 +14,6 @@ import { ScrollView } from "react-native";
 
 import SegmentedControlTab from "react-native-segmented-control-tab";
 
-interface StoryInt {
-  id: number;
-  header: string;
-  richText: string;
-  user: {
-    id: number;
-    name: string;
-    photo?: string;
-  };
-  labels: string[];
-
-  likes: number[];
-
-  locations: {
-    id: number;
-    lat: number;
-    lng: number;
-    name: string;
-  }[];
-
-  comments: {
-    id: number;
-    text: string;
-    user: {
-      id: number;
-      name: string;
-    };
-    likes: number[];
-  }[];
-  startDate: string;
-  endDate: string;
-  startSeason?: string;
-  endSeason?: string;
-  decade?: string;
-}
-
 const Feed = ({ navigation }: any) => {
   const { onLogout } = useAuth();
   const [responseData, setResponseData] = useState(null);
@@ -65,11 +29,10 @@ const Feed = ({ navigation }: any) => {
   };
 
   useEffect(() => {
-    fetchData(); 
-  }, []); 
+    fetchData();
+  }, []);
 
   const handleCardPress = (storyId: number) => {
-    
     navigation.navigate("Story", { storyId });
   };
 
@@ -82,7 +45,7 @@ const Feed = ({ navigation }: any) => {
   return (
     <ScrollView>
       <SafeAreaView>
-        <View style={{ margin: 5}}>
+        <View style={{ margin: 5 }}>
           <SegmentedControlTab
             values={["All", "Following"]}
             selectedIndex={selectedIndex}
@@ -110,7 +73,7 @@ const Feed = ({ navigation }: any) => {
               name="Rauf Eminov"
               likes={2}
               comments={5}
-            />   
+            />
             {responseData &&
               responseData.map((item: any, index: any) => (
                 <>
@@ -118,7 +81,13 @@ const Feed = ({ navigation }: any) => {
                     <Card
                       key={index}
                       title={item.header}
-                      date={item.startDate+" - "+item.endDate}
+                      date={
+                        item.decade
+                          ? item.decade
+                          : item.endDate
+                          ? item.startDate + " - " + item.endDate
+                          : item.startDate
+                      }
                       location={
                         item.locations[0].city +
                         ", " +

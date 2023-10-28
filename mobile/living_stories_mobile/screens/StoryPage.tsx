@@ -1,7 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Button,
   SafeAreaView,
   ScrollView,
   Text,
@@ -14,6 +13,8 @@ import HTML from "react-native-render-html";
 import { API_URL } from "../contexts/AuthContext";
 import MapView, { Marker } from "react-native-maps";
 import LottieView from "lottie-react-native";
+import { Feather } from "@expo/vector-icons";
+import { Entypo } from '@expo/vector-icons';
 
 interface Location {
   lat: number;
@@ -196,19 +197,41 @@ const StoryPage = ({ route, navigation }: any) => {
                         <Text>{storyResponse.decade}</Text>
                       ) : (
                         <>
-                          <Text>{storyResponse.startDate}</Text>
-                          <Text>{storyResponse.endDate}</Text>
+                          <Text>
+                            <Feather name="sunrise" size={14} color="#212121" />{" "}
+                            {storyResponse.startDate}
+                          </Text>
+                          {storyResponse.endDate && (
+                            <Text>
+                              <Feather
+                                name="sunset"
+                                size={14}
+                                color="#212121"
+                              />{" "}
+                              {storyResponse.endDate}
+                            </Text>
+                          )}
                         </>
                       )}
                     </View>
-                    <View>
-                      <Text style={styles.likeAndComment}>
+                    {storyResponse.startSeason&&(<View>
+                    <Text style={styles.likeAndComment}>
+                      <Entypo name="leaf" size={14} color="black" />
                         {storyResponse.startSeason}
                       </Text>
-                      <Text style={styles.likeAndComment}>
-                        {storyResponse.endSeason}
-                      </Text>
-                    </View>
+                      {storyResponse.endSeason && (
+                        <Text style={styles.likeAndComment}>
+                          <Entypo name="leaf" size={14} color="black" />{" "}
+                          {storyResponse.endSeason}
+                        </Text>
+                      )}
+                    </View>)}
+                    
+                  </View>
+                  <View style={styles.headerCont}>
+                    <Text style={styles.headerText}>
+                      {storyResponse.header}
+                    </Text>
                   </View>
                   <View
                     style={{
@@ -242,10 +265,12 @@ const StoryPage = ({ route, navigation }: any) => {
               )}
               <View style={styles.row}>
                 <Text style={styles.likeAndComment}>
-                  Likes: {storyResponse?.likes.length}
+                  <Feather name="thumbs-up" size={14} color="#212121" />{" "}
+                  {storyResponse?.comments.length}
                 </Text>
                 <Text style={styles.likeAndComment}>
-                  Comments: {storyResponse?.comments.length}
+                  <Feather name="message-circle" size={14} color="#212121" />{" "}
+                  {storyResponse?.comments.length}
                 </Text>
               </View>
             </ScrollView>
@@ -260,7 +285,7 @@ const StoryPage = ({ route, navigation }: any) => {
               autoPlay
               loop
             />
-            <Text>LOADING THE STORY!</Text>
+            <Text style={{ marginTop: 20 }}>LOADING THE STORY!</Text>
           </View>
         </>
       )}
@@ -272,6 +297,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  headerCont: { flex: 1, justifyContent: "center", alignItems: "center" },
   mapContainer: {
     height: 230,
     flex: 1,
@@ -280,6 +306,7 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
+  headerText: { fontSize: 30 },
   avatar: {
     margin: 15,
     width: 75, // Set the width as per your requirements
@@ -319,14 +346,15 @@ const styles = StyleSheet.create({
     color: "#1f6c5c",
   },
   animation: {
-    width: 200,
-    height: 200,
-    
+    width: 300,
+    height: 300,
+    marginRight: 60,
+    marginTop: 50,
   },
   animationContainer: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    
+    backgroundColor: "#fff",
+    alignItems: "center",
+
     flex: 1,
   },
 });
