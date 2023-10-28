@@ -14,7 +14,7 @@ import { API_URL } from "../contexts/AuthContext";
 import MapView, { Marker } from "react-native-maps";
 import LottieView from "lottie-react-native";
 import { Feather } from "@expo/vector-icons";
-import { Entypo } from '@expo/vector-icons';
+import { Entypo } from "@expo/vector-icons";
 
 interface Location {
   lat: number;
@@ -53,6 +53,8 @@ interface StoryInt {
     lat: number;
     lng: number;
     name: string;
+    city: string;
+    country: string;
   }[];
 
   comments: {
@@ -165,6 +167,28 @@ const StoryPage = ({ route, navigation }: any) => {
                       ))}
                     </MapView>
                   </View>
+                  <View style={{ flexDirection: "row", flexWrap: "wrap" , margin:10 }}>
+                    <ScrollView
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                      style={{ marginTop: 8 }}
+                    >
+                      {storyResponse.locations &&
+                        storyResponse.locations.map((location, index) => (
+                          <View key={index}>
+                            <Text>
+                              {" "}
+                              <Feather
+                                name="map-pin"
+                                size={14}
+                                color="#212121"
+                              />{" "}
+                              {location.city}, {location.country}
+                            </Text>
+                          </View>
+                        ))}
+                    </ScrollView>
+                  </View>
                   <View style={styles.row}>
                     <View>
                       {storyResponse?.user.photo ? (
@@ -191,7 +215,7 @@ const StoryPage = ({ route, navigation }: any) => {
                         <Text style={styles.link}>See profile</Text>
                       </TouchableOpacity>
                     </View>
-
+                    {/* Dates*/}
                     <View>
                       {storyResponse.decade ? (
                         <Text>{storyResponse.decade}</Text>
@@ -214,20 +238,23 @@ const StoryPage = ({ route, navigation }: any) => {
                         </>
                       )}
                     </View>
-                    {storyResponse.startSeason&&(<View>
-                    <Text style={styles.likeAndComment}>
-                      <Entypo name="leaf" size={14} color="black" />
-                        {storyResponse.startSeason}
-                      </Text>
-                      {storyResponse.endSeason && (
-                        <Text style={styles.likeAndComment}>
-                          <Entypo name="leaf" size={14} color="black" />{" "}
-                          {storyResponse.endSeason}
+                    {/* Seasons*/}
+                    {storyResponse.startSeason && (
+                      <View>
+                        <Text>
+                          <Entypo name="leaf" size={14} color="black" />
+                          {storyResponse.startSeason}
                         </Text>
-                      )}
-                    </View>)}
-                    
+                        {storyResponse.endSeason && (
+                          <Text>
+                            <Entypo name="leaf" size={14} color="black" />{" "}
+                            {storyResponse.endSeason}
+                          </Text>
+                        )}
+                      </View>
+                    )}
                   </View>
+
                   <View style={styles.headerCont}>
                     <Text style={styles.headerText}>
                       {storyResponse.header}
