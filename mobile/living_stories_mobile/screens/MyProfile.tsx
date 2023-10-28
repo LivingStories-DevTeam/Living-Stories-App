@@ -1,8 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text, View, Image, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { API_URL } from "../contexts/AuthContext";
+import {
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
+import { API_URL, useAuth } from "../contexts/AuthContext";
 import { Feather } from "@expo/vector-icons";
 import Card from "../components/Card";
 
@@ -44,6 +52,7 @@ interface User {
 
 const MyProfile = ({ navigation }: any) => {
   const [user, setUser] = useState<User | null>(null);
+  const { onLogout } = useAuth();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -60,14 +69,12 @@ const MyProfile = ({ navigation }: any) => {
   }, []);
 
   const handleCardPress = (storyId: number) => {
-    
     navigation.navigate("Story", { storyId });
   };
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1, // Make the container take up the full available height
-      backgroundColor: "#1F6C5C",
+      flex: 1,
     },
     back: {
       flex: 0.3,
@@ -75,8 +82,9 @@ const MyProfile = ({ navigation }: any) => {
       justifyContent: "center",
     },
     content: {
-      flex: 1, 
+      flex: 1,
       backgroundColor: "white",
+      borderRadius: 15,
       height: "100%",
     },
     avatarContainer: {
@@ -84,9 +92,10 @@ const MyProfile = ({ navigation }: any) => {
       marginBottom: 50,
     },
     avatar: {
-      width: 150, 
-      height: 150, 
-      borderRadius: 75, 
+      width: 150,
+      height: 150,
+      borderRadius: 75,
+      marginBottom: 5,
     },
     title: {
       fontSize: 35,
@@ -99,96 +108,117 @@ const MyProfile = ({ navigation }: any) => {
       textAlign: "center",
       marginTop: 10,
     },
+    background: {
+      flex: 1,
+      resizeMode: "cover", // You can adjust the resizeMode as needed
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 16,
+    },
   });
   return (
-    <ScrollView >
-    <SafeAreaView style={styles.container}>
-      
-      <View style={styles.back}>
-        <View style={styles.avatarContainer}>
-          <Image
-            source={{
-              uri: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-            }}
-            style={styles.avatar}
-          />
-        </View>
-      </View>
+    <ImageBackground
+      source={require("../assets/fall.gif")} 
+      style={styles.background}
+    >
+      <ScrollView>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.back}>
+            <View style={styles.header}>
+              <TouchableOpacity style={{marginRight:20}}>
+                <Feather name="edit" size={30} color="white" />
+              </TouchableOpacity>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>{user?.name}</Text>
-        <Text style={styles.bio}>{user?.biography}</Text>
+              <Image
+                source={{
+                  uri: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+                }}
+                style={styles.avatar}
+              />
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginTop: 10,
-          }}
-        >
-          <Text style={{ marginRight: 4 }}>
-            <Feather name="book" size={25} color="#212121" />{" "}
-            {user?.stories?.length}
-          </Text>
-          <Text>
-            <Feather name="users" size={25} color="#212121" />{" "}
-            {user?.followers?.length}
-          </Text>
-        </View>
-        <View style={{ marginTop: 10, backgroundColor: "white" }}>
-          <View
-            
-          >
-            <Card
-              title="The Removal of Lenin's Statu from the center of Baku"
-              date="29.11.1992 - 2000"
-              location="Azerbaijan, Turkey"
-              labels={[
-                "memories",
-                "family",
-                "happy",
-                "life",
-                "fun",
-                "childhood",
-                "test",
-                "story",
-                "sea",
-                "love",
-              ]}
-              name="Rauf Eminov"
-              likes={2}
-              comments={4}
-            />
-            {user?.stories?.map((item: Story, index: number) => (
-              <><TouchableOpacity onPress={() => handleCardPress(item.id)}>
-                <Card
-                  key={index}
-                  title={item.header}
-                  date={
-                    item.decade
-                      ? item.decade
-                      : item.endDate
-                      ? item.startDate + " - " + item.endDate
-                      : item.startDate
-                  }
-                  location={
-                    item.locations
-                      ?.map((location) => location.country)
-                      .join(", ") || ""
-                  }
-                  labels={item.labels}
-                  name={user.name}
-                  likes={item.likes.length}
-                  comments={item.comments.length}
-                /></TouchableOpacity>
-              </>
-            ))}
+              <TouchableOpacity onPress={() => onLogout!()} style={{marginLeft:20}}>
+                <Feather name="log-out" size={30} color="white" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </View>
-    
-    </SafeAreaView>
-    </ScrollView>
+
+          <View style={styles.content}>
+            <Text style={styles.title}>{user?.name}</Text>
+            <Text style={styles.bio}>{user?.biography}</Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: 10,
+              }}
+            >
+              <Text style={{ marginRight: 4 }}>
+                <Feather name="book" size={25} color="#212121" />{" "}
+                {user?.stories?.length}
+              </Text>
+              <Text>
+                <Feather name="users" size={25} color="#212121" />{" "}
+                {user?.followers?.length}
+              </Text>
+            </View>
+            <View style={{ marginTop: 10, backgroundColor: "white" }}>
+              <View>
+                <Card
+                  title="The Removal of Lenin's Statu from the center of Baku"
+                  date="29.11.1992 - 2000"
+                  location="Azerbaijan, Turkey"
+                  labels={[
+                    "memories",
+                    "family",
+                    "happy",
+                    "life",
+                    "fun",
+                    "childhood",
+                    "test",
+                    "story",
+                    "sea",
+                    "love",
+                  ]}
+                  name="Rauf Eminov"
+                  likes={2}
+                  comments={4}
+                />
+                {user?.stories?.map((item: Story, index: number) => (
+                  <>
+                    <TouchableOpacity onPress={() => handleCardPress(item.id)}>
+                      <Card
+                        key={index}
+                        title={item.header}
+                        date={
+                          item.decade
+                            ? item.decade
+                            : item.endDate
+                            ? item.startDate + " - " + item.endDate
+                            : item.startDate
+                        }
+                        location={
+                          item.locations
+                            ?.map((location) => location.country)
+                            .join(", ") || ""
+                        }
+                        labels={item.labels}
+                        name={user.name}
+                        likes={item.likes.length}
+                        comments={item.comments.length}
+                      />
+                    </TouchableOpacity>
+                  </>
+                ))}
+              </View>
+            </View>
+          </View>
+        </SafeAreaView>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
