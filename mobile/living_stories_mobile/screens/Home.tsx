@@ -49,6 +49,8 @@ const Home = ({ navigation }: any) => {
         name="My Profile"
         component={MyProfile}
         options={{ 
+            headerShown: false,
+          
           tabBarIcon: ({ focused, color, size }) => (
             <Ionicons
               name={focused ? "ios-person" : "ios-person-outline"}
