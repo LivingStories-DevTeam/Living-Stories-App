@@ -25,7 +25,7 @@ const Card: React.FC<CardProps> = ({
 }) => {
   const styles = StyleSheet.create( {
     tag: {
-      backgroundColor: "#F2F2F2",
+      backgroundColor: "#1f6c5c",
       paddingVertical: 4,
       paddingHorizontal: 8,
       borderRadius: 16,
@@ -33,7 +33,7 @@ const Card: React.FC<CardProps> = ({
     },
     tagText: {
       fontSize: 12,
-      color: "#212121",
+      color: "white",
     },
     cardContainer: {
       flexDirection: "row",

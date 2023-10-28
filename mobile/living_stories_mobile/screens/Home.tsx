@@ -24,6 +24,16 @@ const Home = ({ navigation }: any) => {
               color={color}
             />
           ),
+          headerRight: () => (
+            <Button
+              title="Search"
+            />
+          ),
+          headerLeft: () => (
+            <Button
+              title="Activities"
+            />
+          ),
         }}
       />
       <Tab.Screen
@@ -44,6 +54,12 @@ const Home = ({ navigation }: any) => {
               name={focused ? "ios-person" : "ios-person-outline"}
               size={size}
               color={color}
+            />
+          ),
+          headerRight: () => (
+            <Button
+              onPress={() => onLogout!()}
+              title="Logout"
             />
           ),
         }}
