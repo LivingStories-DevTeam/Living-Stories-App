@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { SafeAreaView, Text } from "react-native";
 import { API_URL } from "../contexts/AuthContext";
+import { View } from "native-base";
 interface Story {
   id: number;
   header: string;
@@ -59,8 +60,9 @@ const Profile = ({ route }: any) => {
 
   return (
     <SafeAreaView>
+      <View style={{backgroundColor:"#3a9163"}}>
       <Text> {user?.name}</Text>
-      
+      </View>
     </SafeAreaView>
   );
 };
