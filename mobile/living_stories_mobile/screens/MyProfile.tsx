@@ -95,7 +95,7 @@ const MyProfile = ({ navigation }: any) => {
       width: 150,
       height: 150,
       borderRadius: 75,
-      marginBottom: 5,
+      margin: 35,
     },
     title: {
       fontSize: 35,
