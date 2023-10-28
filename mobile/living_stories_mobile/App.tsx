@@ -44,7 +44,10 @@ export const Layout = () => {
                 }}
               />
               <Stack.Screen name="Story" component={StoryPage} />
-              <Stack.Screen name="Profile" component={Profile} />
+              <Stack.Screen name="Profile" component={Profile} 
+               options={{
+                headerShown: false,
+              }}/>
             </>
           ) : (
             <>
