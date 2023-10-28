@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }: any) => {
   };
   const login = async (email: string, password: string) => {
     try {
+      email = email.toLocaleLowerCase()
       const requestData = { email, password };
       const response = await axios.post(`${API_URL}/login`, requestData);
       console.log(API_URL)

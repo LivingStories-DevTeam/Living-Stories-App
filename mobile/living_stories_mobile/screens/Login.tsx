@@ -51,6 +51,7 @@ const Login = ({ navigation }: any) => {
             borderWidth: 1,
             borderColor: "#ccc",
           }}
+          keyboardType="email-address"
           placeholder="Email"
           onChangeText={(text) => setEmail(text)}
         />
