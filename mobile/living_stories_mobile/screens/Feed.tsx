@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Alert, Button, SafeAreaView, Text, TouchableOpacity } from "react-native";
+import {
+  Alert,
+  Button,
+  SafeAreaView,
+  Text,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import Card from "../components/Card";
 import { API_URL, useAuth } from "../contexts/AuthContext";
 import { ScrollView } from "react-native";
+
+import SegmentedControlTab from "react-native-segmented-control-tab";
 
 interface StoryInt {
   id: number;
@@ -56,36 +65,101 @@ const Feed = ({ navigation }: any) => {
   };
 
   useEffect(() => {
-    fetchData(); // Fetch data when the component mounts
-  }, []); // The empty dependency array ensures this effect runs only once
+    fetchData(); 
+  }, []); 
 
-  const handleCardPress = (storyId:number) => {
+  const handleCardPress = (storyId: number) => {
     
-    // Replace "YourTargetScreen" with the name of the screen you want to navigate to
-    navigation.navigate("Story" , {storyId});
+    navigation.navigate("Story", { storyId });
+  };
+
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+
+  const handleTabChange = (index: number) => {
+    setSelectedIndex(index);
   };
 
   return (
     <ScrollView>
       <SafeAreaView>
-        {responseData &&
-          responseData.map((item: any, index: any) => (
-            <>
-              <TouchableOpacity onPress={() => handleCardPress(item.id)}>
-                <Card
-                  key={index}
-                  title={item.header}
-                  description="A small preview of the Start of the story..."
-                  date={item.startDate}
-                  location={
-                    item.locations[0].city + ", " + item.locations[0].country
-                  }
-                  labels={item.labels}
-                  name={item.user.name}
-                />
-              </TouchableOpacity>
-            </>
-          ))}
+        <View style={{ margin: 5}}>
+          <SegmentedControlTab
+            values={["All", "Following"]}
+            selectedIndex={selectedIndex}
+            onTabPress={handleTabChange}
+          />
+        </View>
+        {selectedIndex === 0 && (
+          <>
+            <Card
+              title="The Removal of Lenin's Statu from the center of Baku"
+              date="29.11.1992 - 2000"
+              location="Azerbaijan, Turkey"
+              labels={[
+                "memories",
+                "family",
+                "happy",
+                "life",
+                "fun",
+                "childhood",
+                "test",
+                "story",
+                "sea",
+                "love",
+              ]}
+              name="Rauf Eminov"
+              likes={2}
+              comments={5}
+            />   
+            {responseData &&
+              responseData.map((item: any, index: any) => (
+                <>
+                  <TouchableOpacity onPress={() => handleCardPress(item.id)}>
+                    <Card
+                      key={index}
+                      title={item.header}
+                      date={item.startDate+" - "+item.endDate}
+                      location={
+                        item.locations[0].city +
+                        ", " +
+                        item.locations[0].country
+                      }
+                      labels={item.labels}
+                      name={item.user.name}
+                      likes={item.likes.length}
+                      comments={item.comments.length}
+                    />
+                  </TouchableOpacity>
+                </>
+              ))}
+          </>
+        )}
+
+        {/* Following Tab */}
+        {selectedIndex === 1 && (
+          <>
+            <Card
+              title="The Removal of Lenin's Statu from the center of Baku"
+              date="29.11.1992 - 2000"
+              location="Azerbaijan, Turkey"
+              labels={[
+                "memories",
+                "family",
+                "happy",
+                "life",
+                "fun",
+                "childhood",
+                "test",
+                "story",
+                "sea",
+                "love",
+              ]}
+              name="Rauf Eminov"
+              likes={2}
+              comments={4}
+            />
+          </>
+        )}
       </SafeAreaView>
     </ScrollView>
   );
