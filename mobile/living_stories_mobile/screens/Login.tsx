@@ -41,7 +41,7 @@ const Login = ({ navigation }: any) => {
     input: {
       width: "70%",
       padding: 8,
-      color: "white",
+      color: "black",
       backgroundColor: "rgba(242, 242, 242, 0.8)",
       marginBottom: 16,
       borderRadius: 4,
