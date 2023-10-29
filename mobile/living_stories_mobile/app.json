@@ -18,13 +18,25 @@
       "supportsTablet": true
     },
     "android": {
+      
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "INTERNET"
+      ],
+      "package": "com.senanyeraz.living_stories_mobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c4f6b33a-9af2-499a-9577-4244d214cdac"
+      }
     }
   }
 }
