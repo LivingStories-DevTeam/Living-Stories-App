@@ -42,6 +42,13 @@ const Home = ({ navigation }: any) => {
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <Ionicons name="ios-add" size={size} color={color} />
+            
+          ),
+          headerRight: () => (
+            <Button
+              onPress={() => onLogout!()}
+              title="Logout"
+            />
           ),
         }}
       />
