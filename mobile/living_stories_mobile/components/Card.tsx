@@ -8,6 +8,7 @@ interface CardProps {
   title: string;
   date: string;
   location: string;
+  avatar: string;
   labels: string[];
   name: string;
   likes: number;
@@ -18,6 +19,7 @@ const Card: React.FC<CardProps> = ({
   title,
   date,
   location,
+  avatar,
   labels,
   name,
   likes,
@@ -84,7 +86,7 @@ const Card: React.FC<CardProps> = ({
         <View style={styles.avatarContainer}>
           <Image
             source={{
-              uri: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
+              uri: avatar,
             }}
             style={styles.avatar}
           />
