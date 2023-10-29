@@ -5,12 +5,15 @@ import com.swe573.living_stories.DTO.MediaDTO;
 import com.swe573.living_stories.Models.*;
 import com.swe573.living_stories.Repositories.StoryRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
+import com.swe573.living_stories.Requests.AdvancedSearchRequest;
 import com.swe573.living_stories.Requests.SearchRequest;
 import com.swe573.living_stories.Requests.StoryRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,11 +26,6 @@ public class StoryService {
     @Autowired
     private UserRepository userRepository;
 
-
-
-
-
-
     @Autowired
     private DateParser dateParser;
 
@@ -35,12 +33,9 @@ public class StoryService {
         return storyRepository.save(story);
     }
 
-
-
     public Story updateStory(Long id, StoryRequest secondStory) {
         Story oldStory = storyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Story not found with id: " + id));
-
 
         if (secondStory.getRichText() != null) {
             oldStory.setRichText(secondStory.getRichText());
@@ -52,9 +47,6 @@ public class StoryService {
             oldStory.setLabels(secondStory.getLabels());
         }
 
-
-
-
         return storyRepository.save(oldStory);
     }
 
@@ -64,7 +56,7 @@ public class StoryService {
 
     public Story getStoryById(Long id) {
         Optional<Story> story = storyRepository.findById(id);
-        if (story.isPresent()){
+        if (story.isPresent()) {
             return story.get();
         }
         return null;
@@ -74,16 +66,13 @@ public class StoryService {
         return storyRepository.findByUserId(userId);
     }
 
-
-    public void deleteStoryById(Long storyId){
+    public void deleteStoryById(Long storyId) {
         Optional<Story> optionalStory = storyRepository.findById(storyId);
         if (optionalStory.isPresent()) {
             storyRepository.deleteById(storyId);
         }
 
     }
-
-
 
     public List<Story> getFollowingStories(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -96,15 +85,13 @@ public class StoryService {
         return result;
     }
 
-
-
-    public String likeStory(Long storyId , Long userId){
+    public String likeStory(Long storyId, Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         Optional<Story> optionalComment = storyRepository.findById(storyId);
-        if (optionalComment.isPresent()&& optionalUser.isPresent()){
+        if (optionalComment.isPresent() && optionalUser.isPresent()) {
             Story story = optionalComment.get();
-            ArrayList<Long> likes  = story.getLikes();
-            if(!likes.contains(userId)){
+            ArrayList<Long> likes = story.getLikes();
+            if (!likes.contains(userId)) {
 
                 likes.add(userId);
                 story.setLikes(likes);
@@ -116,7 +103,6 @@ public class StoryService {
                 storyRepository.save(story);
                 return "User unliked story";
 
-
             }
 
         }
@@ -124,11 +110,12 @@ public class StoryService {
         return "User or comment can not be found!";
 
     }
-    public boolean addLocation(Long storyId, List<Locations> locationsList){
+
+    public boolean addLocation(Long storyId, List<Locations> locationsList) {
         Optional<Story> optionalStory = storyRepository.findById(storyId);
-        if (optionalStory.isPresent()){
-            Story story  = optionalStory.get();
-            for (Locations location:locationsList) {
+        if (optionalStory.isPresent()) {
+            Story story = optionalStory.get();
+            for (Locations location : locationsList) {
                 location.setStory(story);
             }
             story.setLocations(locationsList);
@@ -138,13 +125,14 @@ public class StoryService {
         }
         return false;
     }
-    public boolean addMedia(Long storyId, ArrayList<MediaDTO> media){
+
+    public boolean addMedia(Long storyId, ArrayList<MediaDTO> media) {
         Optional<Story> optionalStory = storyRepository.findById(storyId);
-        if (optionalStory.isPresent()){
+        if (optionalStory.isPresent()) {
 
             ArrayList<Media> mediaArrayList = new ArrayList<>();
             Story story = optionalStory.get();
-            for (MediaDTO datas: media) {
+            for (MediaDTO datas : media) {
 
                 Media media_db = new Media();
                 byte[] decodedBytes = Base64.getDecoder().decode(datas.getData());
@@ -163,12 +151,11 @@ public class StoryService {
         return false;
     }
 
+    public void addStartDate(Long storyId, String startDate) {
+        Optional<Story> optionalStory = storyRepository.findById(storyId);
+        if (optionalStory.isPresent()) {
 
-    public void addStartDate(Long storyId , String startDate) {
-        Optional<Story> optionalStory  = storyRepository.findById(storyId);
-        if (optionalStory.isPresent()){
-
-            Story story  = optionalStory.get();
+            Story story = optionalStory.get();
             Date date = DateParser.parseDate(startDate);
             story.setStartDate(date);
 
@@ -177,10 +164,10 @@ public class StoryService {
         }
     }
 
-    public void addEndDate(Long storyId , String endDate) {
+    public void addEndDate(Long storyId, String endDate) {
         Optional<Story> optionalStory = storyRepository.findById(storyId);
-        if (optionalStory.isPresent()){
-            Story story  = optionalStory.get();
+        if (optionalStory.isPresent()) {
+            Story story = optionalStory.get();
             Date date = DateParser.parseDate(endDate);
             story.setEndDate(date);
             storyRepository.save(story);
@@ -188,20 +175,44 @@ public class StoryService {
         }
     }
 
-    public void addSeason(Long storyId , String season,int flag){
+    public void addSeason(Long storyId, String season, int flag) {
         Optional<Story> optionalStory = storyRepository.findById(storyId);
-        if (optionalStory.isPresent()){
-            Story story  = optionalStory.get();
-            if (flag==0){
+        if (optionalStory.isPresent()) {
+            Story story = optionalStory.get();
+            if (flag == 0) {
                 story.setStartSeason(season);
-            } else if (flag==1) {
+            } else if (flag == 1) {
                 story.setEndSeason(season);
             }
             storyRepository.save(story);
         }
     }
 
-    public List<Story> intervalSearch(SearchRequest searchRequest){
+    public List<Story> advancedSearch(AdvancedSearchRequest searchRequest) throws ParseException {
+        Double latRangeMin = null;
+        Double latRangeMax = null;
+        Double lngRangeMin = null;
+        Double lngRangeMax = null;
+        if (searchRequest.getRadius() != null) {
+            Double latitude = searchRequest.getLatitude();
+            Double longitude = searchRequest.getLongitude();
+            Double radius = searchRequest.getRadius();
+            latRangeMin = latitude - (radius / 110.574);
+            latRangeMax = latitude + (radius / 110.574);
+            lngRangeMin = longitude - (radius / (111.320 * Math.cos(Math.toRadians(latitude))));
+            lngRangeMax = longitude + (radius / (111.320 * Math.cos(Math.toRadians(latitude))));
+        }
+        if (searchRequest.getStartDate() == null)
+            searchRequest.setStartDate(new SimpleDateFormat("yyyy-MM-dd").parse("1000-01-01"));
+        if (searchRequest.getEndDate() == null)
+            searchRequest.setEndDate(new SimpleDateFormat("yyyy-MM-dd").parse("9999-12-31"));
+        List<Story> stories = storyRepository.searchAdvanced(searchRequest.getKey(), latRangeMin, latRangeMax,
+                lngRangeMin, lngRangeMax, searchRequest.getStartDate(), searchRequest.getEndDate());
+        stories.sort(Comparator.comparing(Story::getStartDate));
+        return stories;
+    }
+
+    public List<Story> intervalSearch(SearchRequest searchRequest) {
         Double latRangeMin = null;
         Double latRangeMax = null;
         Double lngRangeMin = null;
@@ -218,11 +229,9 @@ public class StoryService {
 
         }
 
-
-
-
-
-        List<Story> stories = storyRepository.search(searchRequest.getHeader() , searchRequest.getName(), searchRequest.getCity(), searchRequest.getCountry(),searchRequest.getText(),latRangeMin,latRangeMax,lngRangeMin,lngRangeMax, searchRequest.getStartSeason(), searchRequest.getEndSeason());
+        List<Story> stories = storyRepository.search(searchRequest.getHeader(), searchRequest.getName(),
+                searchRequest.getCity(), searchRequest.getCountry(), searchRequest.getText(), latRangeMin, latRangeMax,
+                lngRangeMin, lngRangeMax, searchRequest.getStartSeason(), searchRequest.getEndSeason());
         if (searchRequest.getLabel() != null) {
             String label = searchRequest.getLabel();
             Iterator<Story> iterator = stories.iterator();
@@ -234,45 +243,45 @@ public class StoryService {
             }
         }
 
-        List<Story> result  = new ArrayList<>();
+        List<Story> result = new ArrayList<>();
 
-        if (searchRequest.getStartDate() != null&& searchRequest.getEndDate()==null) {
+        if (searchRequest.getStartDate() != null && searchRequest.getEndDate() == null) {
             Date startDate = DateParser.parseDate(searchRequest.getStartDate());
-            for (Story story: stories) {
-                if (story.getStartDate()!=null && story.getStartDate().after(startDate)){
+            for (Story story : stories) {
+                if (story.getStartDate() != null && story.getStartDate().after(startDate)) {
                     result.add(story);
                 }
             }
-        }else if (searchRequest.getStartDate() != null&&searchRequest.getEndDate() != null) {
+        } else if (searchRequest.getStartDate() != null && searchRequest.getEndDate() != null) {
             Date endDate = DateParser.parseDate(searchRequest.getEndDate());
             Date startDate = DateParser.parseDate(searchRequest.getStartDate());
-            for (Story story: stories) {
-                if (story.getStartDate()!=null && story.getStartDate().after(startDate) && story.getEndDate()==null&& story.getStartDate().before(endDate) ){
+            for (Story story : stories) {
+                if (story.getStartDate() != null && story.getStartDate().after(startDate) && story.getEndDate() == null
+                        && story.getStartDate().before(endDate)) {
                     result.add(story);
-                } else if (story.getStartDate()!=null && story.getStartDate().after(startDate) && story.getEndDate()!=null&& story.getEndDate().before(endDate) ) {
+                } else if (story.getStartDate() != null && story.getStartDate().after(startDate)
+                        && story.getEndDate() != null && story.getEndDate().before(endDate)) {
                     result.add(story);
                 }
             }
         }
 
-        else if (searchRequest.getStartDate() == null&&searchRequest.getEndDate() != null) {
+        else if (searchRequest.getStartDate() == null && searchRequest.getEndDate() != null) {
             Date endDate = DateParser.parseDate(searchRequest.getEndDate());
-            for (Story story: stories) {
-                if (story.getStartDate()!=null && story.getStartDate().before(endDate)){
+            for (Story story : stories) {
+                if (story.getStartDate() != null && story.getStartDate().before(endDate)) {
                     result.add(story);
                 }
             }
         }
-        if (searchRequest.getStartDate()==null && searchRequest.getEndDate() == null){
+        if (searchRequest.getStartDate() == null && searchRequest.getEndDate() == null) {
             return stories;
         }
 
-
-
-        return  result;
+        return result;
     }
 
-    public List<Story> newsearch(SearchRequest searchRequest){
+    public List<Story> newsearch(SearchRequest searchRequest) {
         Double latRangeMin = null;
         Double latRangeMax = null;
         Double lngRangeMin = null;
@@ -282,18 +291,16 @@ public class StoryService {
             Double longitude = searchRequest.getLongitude();
             Double radius = searchRequest.getRadius();
 
-             latRangeMin = latitude - (radius / 110.574);
-             latRangeMax = latitude + (radius / 110.574);
-             lngRangeMin = longitude - (radius / (111.320 * Math.cos(Math.toRadians(latitude))));
-             lngRangeMax = longitude + (radius / (111.320 * Math.cos(Math.toRadians(latitude))));
+            latRangeMin = latitude - (radius / 110.574);
+            latRangeMax = latitude + (radius / 110.574);
+            lngRangeMin = longitude - (radius / (111.320 * Math.cos(Math.toRadians(latitude))));
+            lngRangeMax = longitude + (radius / (111.320 * Math.cos(Math.toRadians(latitude))));
 
         }
 
-
-
-
-
-        List<Story> stories = storyRepository.search(searchRequest.getHeader() , searchRequest.getName(), searchRequest.getCity(), searchRequest.getCountry(),searchRequest.getText(),latRangeMin,latRangeMax,lngRangeMin,lngRangeMax, searchRequest.getStartSeason(), searchRequest.getEndSeason());
+        List<Story> stories = storyRepository.search(searchRequest.getHeader(), searchRequest.getName(),
+                searchRequest.getCity(), searchRequest.getCountry(), searchRequest.getText(), latRangeMin, latRangeMax,
+                lngRangeMin, lngRangeMax, searchRequest.getStartSeason(), searchRequest.getEndSeason());
         if (searchRequest.getLabel() != null) {
             String label = searchRequest.getLabel();
             Iterator<Story> iterator = stories.iterator();
@@ -305,40 +312,39 @@ public class StoryService {
             }
         }
 
-        List<Story> result  = new ArrayList<>();
+        List<Story> result = new ArrayList<>();
 
-        if (searchRequest.getStartDate() != null&& searchRequest.getEndDate()==null) {
+        if (searchRequest.getStartDate() != null && searchRequest.getEndDate() == null) {
             Date startDate = DateParser.parseDate(searchRequest.getStartDate());
-            for (Story story: stories) {
-                if (story.getStartDate()!=null && story.getStartDate().after(startDate)){
+            for (Story story : stories) {
+                if (story.getStartDate() != null && story.getStartDate().after(startDate)) {
                     result.add(story);
                 }
             }
-        }else if (searchRequest.getStartDate() != null&&searchRequest.getEndDate() != null) {
+        } else if (searchRequest.getStartDate() != null && searchRequest.getEndDate() != null) {
             Date endDate = DateParser.parseDate(searchRequest.getEndDate());
             Date startDate = DateParser.parseDate(searchRequest.getStartDate());
-            for (Story story: stories) {
-                if (story.getStartDate()!=null && story.getStartDate().after(startDate) && story.getStartDate().before(endDate) ){
+            for (Story story : stories) {
+                if (story.getStartDate() != null && story.getStartDate().after(startDate)
+                        && story.getStartDate().before(endDate)) {
                     result.add(story);
                 }
             }
         }
 
-        else if (searchRequest.getStartDate() == null&&searchRequest.getEndDate() != null) {
+        else if (searchRequest.getStartDate() == null && searchRequest.getEndDate() != null) {
             Date endDate = DateParser.parseDate(searchRequest.getEndDate());
-            for (Story story: stories) {
-                if (story.getStartDate()!=null && story.getStartDate().before(endDate)){
+            for (Story story : stories) {
+                if (story.getStartDate() != null && story.getStartDate().before(endDate)) {
                     result.add(story);
                 }
             }
         }
-        if (searchRequest.getStartDate()==null && searchRequest.getEndDate() == null){
+        if (searchRequest.getStartDate() == null && searchRequest.getEndDate() == null) {
             return stories;
         }
 
-
-
-        return  result;
+        return result;
     }
 
 }
