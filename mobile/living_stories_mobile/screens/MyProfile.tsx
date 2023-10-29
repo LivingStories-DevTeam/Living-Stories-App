@@ -13,6 +13,7 @@ import {
 import { API_URL, useAuth } from "../contexts/AuthContext";
 import { Feather } from "@expo/vector-icons";
 import Card from "../components/Card";
+import LottieView from "lottie-react-native";
 
 interface Story {
   id: number;
@@ -42,7 +43,7 @@ interface Story {
 interface User {
   id: number;
   name: string;
-  photo?: ArrayBuffer | null;
+  photo?: string;
   biography?: string | null;
   stories?: Story[];
   comments?: Comment[];
@@ -118,107 +119,130 @@ const MyProfile = ({ navigation }: any) => {
       alignItems: "center",
       paddingHorizontal: 16,
     },
+    animation: {
+      width: 300,
+      height: 300,
+      marginRight: 60,
+      marginTop: 50,
+    },
+    animationContainer: {
+      backgroundColor: "#fff",
+      alignItems: "center",
+      flex: 1,
+    },
   });
   return (
-    <ImageBackground
-      source={require("../assets/fall.gif")} 
-      style={styles.background}
-    >
-      <ScrollView>
-        <SafeAreaView style={styles.container}>
-          <View style={styles.back}>
-            <View style={styles.header}>
-              <TouchableOpacity style={{marginRight:20}}>
-                <Feather name="edit" size={30} color="white" />
-              </TouchableOpacity>
-
-              <Image
-                source={{
-                  uri: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-                }}
-                style={styles.avatar}
-              />
-
-              <TouchableOpacity onPress={() => onLogout!()} style={{marginLeft:20}}>
-                <Feather name="log-out" size={30} color="white" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.content}>
-            <Text style={styles.title}>{user?.name}</Text>
-            <Text style={styles.bio}>{user?.biography}</Text>
-
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                marginTop: 10,
-              }}
-            >
-              <Text style={{ marginRight: 4 }}>
-                <Feather name="book" size={25} color="#212121" />{" "}
-                {user?.stories?.length}
-              </Text>
-              <Text>
-                <Feather name="users" size={25} color="#212121" />{" "}
-                {user?.followers?.length}
-              </Text>
-            </View>
-            <View style={{ marginTop: 10, backgroundColor: "white" }}>
-              <View>
-                <Card
-                  title="The Removal of Lenin's Statu from the center of Baku"
-                  date="29.11.1992 - 2000"
-                  location="Azerbaijan, Turkey"
-                  labels={[
-                    "memories",
-                    "family",
-                    "happy",
-                    "life",
-                    "fun",
-                    "childhood",
-                    "test",
-                    "story",
-                    "sea",
-                    "love",
-                  ]}
-                  name="Rauf Eminov"
-                  likes={2}
-                  comments={4}
-                />
-                {user?.stories?.map((item: Story, index: number) => (
-                  <>
-                    <TouchableOpacity onPress={() => handleCardPress(item.id)}>
-                      <Card
-                        key={index}
-                        title={item.header}
-                        date={
-                          item.decade
-                            ? item.decade
-                            : item.endDate
-                            ? item.startDate + " - " + item.endDate
-                            : item.startDate
-                        }
-                        location={
-                          item.locations
-                            ?.map((location) => location.country)
-                            .join(", ") || ""
-                        }
-                        labels={item.labels}
-                        name={user.name}
-                        likes={item.likes.length}
-                        comments={item.comments.length}
-                      />
+    <>
+      {user?(
+        <>
+          <ImageBackground
+            source={require("../assets/fall.gif")}
+            style={styles.background}
+          >
+            <ScrollView>
+              <SafeAreaView style={styles.container}>
+                <View style={styles.back}>
+                  <View style={styles.header}>
+                    <TouchableOpacity style={{ marginRight: 20 }}>
+                      <Feather name="edit" size={30} color="white" />
                     </TouchableOpacity>
-                  </>
-                ))}
-              </View>
-            </View>
+
+                    <Image
+                      source={
+                        user?.photo
+                          ? { uri: user.photo }
+                          : {
+                              uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                            }
+                      }
+                      style={styles.avatar}
+                    />
+
+                    <TouchableOpacity
+                      onPress={() => onLogout!()}
+                      style={{ marginLeft: 20 }}
+                    >
+                      <Feather name="log-out" size={30} color="white" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={styles.content}>
+                  <Text style={styles.title}>{user?.name}</Text>
+                  <Text style={styles.bio}>{user?.biography}</Text>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      marginTop: 10,
+                    }}
+                  >
+                    <Text style={{ marginRight: 4 }}>
+                      <Feather name="book" size={25} color="#212121" />{" "}
+                      {user?.stories?.length}
+                    </Text>
+                    <Text>
+                      <Feather name="users" size={25} color="#212121" />{" "}
+                      {user?.followers?.length}
+                    </Text>
+                  </View>
+                  <View style={{ marginTop: 10, backgroundColor: "white" }}>
+                    <View>
+                      {user?.stories?.map((item: Story, index: number) => (
+                        <>
+                          <TouchableOpacity
+                            onPress={() => handleCardPress(item.id)}
+                          >
+                            <Card
+                              key={index}
+                              title={item.header}
+                              date={
+                                item.decade
+                                  ? item.decade
+                                  : item.endDate
+                                  ? item.startDate + " - " + item.endDate
+                                  : item.startDate
+                              }
+                              location={
+                                item.locations
+                                  ?.map((location) => location.country)
+                                  .join(", ") || ""
+                              }
+                              avatar={
+                                user.photo
+                                  ? user.photo
+                                  : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd"
+                              }
+                              labels={item.labels}
+                              name={user.name}
+                              likes={item.likes.length}
+                              comments={item.comments.length}
+                            />
+                          </TouchableOpacity>
+                        </>
+                      ))}
+                    </View>
+                  </View>
+                </View>
+              </SafeAreaView>
+            </ScrollView>
+          </ImageBackground>
+        </>
+      ) : (
+        <>
+          <View style={styles.animationContainer}>
+            <LottieView
+              style={styles.animation}
+              source={require("./globe.json")} // Replace with the path to your Lottie animation JSON file
+              autoPlay
+              loop
+            />
+            <Text style={{ marginTop: 20 }}>Loading your Profile...!</Text>
           </View>
-        </SafeAreaView>
-      </ScrollView>
-    </ImageBackground>
+        </>
+      )}
+    </>
   );
 };
 
