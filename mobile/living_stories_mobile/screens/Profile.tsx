@@ -8,6 +8,7 @@ import { TouchableOpacity } from "react-native";
 import { Image } from "react-native";
 import Card from "../components/Card";
 import { Feather } from "@expo/vector-icons";
+import LottieView from "lottie-react-native";
 
 interface Story {
   id: number;
@@ -112,9 +113,23 @@ const Profile = ({ route, navigation }: any) => {
       alignItems: "center",
       paddingHorizontal: 16,
     },
+    animation: {
+      width: 300,
+      height: 300,
+      marginRight: 60,
+      marginTop: 50,
+    },
+    animationContainer: {
+      backgroundColor: "#fff",
+      alignItems: "center",
+      flex: 1,
+    },
   });
 
   return (
+    <>
+    {user?(
+      <>
     <ImageBackground
       source={require("../assets/fall.gif")} // Replace with the actual path to your GIF
       style={styles.background}
@@ -131,9 +146,13 @@ const Profile = ({ route, navigation }: any) => {
               </TouchableOpacity>
 
               <Image
-                source={{
-                  uri: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-                }}
+                source={
+                  user?.photo
+                    ? { uri: user.photo }
+                    : {
+                        uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                      }
+                }
                 style={styles.avatar}
               />
 
@@ -165,26 +184,6 @@ const Profile = ({ route, navigation }: any) => {
             </View>
             <View style={{ marginTop: 10, backgroundColor: "white" }}>
               <View>
-                <Card
-                  title="The Removal of Lenin's Statu from the center of Baku"
-                  date="29.11.1992 - 2000"
-                  location="Azerbaijan, Turkey"
-                  labels={[
-                    "memories",
-                    "family",
-                    "happy",
-                    "life",
-                    "fun",
-                    "childhood",
-                    "test",
-                    "story",
-                    "sea",
-                    "love",
-                  ]}
-                  name="Rauf Eminov"
-                  likes={2}
-                  comments={4}
-                />
                 {user?.stories?.map((item: Story, index: number) => (
                   <>
                     <TouchableOpacity onPress={() => handleCardPress(item.id)}>
@@ -203,6 +202,11 @@ const Profile = ({ route, navigation }: any) => {
                             ?.map((location) => location.country)
                             .join(", ") || ""
                         }
+                        avatar={
+                          user.photo
+                            ? user.photo
+                            : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd"
+                        }
                         labels={item.labels}
                         name={user.name}
                         likes={item.likes.length}
@@ -217,6 +221,22 @@ const Profile = ({ route, navigation }: any) => {
         </ScrollView>
       </SafeAreaView>
     </ImageBackground>
+
+</>
+) : (
+  <>
+    <View style={styles.animationContainer}>
+      <LottieView
+        style={styles.animation}
+        source={require("./globe.json")} // Replace with the path to your Lottie animation JSON file
+        autoPlay
+        loop
+      />
+      <Text style={{ marginTop: 20 }}>Loading Profile...!</Text>
+    </View>
+  </>
+)}
+</>
   );
 };
 export default Profile;
