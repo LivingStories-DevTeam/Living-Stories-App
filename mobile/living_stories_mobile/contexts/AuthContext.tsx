@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
-import { URL } from "@env";
+
+
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
@@ -11,7 +12,7 @@ interface AuthProps {
 }
 
 const TOKEN_KEY = "jtw_Token";
-export const API_URL = `${URL}`;
+export const API_URL = `http://104.155.147.249:8080`;
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
@@ -52,6 +53,7 @@ export const AuthProvider = ({ children }: any) => {
   };
   const login = async (email: string, password: string) => {
     try {
+      
       email = email.toLocaleLowerCase()
       const requestData = { email, password };
       const response = await axios.post(`${API_URL}/login`, requestData);
