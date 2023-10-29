@@ -5,7 +5,7 @@ import "react-quill/dist/quill.snow.css";
 import { GoogleMap, Marker, Autocomplete } from "@react-google-maps/api";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import { Col, Row, Container } from "react-bootstrap";
 import NavBar from "../Components/NavBar";
 import dayjs from "dayjs";
@@ -13,6 +13,9 @@ import { RadioGroup } from "../Components/DateRadio";
 import DatePicker from "antd/es/date-picker";
 import { Radio, RadioChangeEvent, Select, TimePicker } from "antd";
 import type { Dayjs } from "dayjs";
+import ImageCompress from "quill-image-compress";
+
+Quill.register('modules/imageCompress', ImageCompress);
 
 const urlEndpoint = `${import.meta.env.VITE_BACKEND_URL}/stories`;
 const api_key = import.meta.env.VITE_GOOGLE_API_KEY;
@@ -341,6 +344,13 @@ const Story: React.FC = () => {
       [{ list: "ordered" }, { list: "bullet" }],
       ["link", "image"],
     ],
+    imageCompress: {
+      quality: 0.7, 
+      maxWidth: 1024, 
+      maxHeight: 1024, 
+      imageType: "image/jpeg", 
+      debug: false,
+    }
   };
 
   const formats = [

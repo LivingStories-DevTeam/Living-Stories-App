@@ -21,6 +21,7 @@
     "npm": "^9.6.7",
     "or": "^0.2.0",
     "quill-delta-to-html": "^0.12.1",
+    "quill-image-compress": "^1.2.30",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
