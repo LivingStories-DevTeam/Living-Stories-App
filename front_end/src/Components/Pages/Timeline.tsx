@@ -1,6 +1,6 @@
 import { Autocomplete, Circle, GoogleMap, Marker } from "@react-google-maps/api";
 import NavBar from "../Components/NavBar";
-import { Avatar, Button, Col, Collapse, DatePicker, Form, Input, Layout, List, Row, Select, Space, Spin, Switch, Tooltip, Tree, Typography } from "antd";
+import { Avatar, Button, Col, Collapse, DatePicker, DatePickerProps, Form, Input, Layout, List, Row, Select, Space, Spin, Switch, TimeRangePickerProps, Tooltip, Tree, Typography } from "antd";
 import axios from "axios";
 import { Fragment, useEffect, useRef, useState, } from "react";
 import { Content } from "antd/es/layout/layout";
@@ -132,12 +132,7 @@ const Timeline: React.FC = () => {
                 {
                     title: "Year",
                     key: "0-4"
-                },
-                {
-                    title: "Period",
-                    key: "0-5",
-                    disabled: true
-                },
+                }
             ]
         },
         {
@@ -162,30 +157,25 @@ const Timeline: React.FC = () => {
                     key: "1-3"
                 },
                 {
-                    title: "Year",
+                    title: "Decade",
                     key: "1-4"
-                },
-                {
-                    title: "Period",
-                    key: "1-5",
-                    disabled: true
-                },
+                }
             ]
         },
     ];
     const onSelectChange = (value: any) => {
         let sortedResults = [...searchResult];
         if (value === "descending") {
-            sortedResults.sort((a, b) => 
+            sortedResults.sort((a, b) =>
                 dayjs(b.startDate, "DD/MM/YYYY").unix() - dayjs(a.startDate, "DD/MM/YYYY").unix()
             );
         }
         else if (value === "ascending") {
-            sortedResults.sort((a, b) => 
+            sortedResults.sort((a, b) =>
                 dayjs(a.startDate, "DD/MM/YYYY").unix() - dayjs(b.startDate, "DD/MM/YYYY").unix()
             );
         }
-        setSearchResult(sortedResults);  // Set the sorted results
+        setSearchResult(sortedResults);
     };
 
     const onTreeSelect: TreeProps["onSelect"] = (key) => {
@@ -193,6 +183,7 @@ const Timeline: React.FC = () => {
             dateClass: key.find(() => true),
             date: undefined
         });
+        onSearch();
     };
 
     const onCircleRadiusChange = () => {
@@ -202,8 +193,24 @@ const Timeline: React.FC = () => {
                 radius: currentRadius,
                 radiusVisual: currentRadius
             });
+            onSearch(null, currentRadius);
         }
+
     };
+
+    const periodIntervalPresets: TimeRangePickerProps["presets"] = [
+        { label: "1950s", value: [dayjs("1950-01-01"), dayjs("1959-12-31")] },
+        { label: "1960s", value: [dayjs("1960-01-01"), dayjs("1969-12-31")] },
+        { label: "1970s", value: [dayjs("1970-01-01"), dayjs("1979-12-31")] },
+        { label: "1980s", value: [dayjs("1980-01-01"), dayjs("1989-12-31")] },
+        { label: "1990s", value: [dayjs("1990-01-01"), dayjs("1999-12-31")] },
+        { label: "2000s", value: [dayjs("2000-01-01"), dayjs("2009-12-31")] },
+        { label: "2010s", value: [dayjs("2010-01-01"), dayjs("2019-12-31")] },
+        { label: "2020s", value: [dayjs("2020-01-01"), dayjs("2029-12-31")] }
+    ];
+
+    const customFormat: DatePickerProps["format"] = (value) =>
+        `${value.format("YYYY")}s`;
 
     const renderDateElement = () => {
         switch (dateClass) {
@@ -217,60 +224,54 @@ const Timeline: React.FC = () => {
                 )
             case "0-0":
                 return (
-                    <DatePicker />
+                    <DatePicker onChange={onSearch} />
                 )
             case "0-1":
                 return (
-                    <DatePicker picker="week" />
+                    <DatePicker picker="week" onChange={() => onSearch()} />
                 )
             case "0-2":
                 return (
-                    <DatePicker picker="month" />
+                    <DatePicker picker="month" onChange={() => onSearch()} />
                 )
             case "0-3":
                 return (
-                    <DatePicker picker="quarter" />
+                    <DatePicker picker="quarter" onChange={() => onSearch()} />
                 )
             case "0-4":
                 return (
-                    <DatePicker picker="year" />
-                )
-            case "0-5":
-                return (
-                    <DatePicker />
+                    <DatePicker picker="year" onChange={() => onSearch()} />
                 )
             case "1-0":
                 return (
-                    <RangePicker />
+                    <RangePicker onChange={() => onSearch()} />
                 )
             case "1-1":
                 return (
-                    <RangePicker picker="week" />
+                    <RangePicker picker="week" onChange={() => onSearch()} />
                 )
             case "1-2":
                 return (
-                    <RangePicker picker="month" />
+                    <RangePicker picker="month" onChange={() => onSearch()} />
                 )
             case "1-3":
                 return (
-                    <RangePicker picker="quarter" />
+                    <RangePicker picker="quarter" onChange={() => onSearch()} />
                 )
             case "1-4":
                 return (
-                    <RangePicker picker="year" />
-                )
-            case "1-5":
-                return (
-                    <RangePicker />
+                    <RangePicker picker="year" onChange={() => onSearch()} presets={periodIntervalPresets} />
                 )
         }
     };
 
-    const onSearch = async (directed?: any) => {
+    const onSearch = async (directed?: any, circle?: any) => {
         setScreenSpin(true)
         try {
             if (!directed)
                 directed = locations;
+            if (!circle)
+                circle = radius;
             let startDate;
             let endDate;
             switch (dateClass) {
@@ -278,24 +279,27 @@ const Timeline: React.FC = () => {
                 case "1-0":
                     startDate = Array.isArray(date) ? date[0] : date;
                     endDate = Array.isArray(date) ? date[1] : date[0];
+                    break;
                 case "0-1":
                 case "1-1":
                     startDate = Array.isArray(date) ? date[0].startOf("week") : date.startOf("week");
                     endDate = Array.isArray(date) ? date[1].endOf("week") : date[0].endOf("week");
+                    break;
                 case "0-2":
                 case "1-2":
                     startDate = Array.isArray(date) ? date[0].startOf("month") : date.startOf("month");
                     endDate = Array.isArray(date) ? date[1].endOf("month") : date[0].endOf("month");
+                    break;
                 case "0-3":
                 case "1-3":
                     startDate = Array.isArray(date) ? date[0].startOf("quarter") : date.startOf("quarter");
                     endDate = Array.isArray(date) ? date[1].endOf("quarter") : date[0].endOf("quarter");
+                    break;
                 case "0-4":
                 case "1-4":
                     startDate = Array.isArray(date) ? date[0].startOf("year") : date.startOf("year");
                     endDate = Array.isArray(date) ? date[1].endOf("year") : date[0].endOf("year");
-                // case "0-5":
-                // case "1-5":
+                    break;
             }
             let request = {
                 startDate: startDate,
@@ -303,7 +307,7 @@ const Timeline: React.FC = () => {
                 key: key === "" ? null : key,
                 longitude: directed.lng,
                 latitude: directed.lat,
-                radius: radius
+                radius: circle
             }
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/stories/advancedsearch`, request, {
                 withCredentials: true,
@@ -319,8 +323,13 @@ const Timeline: React.FC = () => {
                         const imageData = match[1];
                         imageDataList.push(imageData);
                     }
+                    const parser = new DOMParser();
+                    const document = parser.parseFromString(item.richText, "text/html");
+                    const image = document.querySelectorAll("img");
+                    image.forEach(image => image.remove());
                     return {
                         ...item,
+                        text: document.body.textContent,
                         imageData: imageDataList
                     };
                 });
@@ -530,7 +539,7 @@ const Timeline: React.FC = () => {
                                             <Space>
                                                 <Form.Item
                                                     name={"key"}
-                                                    label={<Text style={{ fontSize: "16px", fontFamily: "system-ui", fontWeight: "500" }}>{"Keyword"}</Text>}>
+                                                    label={<Text style={{ fontSize: "16px", fontFamily: "system-ui", fontWeight: "500" }}>{"Search"}</Text>}>
                                                     <Input
                                                         maxLength={50}
                                                         showCount
@@ -543,7 +552,7 @@ const Timeline: React.FC = () => {
                                                         style={{ fontFamily: "sans-serif", color: "white" }}>
                                                         {"Use a keyword to narrow down stories based on their titles, content, tags or username."}
                                                     </Text>}>
-                                                    <InfoCircleOutlined style={{ paddingTop: "12px" }}/>
+                                                    <InfoCircleOutlined style={{ paddingTop: "12px" }} />
                                                 </Tooltip>
                                             </Space>
                                         </Col>
@@ -558,22 +567,25 @@ const Timeline: React.FC = () => {
                                 layout="vertical"
                                 initialValues={{ sort: "ascending" }}>
                                 <Form.Item
-                                    name={"sort"}
-                                    label={<Text style={{ fontFamily: "sans-serif", fontSize: "16px" }}>{"Sort"}</Text>}>
-                                    <Space>
+                                    label={<Text style={{ fontFamily: "system-ui", fontSize: "16px", fontWeight: "500" }}>{"Sort"}</Text>}
+                                    style={{ paddingLeft: "16px" }}>
+                                    <Form.Item
+                                        noStyle
+                                        name={"sort"}>
                                         <Select
                                             options={selectOptions}
                                             onChange={onSelectChange}
                                             style={{ width: "120px" }} />
-                                        <Space>
-                                            <Tooltip
-                                                title={() => <Text
-                                                    style={{ fontFamily: "sans-serif", color: "white" }}>
-                                                    {"Currently, stories are sorted by their start date."}
-                                                </Text>}>
-                                                <InfoCircleOutlined />
-                                            </Tooltip>
-                                        </Space>
+                                    </Form.Item>
+                                    <Space
+                                        style={{ paddingLeft: "8px" }}>
+                                        <Tooltip
+                                            title={() => <Text
+                                                style={{ fontFamily: "sans-serif", color: "white" }}>
+                                                {"Currently, stories are sorted by their start date."}
+                                            </Text>}>
+                                            <InfoCircleOutlined />
+                                        </Tooltip>
                                     </Space>
                                 </Form.Item>
                             </Form>
@@ -616,13 +628,12 @@ const Timeline: React.FC = () => {
                                                 <>
                                                     <Space direction="vertical"
                                                         style={{ paddingLeft: "16px" }}>
-                                                        <Text style={{ fontWeight: "100" }}>
+                                                        <Text style={{ fontWeight: "500" }}>
                                                             <Space direction="horizontal" size="small">
-                                                                {/* {item.startDate === item.endDate ? item.startDate.substring(0, 10) : item.startDate.substring(0, 10)}{<MinusOutlined />}{item.endDate.substring(0, 10)} */}
                                                                 {item.startDate}{<MinusOutlined />}{item.endDate}
                                                             </Space>
                                                         </Text>
-                                                        <Text style={{ fontWeight: "100" }}>
+                                                        <Text style={{ fontWeight: "500" }}>
                                                             {item.locations.find(() => true).name}
                                                         </Text>
                                                     </Space>
@@ -631,7 +642,7 @@ const Timeline: React.FC = () => {
                                         <>
                                             <ReactQuill
                                                 className="borderless"
-                                                value={item.richText.substring(0, (item.richText.substring(0, 250).lastIndexOf(" "))) + "..."}
+                                                value={item.text.substring(0, 250) + "..."}
                                                 readOnly={true}
                                                 theme="snow"
                                                 modules={{ toolbar: false }}
