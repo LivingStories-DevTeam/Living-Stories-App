@@ -195,6 +195,7 @@ const Timeline: React.FC = () => {
             });
             onSearch(null, currentRadius);
         }
+
     };
 
     const periodIntervalPresets: TimeRangePickerProps["presets"] = [
@@ -264,11 +265,13 @@ const Timeline: React.FC = () => {
         }
     };
 
-    const onSearch = async (directed?: any, radius?: any) => {
+    const onSearch = async (directed?: any, circle?: any) => {
         setScreenSpin(true)
         try {
             if (!directed)
                 directed = locations;
+            if (!circle)
+                circle = radius;
             let startDate;
             let endDate;
             switch (dateClass) {
@@ -297,8 +300,6 @@ const Timeline: React.FC = () => {
                     startDate = Array.isArray(date) ? date[0].startOf("year") : date.startOf("year");
                     endDate = Array.isArray(date) ? date[1].endOf("year") : date[0].endOf("year");
                     break;
-                // case "0-5":
-                // case "1-5":
             }
             let request = {
                 startDate: startDate,
@@ -306,7 +307,7 @@ const Timeline: React.FC = () => {
                 key: key === "" ? null : key,
                 longitude: directed.lng,
                 latitude: directed.lat,
-                radius: radius
+                radius: circle
             }
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/stories/advancedsearch`, request, {
                 withCredentials: true,
@@ -321,7 +322,7 @@ const Timeline: React.FC = () => {
                     while ((match = regex.exec(quill))) {
                         const imageData = match[1];
                         imageDataList.push(imageData);
-                    }                
+                    }
                     const parser = new DOMParser();
                     const document = parser.parseFromString(item.richText, "text/html");
                     const image = document.querySelectorAll("img");
