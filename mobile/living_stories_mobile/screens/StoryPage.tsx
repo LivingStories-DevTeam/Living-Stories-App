@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import HTML from "react-native-render-html";
 import { API_URL } from "../contexts/AuthContext";
-import MapView, { Marker } from "react-native-maps";
+import MapView, {PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import LottieView from "lottie-react-native";
 import { Feather } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
@@ -151,7 +151,7 @@ const StoryPage = ({ route, navigation }: any) => {
                 <>
                   <View style={styles.mapContainer}>
                     <MapView
-                      provider="google"
+                      provider={PROVIDER_GOOGLE}
                       style={styles.map}
                       initialRegion={{
                         ...center,
