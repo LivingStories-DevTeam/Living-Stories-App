@@ -2,13 +2,14 @@ package com.swe573.living_stories.Models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
-@Table(name = "activitiy")
+@Table(name = "activity")
 @Getter
 @Setter
 public class Activity {
@@ -17,18 +18,17 @@ public class Activity {
     private Long id;
 
 
-    @NotBlank
+    @NotNull
     private Long user_id;
 
 
     @NotBlank
     private String user_name;
 
-    @NotBlank
-    private Byte user_media;
+    private String user_media;
 
     @NotBlank
-    private String action_type;
+    private String action_type; //Predetermined types are Like, Comment, Post, Follow
 
 
     private Long story_id;
@@ -41,7 +41,7 @@ public class Activity {
 
     private String following_name;
 
-    @NotBlank
+    @NotNull
     private Date action_timestamp;
 
 }

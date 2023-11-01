@@ -9,6 +9,7 @@ import com.swe573.living_stories.Requests.SearchRequest;
 import com.swe573.living_stories.Requests.StoryRequest;
 import com.swe573.living_stories.Services.StoryService;
 import com.swe573.living_stories.Services.UserService;
+import com.swe573.living_stories.Services.ActivityService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,8 @@ public class StoryController {
     @Autowired
     private StoryService storyService;
 
-
+    @Autowired
+    ActivityService activityService;
 
 
 
@@ -200,7 +202,10 @@ public class StoryController {
     @PostMapping("/like/{storyId}")
     public String likeStory(HttpServletRequest request, @PathVariable Long storyId){
         Long userId = userService.isUserLoggedIn(request);
-        return storyService.likeStory(storyId, userId);
+        String return_string = storyService.likeStory(storyId, userId);
+        if (return_string.equals("User liked story!")) activityService.recordLikeActivity(storyId,userId);
+
+        return return_string;
     }
 
 

@@ -107,19 +107,21 @@ public class StoryService {
         if (optionalComment.isPresent()&& optionalUser.isPresent()){
             Story story = optionalComment.get();
             ArrayList<Long> likes  = story.getLikes();
-            if(!likes.contains(userId)){
+            if (likes.contains(userId)) {
+                if (likes.contains(userId)) {
+                    likes.remove(userId);
+                    story.setLikes(likes);
+                    storyRepository.save(story);
+                    return "User unliked story";
+
+
+                }
+            } else {
 
                 likes.add(userId);
                 story.setLikes(likes);
                 storyRepository.save(story);
                 return "User liked story!";
-            } else if (likes.contains(userId)) {
-                likes.remove(userId);
-                story.setLikes(likes);
-                storyRepository.save(story);
-                return "User unliked story";
-
-
             }
 
         }
