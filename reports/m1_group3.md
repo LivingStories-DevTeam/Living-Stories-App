@@ -220,7 +220,7 @@ I also researched the best way to implement Recommendation Engine. I have drafte
 Mostly created or resolved by mostly me. Some of them required group effort but tracked by me.
 
 **Pull Requests:**  
-- Created Pull Request [#](URL) that was reviewed and merged by Sanan.
+- Created Pull Request [73#](https://github.com/SWE574-G3/Living-Stories-App/pull/73) that was reviewed and merged by Sanan.
 
 **Additional Information:**  
 Had meetings with front end, mobile and back end teams to go over requirements.
