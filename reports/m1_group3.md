@@ -292,3 +292,34 @@ None for the time being.
 I have decided that, in order to avoid burdening the team, I should concentrate on the documentation part of the first milestone, as I don't have the same experience as other team members and have failed SWE 573.
 
 ---
+
+### Member: Salih
+**Responsibilities:**  
+One of Main Code Developers and Architect for New Features on Back-End. Also responsible for maintaining Git branch structure and consulting team members on Git.
+
+**Main Contributions:**  
+- **Code Related significant issues:**  
+  - Identify places in code where actions we count as "Activity" is performed. [#65](https://github.com/SWE574-G3/Living-Stories-App/issues/65)
+  - Create an Activity entity that stores activities of users [#64](https://github.com/SWE574-G3/Living-Stories-App/issues/64)
+  - Add a basic endpoint for getting activity stream based on actions of followed users [#19](https://github.com/SWE574-G3/Living-Stories-App/issues/19)
+  - Refactor activity stream controller to communicate with a single endpoint. [#54](https://github.com/SWE574-G3/Living-Stories-App/issues/54)   
+  - Prepare code standards for Java development. [#10](https://github.com/SWE574-G3/Living-Stories-App/issues/10) 
+  - Add unit test for new commment service method [#53](https://github.com/SWE574-G3/Living-Stories-App/issues/53) 
+
+- **Management-related significant issues:**  
+  - Decide on how to handle activity steam. [#18](https://github.com/SWE574-G3/Living-Stories-App/issues/18)
+  - Align with group members on backend and database technologies to be used for the project [#3](https://github.com/SWE574-G3/Living-Stories-App/issues/3)
+  - Align with group members on Integration Method for Recommendation Engine [#6](https://github.com/SWE574-G3/Living-Stories-App/issues/6)
+  - Prepare Responsibility Assignment Matrix. (led by Cansel) [#7](https://github.com/SWE574-G3/Living-Stories-App/issues/7)
+  - Getting familiar with the base project [#9](https://github.com/SWE574-G3/Living-Stories-App/issues/9)
+  - Create custom issue labels [#2](https://github.com/SWE574-G3/Living-Stories-App/issues/2)
+
+**Pull requests:**  
+For milestone 1, new features on the backend were not merged into "main" so we, as backend developers, did not have any pull requests to main. Our work is in our own feature branch, which is available at [feature/activity-stream](https://github.com/SWE574-G3/Living-Stories-App/tree/feature/activity-stream).  
+I have reviewed and solved the related issues on the pull request to main branch for milestone 1 release available at: [Merge branch "test" into "main"](https://github.com/SWE574-G3/Living-Stories-App/pull/60).  
+Also reviewed and merged the PR available at: [58](https://github.com/SWE574-G3/Living-Stories-App/pull/58).
+
+**Additional Information:**  
+Communicated closely with front-end and recommendation engine developers to decide on optimal achitecture for integration of new features. Transferred knowledge to the team on how to optimally use Git for our project. 
+
+---
