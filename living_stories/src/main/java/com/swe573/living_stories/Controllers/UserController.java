@@ -3,6 +3,7 @@ package com.swe573.living_stories.Controllers;
 import com.swe573.living_stories.Models.User;
 import com.swe573.living_stories.Requests.EditUser;
 import com.swe573.living_stories.Requests.SearchRequest;
+import com.swe573.living_stories.Services.ActivityService;
 import com.swe573.living_stories.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ActivityService activityService;
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
@@ -45,6 +48,8 @@ public class UserController {
     public ResponseEntity<String> followUser( @PathVariable Long followingId, HttpServletRequest request) {
         Long userId = userService.isUserLoggedIn(request);
         String response  = userService.followUser(userId, followingId);
+
+       if (!response.contains("unfollowed")) activityService.recordFollowAction(userId,followingId); //Just record follow action can be improved using ActivityRepository
         return ResponseEntity.ok( response);
     }
 

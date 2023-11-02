@@ -5,6 +5,7 @@ import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Models.User;
 import com.swe573.living_stories.Requests.CommentRequest;
 import com.swe573.living_stories.Services.CommentService;
+import com.swe573.living_stories.Services.ActivityService;
 import com.swe573.living_stories.Services.StoryService;
 import com.swe573.living_stories.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +27,9 @@ public class CommentController {
     private StoryService storyService;
     @Autowired
     UserService userService;
+
+    @Autowired
+    ActivityService activityService;
 
     @DeleteMapping("/{commentId}")
     public String deleteComment(@PathVariable Long commentId){
@@ -50,6 +54,9 @@ public class CommentController {
         comment.setUser(optionalUser.get());
         comment.setStory(optionalStory);
         commentService.addCommentToStory(optionalStory.getId(), comment);
+
+        activityService.recordActivity(optionalStory.getId(),optionalUser.get().getId(),"Comment");
+
         return ResponseEntity.ok().build();
     }
 
