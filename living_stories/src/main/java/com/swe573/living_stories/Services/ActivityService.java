@@ -3,12 +3,13 @@ package com.swe573.living_stories.Services;
 
 import com.swe573.living_stories.Models.Activity;
 import com.swe573.living_stories.Models.User;
-import java.util.Date;
 import com.swe573.living_stories.Repositories.ActivityRepository;
 import com.swe573.living_stories.Repositories.StoryRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public class ActivityService {
@@ -80,4 +81,46 @@ public class ActivityService {
 
     }
 
+    public void recordLikeActivity(final Long story_id, final Long user_id) throws RuntimeException {
+        recordBaseActivity(story_id, user_id, "L");
+    }
+
+    public void recordPostStoryActivity(final Long story_id, final Long user_id) throws RuntimeException {
+        recordBaseActivity(story_id, user_id, "S");
+    }
+
+    public void recordCommentActivity(final Long story_id, final Long user_id) throws RuntimeException {
+        recordBaseActivity(story_id, user_id, "C");
+    }
+
+    public void recordFollowActivity(final Long following_id, final Long user_id) throws RuntimeException {
+        recordBaseActivity(following_id, user_id, "F");
+    }
+
+    public void recordBaseActivity(final Long actionItemId, final Long user_id, final String action_type)
+            throws RuntimeException {
+
+        User user = userRepository.getReferenceById(user_id);
+        Activity activity = new Activity();
+        activity.setUser_id(user.getId());
+        activity.setUser_name(user.getName());
+        activity.setUser_media(user.getPhoto());
+        activity.setAction_timestamp(new Date());
+        activity.setAction_type(action_type);
+
+        if (!action_type.equals("F")) {
+            activity.setStory_id(actionItemId);
+            activity.setStory_title(storyRepository.getReferenceById(actionItemId).getHeader());
+        } else {
+            activity.setFollowing_id(actionItemId);
+            activity.setFollowing_name(userRepository.getReferenceById(actionItemId).getName());
+        }
+
+        try {
+            activityRepository.save(activity);
+        }
+        catch(RuntimeException e) {
+            throw new RuntimeException("Follow Activity could not be recorded",e);
+        }
+    }
 }
