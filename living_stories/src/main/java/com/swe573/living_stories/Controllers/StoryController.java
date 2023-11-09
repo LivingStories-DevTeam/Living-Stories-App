@@ -5,6 +5,7 @@ import com.swe573.living_stories.Models.Media;
 import com.swe573.living_stories.DTO.MediaDTO;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Models.User;
+import com.swe573.living_stories.Requests.AdvancedSearchRequest;
 import com.swe573.living_stories.Requests.SearchRequest;
 import com.swe573.living_stories.Requests.StoryRequest;
 import com.swe573.living_stories.Services.StoryService;
@@ -37,14 +38,14 @@ public class StoryController {
 
     @PostMapping
     public ResponseEntity<Story> createStory(@RequestBody StoryRequest storyRequest, HttpServletRequest request) {
-        Long id  = userService.isUserLoggedIn(request);
+        Long id = userService.isUserLoggedIn(request);
         Optional<User> optionalUser = userService.getUserById(id);
         if (!optionalUser.isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
         Story story = new Story();
-        if (storyRequest.getDecade()!=null){
+        if (storyRequest.getDecade() != null) {
             story.setDecade(storyRequest.getDecade());
         }
         story.setText(storyRequest.getText());
@@ -53,94 +54,94 @@ public class StoryController {
         story.setLabels(storyRequest.getLabels());
         story.setRichText(storyRequest.getRichText());
         Story savedStory = storyService.createStory(story);
-        if (storyRequest.getLocations() !=null){
-            storyService.addLocation(savedStory.getId(),storyRequest.getLocations());
+        if (storyRequest.getLocations() != null) {
+            storyService.addLocation(savedStory.getId(), storyRequest.getLocations());
         }
-        if (storyRequest.getMediaString()!=null){
+        if (storyRequest.getMediaString() != null) {
             storyService.addMedia(savedStory.getId(), storyRequest.getMediaString());
 
         }
-        if (storyRequest.getStartDate() != null){
-           storyService.addStartDate(savedStory.getId(),storyRequest.getStartDate());
+        if (storyRequest.getStartDate() != null) {
+            storyService.addStartDate(savedStory.getId(), storyRequest.getStartDate());
         }
-        if (storyRequest.getEndDate() != null){
-            storyService.addEndDate(savedStory.getId(),storyRequest.getEndDate());
+        if (storyRequest.getEndDate() != null) {
+            storyService.addEndDate(savedStory.getId(), storyRequest.getEndDate());
         }
-        if (storyRequest.getStartSeason() != null){
-            storyService.addSeason(savedStory.getId(),storyRequest.getStartSeason(),0);
+        if (storyRequest.getStartSeason() != null) {
+            storyService.addSeason(savedStory.getId(), storyRequest.getStartSeason(), 0);
         }
-        if (storyRequest.getEndSeason() != null){
-            storyService.addSeason(savedStory.getId(),storyRequest.getEndSeason(),1);
+        if (storyRequest.getEndSeason() != null) {
+            storyService.addSeason(savedStory.getId(), storyRequest.getEndSeason(), 1);
         }
 
         activityService.recordActivity(savedStory.getId(),optionalUser.get().getId(), "Post");
 
         return ResponseEntity.ok(savedStory);
     }
+
     @GetMapping("/following")
-    public List<Story> getFollowingUsers(HttpServletRequest request){
+    public List<Story> getFollowingUsers(HttpServletRequest request) {
         Long id = userService.isUserLoggedIn(request);
-        return  storyService.getFollowingStories(id);
+        return storyService.getFollowingStories(id);
     }
 
-
-
     @PostMapping("/edit/{id}")
-    public ResponseEntity<Story> updateStory(@PathVariable Long id, @RequestBody StoryRequest storyRequest,HttpServletRequest request) {
+    public ResponseEntity<Story> updateStory(@PathVariable Long id, @RequestBody StoryRequest storyRequest,
+            HttpServletRequest request) {
         Long userId = userService.isUserLoggedIn(request);
         Story existingStory = storyService.getStoryById(id);
-        if (existingStory!=null) {
+        if (existingStory != null) {
 
-            Story updatedStory = storyService.updateStory(id ,storyRequest);
+            Story updatedStory = storyService.updateStory(id, storyRequest);
             return ResponseEntity.ok(updatedStory);
         }
         return ResponseEntity.notFound().build();
     }
 
-
     @GetMapping("/{id}/photo")
-    public List<MediaDTO> getMeida(@PathVariable Long id, HttpServletRequest request){
+    public List<MediaDTO> getMeida(@PathVariable Long id, HttpServletRequest request) {
         userService.isUserLoggedIn(request);
         Story story = storyService.getStoryById(id);
         if (story.getMedia() != null) {
             List<Media> media = story.getMedia();
             List<MediaDTO> mediaDTOList = new ArrayList<>();
             for (Media photos : media) {
-                mediaDTOList.add(new MediaDTO(photos.getType(),photos.getData()));
+                mediaDTOList.add(new MediaDTO(photos.getType(), photos.getData()));
             }
             return mediaDTOList;
         }
         return null;
     }
+
     @GetMapping
     public ResponseEntity<List<Story>> getAllStories(HttpServletRequest request) {
         Long userId = userService.isUserLoggedIn(request);
 
         List<Story> stories = storyService.getAllStories();
-        for(Story story:stories){
+        for (Story story : stories) {
             story.setRichText(null);
             if (story.getComments() != null) {
-                for (Comment comment:
-                     story.getComments()) {
-                        comment.setUser(null);
-                        comment.setText(null);
+                for (Comment comment : story.getComments()) {
+                    comment.setUser(null);
+                    comment.setText(null);
                 }
             }
 
         }
         return ResponseEntity.ok(stories);
     }
+
     @GetMapping("/commentliked/{id}")
 
-    public String commentLikedOrNor(@PathVariable Long id, HttpServletRequest request){
+    public String commentLikedOrNor(@PathVariable Long id, HttpServletRequest request) {
         Long userId = userService.isUserLoggedIn(request);
 
         Story story = storyService.getStoryById(id);
-        if (story!=null ) {
+        if (story != null) {
 
-            List<Comment> comments  = story.getComments();
+            List<Comment> comments = story.getComments();
             if (comments != null) {
-                for (Comment comment:comments) {
+                for (Comment comment : comments) {
                     if (comment.getLikes() != null && comment.getLikes().contains(userId)) {
                         return "yes";
                     }
@@ -149,69 +150,71 @@ public class StoryController {
 
             }
 
-
         }
         return "no";
     }
 
     @GetMapping("/storyliked/{id}")
-    public String likedOrNor(@PathVariable Long id, HttpServletRequest request){
+    public String likedOrNor(@PathVariable Long id, HttpServletRequest request) {
         Long userId = userService.isUserLoggedIn(request);
 
         Story story = storyService.getStoryById(id);
-        if (story!=null ) {
+        if (story != null) {
 
-            if (story.getLikes()!=null && story.getLikes().contains(userId)) {
+            if (story.getLikes() != null && story.getLikes().contains(userId)) {
                 return "yes";
             }
         }
         return "no";
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Story> getStoryById(@PathVariable Long id, HttpServletRequest request) {
         Long userId = userService.isUserLoggedIn(request);
         Story story = storyService.getStoryById(id);
-        if (story!=null) {
+        if (story != null) {
             return ResponseEntity.ok(story);
         }
         return ResponseEntity.notFound().build();
     }
+
     @GetMapping("/get")
-    public List<Story> getUserStories(HttpServletRequest request)  {
-        Long userId  = userService.isUserLoggedIn(request);
+    public List<Story> getUserStories(HttpServletRequest request) {
+        Long userId = userService.isUserLoggedIn(request);
         return storyService.getByUserId(userId);
     }
 
     @PostMapping("/search")
-    public List<Story> search(HttpServletRequest request , @RequestBody SearchRequest searchRequest){
+    public List<Story> search(HttpServletRequest request, @RequestBody SearchRequest searchRequest) {
         userService.isUserLoggedIn(request);
         return storyService.newsearch(searchRequest);
     }
+
+    @PostMapping("/advancedsearch")
+    public List<Story> advancedSearch(HttpServletRequest request, @RequestBody AdvancedSearchRequest searchRequest) throws ParseException {
+        userService.isUserLoggedIn(request);
+        return storyService.advancedSearch(searchRequest);
+    }
+
     @PostMapping("/intervalsearch")
-    public List<Story> intervalSearch(HttpServletRequest request , @RequestBody SearchRequest searchRequest){
+    public List<Story> intervalSearch(HttpServletRequest request, @RequestBody SearchRequest searchRequest) {
         userService.isUserLoggedIn(request);
         return storyService.intervalSearch(searchRequest);
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Long id ){
-         storyService.deleteStoryById(id);
-         return "done";
+    public String delete(@PathVariable Long id) {
+        storyService.deleteStoryById(id);
+        return "done";
     }
 
-
-
     @PostMapping("/like/{storyId}")
-    public String likeStory(HttpServletRequest request, @PathVariable Long storyId){
+    public String likeStory(HttpServletRequest request, @PathVariable Long storyId) {
         Long userId = userService.isUserLoggedIn(request);
         String return_string = storyService.likeStory(storyId, userId);
         if (return_string.equals("User liked story!")) activityService.recordActivity(storyId,userId,"Like");
 
         return return_string;
     }
-
-
-
-
 
 }

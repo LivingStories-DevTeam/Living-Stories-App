@@ -1,0 +1,12 @@
+.panel--icon [class="ant-collapse-expand-icon"] {
+    padding-top: 4px;
+}
+
+.quill.borderless {
+    .ql-container {
+        border-top: 0px;
+        border-left: 0px;
+        border-right: 0px;
+        border-bottom: 0px;
+    }
+}

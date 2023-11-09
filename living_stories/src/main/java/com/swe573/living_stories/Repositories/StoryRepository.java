@@ -16,8 +16,8 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 
     List<Story> findByUserId(Long user_id);
 
-
     List<Story> findByUserIdIn(List<Long> followingIds);
+
     @Query("SELECT s FROM Story s" +
             " WHERE" +
             " (:header IS NULL OR LOWER(s.header) LIKE CONCAT('%', :header, '%'))" +
@@ -31,7 +31,6 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
             "   (l.lng BETWEEN :lngRangeMin AND :lngRangeMax) OR (l.lng IS NULL)))" +
             " AND (:startSeason IS NULL OR s.startSeason = :startSeason)" +
             " AND (:endSeason IS NULL OR s.endSeason = :endSeason)")
-
     List<Story> search(
             @Param("header") String header,
             @Param("userName") String userName,
@@ -44,8 +43,27 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
             @Param("lngRangeMax") Double lngRangeMax,
             @Param("startSeason") String startSeason,
             @Param("endSeason") String endSeason
-
     );
+
+    @Query("SELECT DISTINCT s FROM Story s" +
+            " LEFT JOIN s.locations l" +
+            " WHERE" +
+            " (:key is null OR LOWER(s.user.name) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.richText) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.city) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.country) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.header) LIKE CONCAT('%', LOWER(:key), '%'))" +
+            " AND ((:latRangeMin IS NULL AND :latRangeMax IS NULL) OR EXISTS (SELECT l FROM s.locations l WHERE (l.lat BETWEEN :latRangeMin AND :latRangeMax) OR (l.lat IS NULL)))" +
+            " AND ((:lngRangeMin IS NULL AND :lngRangeMax IS NULL) OR EXISTS (SELECT l FROM s.locations l WHERE (l.lng BETWEEN :lngRangeMin AND :lngRangeMax) OR (l.lng IS NULL)))" +
+            " AND (s.startDate >= :startDate) " +
+            " AND (s.endDate <= :endDate)")
+    List<Story> searchAdvanced(
+            @Param("key") String key,
+            @Param("latRangeMin") Double latRangeMin,
+            @Param("latRangeMax") Double latRangeMax,
+            @Param("lngRangeMin") Double lngRangeMin,
+            @Param("lngRangeMax") Double lngRangeMax,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate
+    );
+
+    
 
 
 
