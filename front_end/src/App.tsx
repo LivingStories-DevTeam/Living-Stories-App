@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./Components/Pages/HomePage";
 import StoryCreate from "./Components/Pages/StoryCreate";
+import StoryCreateMobile from "./Components/Pages/StoryCreateMobile";
 import StoryPage from "./Components/Pages/StoryPage";
 //import LogOut from './Components/Logout';
 import LoginPage from "./Components/Pages/LoginPage";
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/search" element={<Search />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/story" element={<StoryCreate />}></Route>
+          <Route path="/storymobile" element={<StoryCreateMobile />}></Route>
           <Route path="/stories/:id" element={<StoryPage />} />
           <Route path="/stories/edit/:id" element={<StoryEdit />} />
           <Route path="/user/:name" element={<ProfilePage />} />
