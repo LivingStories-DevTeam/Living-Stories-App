@@ -368,16 +368,16 @@ const StoryCreateMobile: React.FC = () => {
   ];
 
   useEffect(() => {
-    /*
+    
     const cookieValue = document.cookie
       .split("; ")
       .find((row) => row.startsWith("jwt_Token"))
       ?.split("=")[1];
 
     if (!cookieValue) {
-      navigate("/login");
+      alert("User is not logged in!")
     }
-  */
+  
   }, []);
   return (
     <div style={{ backgroundColor: "#1f6c5c" }}>
