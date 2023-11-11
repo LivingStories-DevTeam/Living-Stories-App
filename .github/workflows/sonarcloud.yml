@@ -3,6 +3,12 @@ on:
   push:
     branches:
       - main
+      - front-end
+      - feature/activity-stream
+      - feature-mobile-basic-page-design
+      - mobile
+      - recommendation-engine
+      - test
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
