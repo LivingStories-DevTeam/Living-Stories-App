@@ -13,23 +13,28 @@ import { RadioGroup } from "../Components/DateRadio";
 import DatePicker from "antd/es/date-picker";
 import { Radio, RadioChangeEvent, Select, TimePicker } from "antd";
 import type { Dayjs } from "dayjs";
+import CancelIcon from "@mui/icons-material/Cancel";
 import ImageCompress from "quill-image-compress";
+import { Chip } from "@mui/material";
 
-Quill.register('modules/imageCompress', ImageCompress);
+Quill.register("modules/imageCompress", ImageCompress);
 
 const urlEndpoint = `${import.meta.env.VITE_BACKEND_URL}/stories`;
 const api_key = import.meta.env.VITE_GOOGLE_API_KEY;
 const containerStyle = {
   width: "100%",
-  height: "400px",
+  height: "350px",
+  margin: "auto",
+  border: "1px solid #ccc",
+  boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
 };
 
 interface Location {
   name: string;
   lat: number;
   lng: number;
-  city?:string;
-  country?:string;
+  city?: string;
+  country?: string;
 }
 
 interface Story {
@@ -43,7 +48,7 @@ interface Story {
   startDate?: string;
   endDate?: string;
   startSeason?: string;
-  endSeason?:string;
+  endSeason?: string;
 }
 type Option = {
   label: string;
@@ -58,7 +63,6 @@ const options: Option[] = [
 const decadeOption: Option[] = [
   { label: "Date", value: "date" },
   { label: "Decade", value: "decade" },
-  
 ];
 
 const exactDateFormat = "DD/MM/YYYY";
@@ -66,10 +70,6 @@ const yearFormat = "YYYY";
 const monthFormat = "MM/YYYY";
 
 const StoryCreateMobile: React.FC = () => {
-  
-  
- 
-
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({
     lat: 41.0856396,
     lng: 29.0424937,
@@ -88,7 +88,8 @@ const StoryCreateMobile: React.FC = () => {
   const [selectedSeason, setSelectedSeason] = useState<string>();
   const [selectedSeasonEnd, setSelectedSeasonEnd] = useState<string>();
   const [requestStartDate, setRequestStartDate] = useState<string>();
-  const [selectedOptionEnd, setSelectedOptionEnd] = useState<string>("exact-year");
+  const [selectedOptionEnd, setSelectedOptionEnd] =
+    useState<string>("exact-year");
   const [selectedDateInput, setSelectedDateInput] = useState<string>("date");
   const [selectedDecadeValue, setSelectedDecadeValue] = useState<number>();
   const [decade, setDecade] = useState<string>();
@@ -101,7 +102,7 @@ const StoryCreateMobile: React.FC = () => {
   ];
 
   const decadeSelectOptions = [
-    { value: 1901 , label: "1900s" },
+    { value: 1901, label: "1900s" },
     { value: 1911, label: "1910s" },
     { value: 1921, label: "1920s" },
     { value: 1931, label: "1930s" },
@@ -113,22 +114,16 @@ const StoryCreateMobile: React.FC = () => {
     { value: 1991, label: "1990s" },
     { value: 2001, label: "2000s" },
     { value: 2011, label: "2010s" },
-    {value:2021 , label:"2020s"}
-    ];
-    
-    
-    
-    
-    
-    
-    
+    { value: 2021, label: "2020s" },
+  ];
+
   const dateFormats: { [key: string]: string } = {
     "exact-year": "DD/MM/YYYY",
     month: "MM/YYYY",
     year: "YYYY",
   };
   const combinedStartDateTimeString = `${
-    startDate && startTime&& selectedOption==='exact-year'
+    startDate && startTime && selectedOption === "exact-year"
       ? dayjs(
           `${startDate.format("YYYY-MM-DD")}T${startTime.format("HH:mm:ss")}`
         ).format("DD/MM/YYYY HH:mm:ss")
@@ -136,15 +131,13 @@ const StoryCreateMobile: React.FC = () => {
   }`;
 
   const combinedEndDateTimeString = `${
-    endtDate && endTime && selectedOptionEnd === "exact-year" 
+    endtDate && endTime && selectedOptionEnd === "exact-year"
       ? dayjs(
           `${endtDate.format("YYYY-MM-DD")}T${endTime.format("HH:mm:ss")}`
         ).format("DD/MM/YYYY HH:mm:ss")
       : endtDate?.format(dateFormats[selectedOptionEnd])
   }`;
-  
 
- 
   const onRadioChange = (e: RadioChangeEvent) => {
     setSelectedOption(e.target.value);
   };
@@ -166,7 +159,6 @@ const StoryCreateMobile: React.FC = () => {
 
     if (place?.geometry?.location) {
       const addressComponents = place?.address_components;
-      
 
       let country = "";
       let city = "";
@@ -187,13 +179,12 @@ const StoryCreateMobile: React.FC = () => {
         name: place.name || "",
         lat: Number(place.geometry?.location?.lat().toFixed(6)),
         lng: Number(place.geometry?.location?.lng().toFixed(6)),
-        city:city,
-        country:country
+        city: city,
+        country: country,
       };
-      
 
       setLocations([...locations, locationData]);
-      
+
       console.log(locationData);
       setMapCenter({ lat: locationData.lat, lng: locationData.lng });
     }
@@ -205,7 +196,7 @@ const StoryCreateMobile: React.FC = () => {
     const lng = latLng?.lng();
     let country = "";
     let city = "";
-  
+
     try {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${api_key}`
@@ -213,43 +204,41 @@ const StoryCreateMobile: React.FC = () => {
       const { results } = response.data;
       let stopExecution = false;
       if (results.length > 0) {
-        results.forEach((result:any) => {
+        results.forEach((result: any) => {
           const address_components = result.address_components;
-          console.log(address_components)
-         
-          address_components?.forEach((component:google.maps.GeocoderAddressComponent) => {
-            if (component.types.includes("country")) {
-              country = component.long_name;
+          console.log(address_components);
+
+          address_components?.forEach(
+            (component: google.maps.GeocoderAddressComponent) => {
+              if (component.types.includes("country")) {
+                country = component.long_name;
+              }
+
+              if (
+                component.types.includes("administrative_area_level_1") ||
+                component.types.includes("locality") ||
+                component.types.includes("administrative_area_level_2")
+              ) {
+                city = component.long_name;
+              }
             }
-        
-            if (
-              component.types.includes("administrative_area_level_1") ||
-              component.types.includes("locality") ||
-              component.types.includes("administrative_area_level_2")
-            ) {
-              city = component.long_name;
-            }
-          });
-        
+          );
+
           if (city && country) {
             stopExecution = true;
             return; // Stop the iteration
           }
         });
-        
-        
-       
 
         const locationData: Location = {
           name: results[1].formatted_address,
           lat: Number(lat?.toFixed(6)),
           lng: Number(lng?.toFixed(6)),
-          city:city,
-          country:country
+          city: city,
+          country: country,
         };
-       console.log(locationData)
-       
-        
+        console.log(locationData);
+
         setLocations([...locations, locationData]);
         setMapCenter({ lat: locationData.lat, lng: locationData.lng });
       }
@@ -271,9 +260,8 @@ const StoryCreateMobile: React.FC = () => {
   const disableStartdDate = (currentDate: dayjs.Dayjs): boolean => {
     const today = dayjs();
     const isAfterToday = currentDate.isAfter(today);
-    
 
-    return isAfterToday ;
+    return isAfterToday;
   };
 
   const handleStartTimeChange = (time: Dayjs | null, timeString: string) => {
@@ -297,33 +285,40 @@ const StoryCreateMobile: React.FC = () => {
       ...(endtDate && { endDate: combinedEndDateTimeString }),
       ...(selectedSeason && { startSeason: selectedSeason }),
       ...(selectedSeasonEnd && { endSeason: selectedSeasonEnd }),
-      ...(decade && { decade: decade })
+      ...(decade && { decade: decade }),
     };
     async function postData() {
-      const requiredFieldsEmpty = [storyRequest.richText, storyRequest.header, storyRequest.locations,storyRequest.startDate].some(
-        (value) => value === undefined || value === ""|| value.length===0
+      const requiredFieldsEmpty = [
+        storyRequest.richText,
+        storyRequest.header,
+        storyRequest.locations,
+        storyRequest.startDate,
+      ].some(
+        (value) => value === undefined || value === "" || value.length === 0
       );
-  
+
       if (requiredFieldsEmpty) {
-        alert("The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location.");
+        alert(
+          "The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location."
+        );
         return;
       } else {
-      try {
-        console.log(storyRequest);
-        const response = await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/stories`,
-          storyRequest,
-          {
-            withCredentials: true,
-          }
-        );
+        try {
+          console.log(storyRequest);
+          const response = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/stories`,
+            storyRequest,
+            {
+              withCredentials: true,
+            }
+          );
 
-        console.log(response);
-      } catch (error) {
-        console.error("Error:", error);
+          console.log(response);
+        } catch (error) {
+          console.error("Error:", error);
+        }
       }
     }
-  }
 
     postData();
     navigate("/home");
@@ -345,12 +340,12 @@ const StoryCreateMobile: React.FC = () => {
       ["link", "image"],
     ],
     imageCompress: {
-      quality: 0.7, 
-      maxWidth: 1024, 
-      maxHeight: 1024, 
-      imageType: "image/jpeg", 
+      quality: 0.7,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageType: "image/jpeg",
       debug: false,
-    }
+    },
   };
 
   const formats = [
@@ -368,6 +363,7 @@ const StoryCreateMobile: React.FC = () => {
   ];
 
   useEffect(() => {
+    /*
     const cookieValue = document.cookie
       .split("; ")
       .find((row) => row.startsWith("jwt_Token"))
@@ -376,246 +372,374 @@ const StoryCreateMobile: React.FC = () => {
     if (!cookieValue) {
       navigate("/login");
     }
+  */
   }, []);
   return (
-    <>
+    <div style={{ backgroundColor: "#1f6c5c" }}>
+      <div style={{ marginLeft: 5, marginRight: 5 }}>
+        <Container>
+          <Row>
+            <Col>
+              <form
+                style={{
+                  backgroundColor: "#fff",
+                  borderRadius: "8px",
+                  padding: 1,
+                  paddingRight: 15,
+                  paddingLeft: 15,
+                  border: "1px solid #ccc",
+                  marginBottom: 10,
+                  marginTop: 10,
+                  boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <div className="form-group" style={{ marginTop: 10 }}>
+                  <label>Title:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={header}
+                    onChange={handleHeaderChange}
+                  />
+                </div>
 
-      <Container>
-        <Row>
-          <Col>
-            <form>
-              <div className="form-group">
-                <label>Header:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={header}
-                  onChange={handleHeaderChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Labels (comma-separated):</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={labels.join(", ")}
-                  onChange={handleLabelsChange}
-                />
-              </div>
-              <ul style={{ display: "flex", flexDirection: "row" }}>
-                {labels.map((value, index) => (
-                  <div key={index}>
-                    <li
-                      style={{
-                        display: "inline-block",
-                        marginRight: "0.5em",
-                        marginLeft: "0.5em",
-                      }}
-                    >
-                      {value}
-                    </li>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() =>
-                        setLabels(labels.filter((_, i) => i !== index))
-                      }
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </ul>
-            </form>
-          </Col>
-        </Row>
-        <Row>
-        <Radio.Group
+                <div
+                  className="form-group"
+                  style={{ marginTop: 10, marginBottom: 10 }}
+                >
+                  <label>Labels (comma-separated):</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={labels.join(", ")}
+                    onChange={handleLabelsChange}
+                  />
+                </div>
+                <div style={{ width: "100%", overflowX: "auto" }}>
+                  <ul
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      backgroundColor: "#fff",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    {labels.map((value, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          backgroundColor: "#fff",
+                          paddingTop: 5,
+                          paddingBottom: 5,
+                        }}
+                      >
+                        <Chip
+                          style={{ backgroundColor: "#1f6c5c", color: "#fff" }}
+                          label={value}
+                        />
+                        <CancelIcon
+                          type="button"
+                          style={{ color: "#ad0202" }}
+                          onClick={() =>
+                            setLabels(labels.filter((_, i) => i !== index))
+                          }
+                        />
+                      </div>
+                    ))}
+                  </ul>
+                </div>
+              </form>
+            </Col>
+          </Row>
+          <div
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              padding: 10,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px solid #ccc",
+              marginBottom: 10,
+              boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Row>
+              <Radio.Group
                 options={decadeOption}
                 onChange={onRadioChangeInput}
                 value={selectedDateInput}
                 optionType="button"
                 buttonStyle="solid"
-                style={{marginBottom:"10px"}}
-              />
-          
-        </Row>
-        { selectedDateInput!=="date"&& <Row>
-        <Select
-                value={selectedDecadeValue}
-                onChange={(value:number) =>{
-                  const decString = value-1
-                  const decEndString = value+7
-                  setDecade(decString.toString() + "s")
-                  setStartDate(dayjs(value.toString() , yearFormat))
-                  setEndDate(dayjs(decEndString.toString() , yearFormat))
-               
+                style={{
+                  marginBottom: "10px",
+                  width: "100%",
+                  minWidth: "100px",
+                  maxWidth: "200px",
                 }}
-                options={decadeSelectOptions}
-                placeholder="Select a decade."
-                style={{marginBottom:"30px"}}
               />
-          </Row>}
-        
-      { selectedDateInput==="date"&& <Row>
-          <Col style={{marginRight:"30px"}}>
-            <Row>
-              <Select
-                value={selectedSeason}
-                onChange={(value) => setSelectedSeason(value)}
-                options={seasonOptions}
-                placeholder="Select a start season."
-                style={{marginBottom:"30px"}}
-              />
-
-              <Radio.Group
-                options={options}
-                onChange={onRadioChange}
-                value={selectedOption}
-                optionType="button"
-                buttonStyle="solid"
-                style={{marginBottom:"10px"}}
-              />
-              {selectedOption === "exact-year" && (
-                <>
-                  <TimePicker
-                    onChange={handleStartTimeChange}
-                    defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
-                    style={{marginBottom:"10px"}}
+            </Row>
+            {selectedDateInput !== "date" && (
+              <Row>
+                <Select
+                  value={selectedDecadeValue}
+                  onChange={(value: number) => {
+                    const decString = value - 1;
+                    const decEndString = value + 7;
+                    setDecade(decString.toString() + "s");
+                    setStartDate(dayjs(value.toString(), yearFormat));
+                    setEndDate(dayjs(decEndString.toString(), yearFormat));
+                  }}
+                  options={decadeSelectOptions}
+                  placeholder="Select a decade"
+                  style={{
+                    marginBottom: "5px",
+                    marginTop: "5px",
+                    width: "100%",
+                    minWidth: "100px",
+                    maxWidth: "200px",
+                  }}
+                />
+              </Row>
+            )}
+            {selectedDateInput === "date" && (
+              <>
+                <div>
+                  <Col style={{ marginRight: "30px" }}>
+                    <Row gutter={[16, 16]} justify="center" align="middle">
+                      <Col span={24}>
+                        <label>Start Season:</label>
+                        <Select
+                          value={selectedSeason}
+                          onChange={(value) => setSelectedSeason(value)}
+                          options={seasonOptions}
+                          placeholder="Start Season"
+                          style={{
+                            marginBottom: "10px",
+                            width: "100%",
+                            minWidth: "100px",
+                            maxWidth: "200px",
+                          }}
+                        />
+                      </Col>
+                      <Col span={24}>
+                        <label>End Season:</label>
+                        <Select
+                          value={selectedSeasonEnd}
+                          onChange={(value) => setSelectedSeasonEnd(value)}
+                          options={seasonOptions}
+                          placeholder="End Season"
+                          style={{
+                            marginBottom: "10px",
+                            width: "100%",
+                            minWidth: "100px",
+                            maxWidth: "200px",
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                  </Col>
+                </div>
+                <div style={{ justifyContent: "center", alignItems: "center" }}>
+                  <Radio.Group
+                    options={options}
+                    onChange={onRadioChange}
+                    value={selectedOption}
+                    optionType="button"
+                    buttonStyle="solid"
+                    style={{
+                      margin: "auto",
+                      marginBottom: "10px",
+                      width: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
                   />
+                </div>
+                {selectedOption === "exact-year" && (
+                  <>
+                    <TimePicker
+                      onChange={handleStartTimeChange}
+                      defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
+                      style={{
+                        margin: "auto",
+                        marginBottom: "10px",
+                        width: "100%",
+                        minWidth: "100px",
+                        maxWidth: "200px",
+                      }}
+                    />
+                    <DatePicker
+                      placeholder="Select start date"
+                      status="error"
+                      picker="date"
+                      disabledDate={disableStartdDate}
+                      format={exactDateFormat}
+                      onChange={(date) => {
+                        const start = dayjs(date, exactDateFormat);
+                        setStartDate(start);
+                        console.log(start.format(exactDateFormat));
+                      }}
+                      style={{
+                        margin: "auto",
+                        marginBottom: "10px",
+                        width: "100%",
+                        minWidth: "100px",
+                        maxWidth: "200px",
+                      }}
+                    />
+                  </>
+                )}
+                {selectedOption === "month" && (
                   <DatePicker
-                    placeholder="Select start date!"
+                    style={{
+                      margin: "auto",
+                      marginBottom: "10px",
+                      width: "100%",
+                      minWidth: "100px",
+                      maxWidth: "200px",
+                    }}
                     status="error"
-                    picker="date"
-                    disabledDate = {disableStartdDate}
-                    format={exactDateFormat}
+                    format={monthFormat}
+                    disabledDate={disableStartdDate}
+                    picker="month"
+                    placeholder="Select start date"
                     onChange={(date) => {
-                      const start = dayjs(date, exactDateFormat);
+                      const start = dayjs(date, monthFormat);
                       setStartDate(start);
-                      console.log(start.format(exactDateFormat));
-                    }}
-                  />
-                </>
-              )}
-              {selectedOption === "month" && (
-                <DatePicker
-                  status="error"
-                  format={monthFormat}
-                  disabledDate = {disableStartdDate}
-                  picker="month"
-                  placeholder="Select start date!"
-                  onChange={(date) => {
-                    const start = dayjs(date, monthFormat);
-                    setStartDate(start);
 
-                    console.log(startDate?.toString);
-                    // Do something with the selected date value here
-                  }}
-                />
-              )}
-              {selectedOption === "year" && (
-                <DatePicker
-                  placeholder="Select start date!"
-                  status="error"
-                  format={yearFormat}
-                  disabledDate = {disableStartdDate}
-                  picker="year"
-                  onChange={(date) => {
-                    const start = dayjs(date, yearFormat);
-                    setStartDate(start);
-                    console.log(startDate?.toString);
-                    // Do something with the selected date value here
-                  }}
-                />
-              )}
-            </Row>
-          </Col>
-          <Col>
-            <Row>
-              <Select
-                value={selectedSeasonEnd}
-                onChange={(value) => setSelectedSeasonEnd(value)}
-                options={seasonOptions}
-                placeholder="Select an end season."
-                style={{marginBottom:"30px"}}
-              />
-              <Radio.Group
-                options={options}
-                onChange={onRadioChangeEnd}
-                value={selectedOptionEnd}
-                optionType="button"
-                buttonStyle="solid"
-                style={{marginBottom:"10px"}}
-              />
-              {selectedOptionEnd === "exact-year" && (
-                <>
-                  <TimePicker
-                    onChange={handleEndTimeChange}
-                    defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
-                    style={{marginBottom:"10px"}}
-                  />
-                  <DatePicker
-                    placeholder="Select end date!"
-                    picker="date"
-                    disabledDate={disabledDate}
-                    format={exactDateFormat}
-                    onChange={(date) => {
-                      const start = dayjs(date, exactDateFormat);
-                      setEndDate(start);
-                     
-                      
+                      console.log(startDate?.toString);
+                      // Do something with the selected date value here
                     }}
                   />
-                </>
-              )}
-              {selectedOptionEnd === "month" && (
-                <DatePicker
-                  placeholder="Select end date!"
-                  format={monthFormat}
-                  disabledDate={disabledDate}
-                  picker="month"
-                  onChange={(date) => {
-                    const start = dayjs(date, monthFormat);
-                    setEndDate(start);
-                    
-                  }}
-                />
-              )}
-              {selectedOptionEnd === "year" && (
-                <DatePicker
-                  placeholder="Select end date!"
-                  format={yearFormat}
-                  picker="year"
-                  disabledDate={disabledDate}
-                  onChange={(date) => {
-                    const start = dayjs(date, yearFormat);
-                    setEndDate(start);
-                    
-                  }}
-                />
-              )}
-            </Row>
-          </Col>
-        </Row>}
-      </Container>
-      <Container>
-        <Row>
-          <Col sm={8}>
-            <ReactQuill
-              theme="snow"
-              value={editorContent}
-              onChange={handleEditorChange}
-              formats={formats}
-              modules={modules}
-              style={{marginTop:"50px"}}
-            />
-            <button style={{marginTop:"40px"}} type="submit" className="btn btn-primary" onClick={handleSubmit}>
-        Create Story!
-      </button>
-          </Col>
-          <Col sm={4}>
-            <Row>
+                )}
+                {selectedOption === "year" && (
+                  <DatePicker
+                    style={{
+                      margin: "auto",
+                      marginBottom: "10px",
+                      width: "100%",
+                      minWidth: "100px",
+                      maxWidth: "200px",
+                    }}
+                    placeholder="Select start Year"
+                    status="error"
+                    format={yearFormat}
+                    disabledDate={disableStartdDate}
+                    picker="year"
+                    onChange={(date) => {
+                      const start = dayjs(date, yearFormat);
+                      setStartDate(start);
+                      console.log(startDate?.toString);
+                      // Do something with the selected date value here
+                    }}
+                  />
+                )}
+                <div style={{ justifyContent: "center", alignItems: "center" }}>
+                  <Radio.Group
+                    options={options}
+                    onChange={onRadioChangeEnd}
+                    value={selectedOptionEnd}
+                    optionType="button"
+                    buttonStyle="solid"
+                    style={{
+                      margin: "auto",
+                      marginBottom: "10px",
+                      width: "100%",
+                    }}
+                  />
+                </div>
+                {selectedOptionEnd === "exact-year" && (
+                  <>
+                    <TimePicker
+                      onChange={handleEndTimeChange}
+                      defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
+                      style={{
+                        margin: "auto",
+                        marginBottom: "10px",
+                        width: "100%",
+                        minWidth: "100px",
+                        maxWidth: "200px",
+                      }}
+                    />
+                    <DatePicker
+                      style={{
+                        margin: "auto",
+                        marginBottom: "10px",
+                        width: "100%",
+                        minWidth: "100px",
+                        maxWidth: "200px",
+                      }}
+                      placeholder="Select end date"
+                      picker="date"
+                      disabledDate={disabledDate}
+                      format={exactDateFormat}
+                      onChange={(date) => {
+                        const start = dayjs(date, exactDateFormat);
+                        setEndDate(start);
+                      }}
+                    />
+                  </>
+                )}
+                {selectedOptionEnd === "month" && (
+                  <DatePicker
+                    style={{
+                      margin: "auto",
+                      marginBottom: "10px",
+                      width: "100%",
+                      minWidth: "100px",
+                      maxWidth: "200px",
+                    }}
+                    placeholder="Select end date"
+                    format={monthFormat}
+                    disabledDate={disabledDate}
+                    picker="month"
+                    onChange={(date) => {
+                      const start = dayjs(date, monthFormat);
+                      setEndDate(start);
+                    }}
+                  />
+                )}
+                {selectedOptionEnd === "year" && (
+                  <DatePicker
+                    style={{
+                      margin: "auto",
+                      marginBottom: "10px",
+                      width: "100%",
+                      minWidth: "100px",
+                      maxWidth: "200px",
+                    }}
+                    placeholder="Select end Year"
+                    format={yearFormat}
+                    picker="year"
+                    disabledDate={disabledDate}
+                    onChange={(date) => {
+                      const start = dayjs(date, yearFormat);
+                      setEndDate(start);
+                    }}
+                  />
+                )}
+              </>
+            )}
+          </div>
+
+          <div
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: "5px",
+              padding: 5,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              border: "1px solid #ccc",
+              marginBottom: 10,
+              boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <div>
               <div className="form-group">
                 <label>Locations:</label>
                 <Autocomplete
@@ -624,57 +748,125 @@ const StoryCreateMobile: React.FC = () => {
                   }}
                   onPlaceChanged={handleLocationSelect}
                 >
-                  <input type="text" className="form-control" />
+                  <input
+                    type="text"
+                    className="form-control"
+                    style={{
+                      marginBottom: "5px",
+                      marginTop: "5px",
+                      width: "100%",
+                      minWidth: "100px",
+                      maxWidth: "200px",
+                    }}
+                  />
                 </Autocomplete>
-                <ul >
+                <div
+                  style={{
+                    maxHeight: 250,
+                    overflow: "scroll",
+                    borderTop: "1px solid #ccc",
+                    borderBottom: "1px solid #ccc",
+                    marginBottom: 2,
+                  }}
+                >
                   {locations.map((loc, index) => (
-                    <div key={index}>
-                      <li
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        border: "1px solid black",
+                        borderRadius: "5px",
+                        marginBottom: "8px",
+                        marginTop: "8px",
+                        padding: "8px",
+                      }}
+                    >
+                      <p
                         style={{
-                          display: "inline-block",
-                          marginRight: "0.5em",
-                          marginLeft: "0.5em",
+                          flex: 1,
+                          margin: 4,
+                          fontSize: 11,
                         }}
                       >
-                        {loc.name || `${loc.lat}, ${loc.lng}`}
-                      </li>
-                      <button
+                        {(loc.name || `${loc.lat}, ${loc.lng}`).slice(0, 55) +
+                          "..."}
+                      </p>
+                      <CancelIcon
                         type="button"
-                        className="btn btn-secondary"
+                        fontSize="medium"
+                        style={{
+                          cursor: "pointer",
+                        }}
                         onClick={() =>
                           setLocations(locations.filter((_, i) => i !== index))
                         }
-                      >
-                        Remove
-                      </button>
+                      />
                     </div>
                   ))}
-                </ul>
+                </div>
               </div>
-            </Row>
+            </div>
 
-            <Row>
-              <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={mapCenter}
-                zoom={20}
-                onClick={handleMapClick}
-              >
-                {locations.map((loc, index) => (
-                  <Marker
-                    key={index}
-                    position={{ lat: loc.lat, lng: loc.lng }}
-                  />
-                ))}
-              </GoogleMap>
-            </Row>
-          </Col>
-          
-        </Row>
-        
-      </Container>
-      
-    </>
+            <GoogleMap
+              mapContainerStyle={containerStyle}
+              center={mapCenter}
+              zoom={20}
+              onClick={handleMapClick}
+            >
+              {locations.map((loc, index) => (
+                <Marker key={index} position={{ lat: loc.lat, lng: loc.lng }} />
+              ))}
+            </GoogleMap>
+          </div>
+        </Container>
+        <div
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            padding: 10,
+            alignItems: "center",
+            justifyContent: "center",
+            border: "1px solid #ccc",
+            marginBottom: 10,
+            marginTop: "35px",
+            height: "350px",
+            boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <ReactQuill
+            theme="snow"
+            value={editorContent}
+            onChange={handleEditorChange}
+            formats={formats}
+            modules={modules}
+            style={{ height: "80%", backgroundColor: "#fff" }}
+          />
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <button
+            style={{
+              marginTop: "30px",
+              marginBottom: "30px",
+              boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+            }}
+            type="submit"
+            className="btn btn-primary"
+            onClick={handleSubmit}
+          >
+            Create Story!
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
