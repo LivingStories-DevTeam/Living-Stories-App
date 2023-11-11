@@ -45,8 +45,10 @@ export const AuthProvider = ({ children }: any) => {
   }, []);
 
   const register = async (email: string, password: string, name: string) => {
+    email = email.toLocaleLowerCase()
     try {
       return await axios.post(`${API_URL}/users`, { email, password, name });
+      
     } catch (e) {
       return { error: true, msg: (e as any).response.data.msg };
     }

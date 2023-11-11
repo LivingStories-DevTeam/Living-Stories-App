@@ -72,7 +72,7 @@ const Feed = ({ navigation }: any) => {
             <View style={styles.animationContainer}>
               <LottieView
                 style={styles.animation}
-                source={require("./globe.json")}
+                source={require("./globePin.json")}
                 autoPlay
                 loop
               />

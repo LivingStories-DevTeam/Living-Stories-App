@@ -1,4 +1,4 @@
-rootProject.name = 'living_stories_mobile'
+rootProject.name = 'Living Stories'
 
 apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle");
 useExpoModules()
