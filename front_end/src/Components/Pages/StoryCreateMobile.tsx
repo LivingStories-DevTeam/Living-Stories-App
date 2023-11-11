@@ -321,7 +321,12 @@ const StoryCreateMobile: React.FC = () => {
     }
 
     postData();
-    navigate("/home");
+    alert(
+      "Story posted successfully!"
+    );
+    window.location.reload();
+
+    
   };
 
   const handleHeaderChange = (event: ChangeEvent<HTMLInputElement>) => {
