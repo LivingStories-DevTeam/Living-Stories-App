@@ -312,7 +312,8 @@ const StoryCreateMobile: React.FC = () => {
               withCredentials: true,
             }
           );
-
+          alert("Story posted successfully!");
+          window.location.reload();
           console.log(response);
         } catch (error) {
           console.error("Error:", error);
@@ -321,10 +322,6 @@ const StoryCreateMobile: React.FC = () => {
     }
 
     postData();
-    alert(
-      "Story posted successfully!"
-    );
-    window.location.reload();
 
     
   };
@@ -368,16 +365,14 @@ const StoryCreateMobile: React.FC = () => {
   ];
 
   useEffect(() => {
-    
     const cookieValue = document.cookie
       .split("; ")
       .find((row) => row.startsWith("jwt_Token"))
       ?.split("=")[1];
 
     if (!cookieValue) {
-      alert("User is not logged in!")
+      alert("User is not logged in!");
     }
-  
   }, []);
   return (
     <div style={{ backgroundColor: "#1f6c5c" }}>
@@ -399,7 +394,7 @@ const StoryCreateMobile: React.FC = () => {
                 }}
               >
                 <div className="form-group" style={{ marginTop: 10 }}>
-                  <label>Title:</label>
+                  <label>Header:</label>
                   <input
                     type="text"
                     className="form-control"
@@ -553,6 +548,7 @@ const StoryCreateMobile: React.FC = () => {
                     options={options}
                     onChange={onRadioChange}
                     value={selectedOption}
+                    inputReadOnly={true}
                     optionType="button"
                     buttonStyle="solid"
                     style={{
@@ -568,6 +564,7 @@ const StoryCreateMobile: React.FC = () => {
                   <>
                     <TimePicker
                       onChange={handleStartTimeChange}
+                      inputReadOnly={true}
                       defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
                       style={{
                         margin: "auto",
@@ -582,6 +579,7 @@ const StoryCreateMobile: React.FC = () => {
                       status="error"
                       picker="date"
                       disabledDate={disableStartdDate}
+                      inputReadOnly={true}
                       format={exactDateFormat}
                       onChange={(date) => {
                         const start = dayjs(date, exactDateFormat);
@@ -607,6 +605,7 @@ const StoryCreateMobile: React.FC = () => {
                       minWidth: "100px",
                       maxWidth: "200px",
                     }}
+                    inputReadOnly={true}
                     status="error"
                     format={monthFormat}
                     disabledDate={disableStartdDate}
@@ -630,6 +629,7 @@ const StoryCreateMobile: React.FC = () => {
                       minWidth: "100px",
                       maxWidth: "200px",
                     }}
+                    inputReadOnly={true}
                     placeholder="Select start Year"
                     status="error"
                     format={yearFormat}
@@ -662,6 +662,7 @@ const StoryCreateMobile: React.FC = () => {
                     <TimePicker
                       onChange={handleEndTimeChange}
                       defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
+                      inputReadOnly={true}
                       style={{
                         margin: "auto",
                         marginBottom: "10px",
@@ -680,6 +681,7 @@ const StoryCreateMobile: React.FC = () => {
                       }}
                       placeholder="Select end date"
                       picker="date"
+                      inputReadOnly={true}
                       disabledDate={disabledDate}
                       format={exactDateFormat}
                       onChange={(date) => {
@@ -698,6 +700,7 @@ const StoryCreateMobile: React.FC = () => {
                       minWidth: "100px",
                       maxWidth: "200px",
                     }}
+                    inputReadOnly={true}
                     placeholder="Select end date"
                     format={monthFormat}
                     disabledDate={disabledDate}
@@ -717,6 +720,7 @@ const StoryCreateMobile: React.FC = () => {
                       minWidth: "100px",
                       maxWidth: "200px",
                     }}
+                    inputReadOnly={true}
                     placeholder="Select end Year"
                     format={yearFormat}
                     picker="year"
@@ -860,8 +864,12 @@ const StoryCreateMobile: React.FC = () => {
           <button
             style={{
               marginTop: "30px",
-              marginBottom: "30px",
+              marginBottom: "50px",
               boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+              backgroundColor: "#29b3f2",
+              border: "1px solid #fff",
+              borderRadius: "30px",
+              color: "#fff"
             }}
             type="submit"
             className="btn btn-primary"
