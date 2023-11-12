@@ -125,5 +125,31 @@ public class UserController {
     public List<User> findUsersWithUserName(@RequestBody SearchRequest searchRequest){
         return userService.findUsersByUsername(searchRequest);
     }
+   @GetMapping("/isfollower/{followingId}")
+    public int isFollower(HttpServletRequest request, @PathVariable Long followingId) { 
+        Long userId = userService.isUserLoggedIn(request);
+        Optional<User> user = userService.getUserById(userId);
+        Optional<User> otherUser = userService.getUserById(followingId);
+
+        if (user.isPresent() && otherUser.isPresent() ) {
+            User user1 = user.get();
+            User user2 = otherUser.get();
+            List<User> following = user2.getFollowers();
+            
+
+            for (User followedUser : following) {
+                if (followedUser.getId().equals(userId)) {
+                    // The user is following the user with the given followingId
+                    return 1;
+                }
+            }
+
+            // The user is not following the user with the given followingId
+            return 0;
+        }
+
+        
+        return -1; 
+    }
 }
 
