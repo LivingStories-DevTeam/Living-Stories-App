@@ -20,6 +20,7 @@ type Props = {
 function LikeButton({ type, id, commentId, likeNumber }: Props) {
   const [liked, setLiked] = useState(false);
   const [likeCouunt, setLikeCount] = useState<number>(likeNumber);
+  const [pressed, setPressed] = useState(false);
 
   const icon = liked ? (
     <AntDesign name="like1" size={24} color="black" />
@@ -34,9 +35,7 @@ function LikeButton({ type, id, commentId, likeNumber }: Props) {
           ? `${API_URL}/stories/commentliked/${id}`
           : `${API_URL}/stories/storyliked/${id}`;
       try {
-        const response = await axios.get<string>(url, {
-          withCredentials: true,
-        });
+        const response = await axios.get<string>(url);
 
         if (response.data === "yes") {
           setLiked(true);
@@ -47,7 +46,7 @@ function LikeButton({ type, id, commentId, likeNumber }: Props) {
     };
 
     fetchUser();
-  }, [liked]);
+  }, [pressed]);
 
   const handleClick = () => {
     const url =
@@ -56,17 +55,25 @@ function LikeButton({ type, id, commentId, likeNumber }: Props) {
         : `${API_URL}/stories/like/${id}`;
 
     axios
-      .post(url, null, { withCredentials: true })
+      .post(url, null)
       .then((response) => {
         if (response.status === 200) {
           if (liked) {
             setLikeCount(likeCouunt - 1);
             setLiked(false);
+            setPressed(!pressed);
           
           } else {
             setLikeCount(likeCouunt + 1);
             setLiked(true);
-            Alert.alert("You liked the story!")
+            setPressed(!pressed);
+            if(type==="story"){
+              Alert.alert("You liked the story!")
+            }
+            else{
+              Alert.alert("You liked the comment!")
+            }
+            
         }
         }
       })
