@@ -380,8 +380,8 @@ const Story: React.FC = () => {
           lat: event.overlay.getPosition().lat(),
           lng: event.overlay.getPosition().lng(),
           name: await getLocationName(event.overlay.getPosition().lat(), event.overlay.getPosition().lng(), 0),
-          city: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 1),
-          country: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 2),
+          city: await getLocationName(event.overlay.getPosition().lat(), event.overlay.getPosition().lng(), 1),
+          country: await getLocationName(event.overlay.getPosition().lat(), event.overlay.getPosition().lng(), 2),
           type: "Point",
           coordinates: [[event.overlay.getPosition().lng(), event.overlay.getPosition().lat()]],
           radius: null
@@ -402,8 +402,8 @@ const Story: React.FC = () => {
           lat: (ne.lat() + sw.lat()),
           lng: (ne.lng() + sw.lng()),
           name: await getLocationName((ne.lat() + sw.lat()) / 2, (ne.lng() + sw.lng()) / 2, 0),
-          city: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 1),
-          country: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 2),
+          city: await getLocationName((ne.lat() + sw.lat()) / 2, (ne.lng() + sw.lng()) / 2, 1),
+          country: await getLocationName((ne.lat() + sw.lat()) / 2, (ne.lng() + sw.lng()) / 2, 2),
           type: "Polygon",
           coordinates: rectangleCoordinates,
           radius: null
@@ -417,8 +417,8 @@ const Story: React.FC = () => {
           lat: path[0].lat(),
           lng: path[0].lng(),
           name: await getLocationName(path[0].lat(), path[0].lng(), 0),
-          city: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 1),
-          country: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 2),
+          city: await getLocationName(path[0].lat(), path[0].lng(), 1),
+          country: await getLocationName(path[0].lat(), path[0].lng(), 2),
           type: "Polygon",
           coordinates: coordinates,
           radius: null
