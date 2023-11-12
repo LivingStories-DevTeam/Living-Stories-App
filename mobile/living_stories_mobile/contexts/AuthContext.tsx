@@ -12,7 +12,7 @@ interface AuthProps {
 }
 
 const TOKEN_KEY = "jtw_Token";
-export const API_URL = `http://104.155.147.249:8080`;
+export const API_URL = `http://35.246.216.172:8080`;
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {

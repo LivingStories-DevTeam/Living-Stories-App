@@ -24,16 +24,7 @@ const PostStory = ({ navigation }: any) => {
     document.cookie = 'jwt_Token=${webtoken}; path=/;';
   `;
 
-  const hideNavBar = `
-  // Add code to remove the <nav> element inside the <div> with id "root"
-  var rootDiv = document.getElementById('root');
-  if (rootDiv) {
-    var navBar = rootDiv.querySelector('nav');
-    if (navBar) {
-      navBar.parentNode.removeChild(navBar);
-    }
-  }
-`;
+
 
   const injectedJavaScript = setJwtToken;
 
@@ -41,8 +32,8 @@ const PostStory = ({ navigation }: any) => {
     <>
       <SafeAreaView style={{ flex: 1 }}>
         <WebView
-          source={{ uri: "http://104.155.147.249:3000/storymobile" }}
-          injectedJavaScriptBeforeContentLoaded={injectedJavaScript} injectedJavaScript={hideNavBar}
+          source={{ uri: "http://35.246.216.172:3000/storymobile" }}
+          injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
         />
       </SafeAreaView>
 

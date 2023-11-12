@@ -375,7 +375,8 @@ const StoryCreateMobile: React.FC = () => {
     }
   }, []);
   return (
-    <div style={{ backgroundColor: "#1f6c5c" }}>
+    <div style={{ backgroundColor: "#1f6c5c", touchAction: "pan-down",  }}>
+  
       <div style={{ marginLeft: 5, marginRight: 5 }}>
         <Container>
           <Row>
