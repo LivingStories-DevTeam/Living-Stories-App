@@ -50,6 +50,7 @@ const Profile = ({ route, navigation }: any) => {
   const { name } = route.params;
   const [user, setUser] = useState<User | null>(null);
   const [followed, setFollowed] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -63,7 +64,7 @@ const Profile = ({ route, navigation }: any) => {
     };
 
     fetchUser();
-  }, [name ]);
+  }, [trigger,name]);
 
   const handleCardPress = (storyId: number) => {
     navigation.push("Story", { storyId });
@@ -129,7 +130,8 @@ const Profile = ({ route, navigation }: any) => {
   });
   const handleFollowedChange = (followed: boolean) => {
     // Update the follower count based on whether the user followed or unfollowed
-    setFollowed(!followed)
+    setFollowed(!followed);
+    setTrigger(!trigger);
   };
 
   return (
@@ -162,12 +164,12 @@ const Profile = ({ route, navigation }: any) => {
                       style={styles.avatar}
                     />
                    
-                      <FollowButton
+                      <FollowButton 
                         followers={user.followers}
                         id={user.id}
                         onFollowedChange={handleFollowedChange}
+                        
                       />
-                    
                   </View>
                 </View>
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Text,
@@ -14,6 +14,7 @@ import { API_URL, useAuth } from "../contexts/AuthContext";
 import { Feather } from "@expo/vector-icons";
 import Card from "../components/Card";
 import LottieView from "lottie-react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 interface Story {
   id: number;
@@ -55,19 +56,21 @@ const MyProfile = ({ navigation }: any) => {
   const [user, setUser] = useState<User | null>(null);
   const { onLogout } = useAuth();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get<User>(`${API_URL}/users/profile`);
-        setUser(response.data);
-        console.log("User: " + JSON.stringify(response.data, null, 2));
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchUser = async () => {
+        try {
+          const response = await axios.get<User>(`${API_URL}/users/profile`);
+          setUser(response.data);
+          console.log("User: " + JSON.stringify(response.data, null, 2));
+        } catch (error) {
+          console.error(error);
+        }
+      };
+  
+      fetchUser();
+    }, [])
+  );
 
   const handleCardPress = (storyId: number) => {
     navigation.navigate("Story", { storyId });
