@@ -71,6 +71,36 @@ public class StoryController {
         return ResponseEntity.ok(savedStory);
     }
 
+    @PostMapping("/advanced")
+    public ResponseEntity<Story> createStoryAdvanced(@RequestBody StoryRequest storyRequest, HttpServletRequest request) {
+        Long id = userService.isUserLoggedIn(request);
+        Optional<User> optionalUser = userService.getUserById(id);
+        if (!optionalUser.isPresent()) 
+            return ResponseEntity.notFound().build();
+        Story story = new Story();
+        if (storyRequest.getDecade() != null) 
+            story.setDecade(storyRequest.getDecade());
+        story.setText(storyRequest.getText());
+        story.setUser(optionalUser.get());
+        story.setHeader(storyRequest.getHeader());
+        story.setLabels(storyRequest.getLabels());
+        story.setRichText(storyRequest.getRichText());
+        Story savedStory = storyService.createStory(story);
+        if (storyRequest.getLocationsAdvanced() != null) 
+            storyService.addLocationAdvanced(savedStory.getId(), storyRequest.getLocationsAdvanced());
+        if (storyRequest.getMediaString() != null) 
+            storyService.addMedia(savedStory.getId(), storyRequest.getMediaString());
+        if (storyRequest.getStartDate() != null) 
+            storyService.addStartDate(savedStory.getId(), storyRequest.getStartDate());
+        if (storyRequest.getEndDate() != null) 
+            storyService.addEndDate(savedStory.getId(), storyRequest.getEndDate());
+        if (storyRequest.getStartSeason() != null) 
+            storyService.addSeason(savedStory.getId(), storyRequest.getStartSeason(), 0);
+        if (storyRequest.getEndSeason() != null) 
+            storyService.addSeason(savedStory.getId(), storyRequest.getEndSeason(), 1);
+        return ResponseEntity.ok(savedStory);
+    }
+
     @GetMapping("/following")
     public List<Story> getFollowingUsers(HttpServletRequest request) {
         Long id = userService.isUserLoggedIn(request);
@@ -183,7 +213,8 @@ public class StoryController {
     }
 
     @PostMapping("/advancedsearch")
-    public List<Story> advancedSearch(HttpServletRequest request, @RequestBody AdvancedSearchRequest searchRequest) throws ParseException {
+    public List<Story> advancedSearch(HttpServletRequest request, @RequestBody AdvancedSearchRequest searchRequest)
+            throws ParseException {
         userService.isUserLoggedIn(request);
         return storyService.advancedSearch(searchRequest);
     }

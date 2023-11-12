@@ -1,6 +1,5 @@
 import { Autocomplete, Circle, GoogleMap, Marker } from "@react-google-maps/api";
 import NavBar from "../Components/NavBar";
-
 import { Avatar, Button, Col, Collapse, DatePicker, DatePickerProps, Form, Input, Layout, List, Row, Select, Space, Spin, Switch, TimeRangePickerProps, Tooltip, Tree, Typography } from "antd";
 import axios from "axios";
 import { Fragment, useEffect, useRef, useState, } from "react";
@@ -167,7 +166,6 @@ const Timeline: React.FC = () => {
     const onSelectChange = (value: any) => {
         let sortedResults = [...searchResult];
         if (value === "descending") {
-
             sortedResults.sort((a, b) =>
                 dayjs(b.startDate, "DD/MM/YYYY").unix() - dayjs(a.startDate, "DD/MM/YYYY").unix()
             );
@@ -213,6 +211,7 @@ const Timeline: React.FC = () => {
 
     const customFormat: DatePickerProps["format"] = (value) =>
         `${value.format("YYYY")}s`;
+
     const renderDateElement = () => {
         switch (dateClass) {
             case null:
@@ -308,7 +307,7 @@ const Timeline: React.FC = () => {
                 key: key === "" ? null : key,
                 longitude: directed.lng,
                 latitude: directed.lat,
-                radius: circle
+                radius: circle * 1000
             }
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/stories/advancedsearch`, request, {
                 withCredentials: true,
@@ -541,7 +540,6 @@ const Timeline: React.FC = () => {
                                                 <Form.Item
                                                     name={"key"}
                                                     label={<Text style={{ fontSize: "16px", fontFamily: "system-ui", fontWeight: "500" }}>{"Search"}</Text>}>
-
                                                     <Input
                                                         maxLength={50}
                                                         showCount
@@ -636,7 +634,7 @@ const Timeline: React.FC = () => {
                                                             </Space>
                                                         </Text>
                                                         <Text style={{ fontWeight: "500" }}>
-                                                            {item.locations.find(() => true).name}
+                                                            {item.locations.find(() => true)?.name}
                                                         </Text>
                                                     </Space>
                                                 </>}
