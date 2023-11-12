@@ -85,8 +85,8 @@ const StoryComponent: React.FC<StoryProps> = ({ story }) => {
             )}
             <Col xs={6}>
               <p>Locations:</p>{" "}
-              {story.locations?.map((location) => (
-                <p key={location.id}>{location.city}/{location.country}</p>
+              {(story as any).locationsAdvanced?.map((location: any) => (
+                <p key={location.id}>{location.name}</p>
               ))}
             </Col>
             <Col >

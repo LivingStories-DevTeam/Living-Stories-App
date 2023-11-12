@@ -12,6 +12,15 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -126,6 +135,23 @@ public class StoryService {
         return false;
     }
 
+    public boolean addLocationAdvanced(Long storyId, List<LocationsAdvanced> locationsList) {
+        Optional<Story> optionalStory = storyRepository.findById(storyId);
+        if (optionalStory.isPresent()) {
+            Story story = optionalStory.get();
+            for (LocationsAdvanced location : locationsList) {
+                location.setStory(story);
+                location.setType(location.getType());
+                location.setCoordinates(location.getCoordinates());
+                location.setRadius(location.getRadius());
+            }
+            story.setLocationsAdvanced(locationsList);
+            storyRepository.save(story);
+            return true;
+        }
+        return false;
+    }
+
     public boolean addMedia(Long storyId, ArrayList<MediaDTO> media) {
         Optional<Story> optionalStory = storyRepository.findById(storyId);
         if (optionalStory.isPresent()) {
@@ -189,27 +215,96 @@ public class StoryService {
     }
 
     public List<Story> advancedSearch(AdvancedSearchRequest searchRequest) throws ParseException {
-        Double latRangeMin = null;
-        Double latRangeMax = null;
-        Double lngRangeMin = null;
-        Double lngRangeMax = null;
-        if (searchRequest.getRadius() != null) {
-            Double latitude = searchRequest.getLatitude();
-            Double longitude = searchRequest.getLongitude();
-            Double radius = searchRequest.getRadius();
-            latRangeMin = latitude - (radius / 110.574);
-            latRangeMax = latitude + (radius / 110.574);
-            lngRangeMin = longitude - (radius / (111.320 * Math.cos(Math.toRadians(latitude))));
-            lngRangeMax = longitude + (radius / (111.320 * Math.cos(Math.toRadians(latitude))));
-        }
         if (searchRequest.getStartDate() == null)
             searchRequest.setStartDate(new SimpleDateFormat("yyyy-MM-dd").parse("1000-01-01"));
         if (searchRequest.getEndDate() == null)
             searchRequest.setEndDate(new SimpleDateFormat("yyyy-MM-dd").parse("9999-12-31"));
-        List<Story> stories = storyRepository.searchAdvanced(searchRequest.getKey(), latRangeMin, latRangeMax,
-                lngRangeMin, lngRangeMax, searchRequest.getStartDate(), searchRequest.getEndDate());
-        stories.sort(Comparator.comparing(Story::getStartDate));
-        return stories;
+        List<Story> stories = storyRepository.searchAdvanced(searchRequest.getKey(), searchRequest.getStartDate(),
+                searchRequest.getEndDate());
+        List<Story> filteredStories = new ArrayList<>();
+        for (Story story : stories) {
+            if (searchCriteria(story, searchRequest))
+                filteredStories.add(story);
+        }
+        filteredStories.sort(Comparator.comparing(Story::getStartDate));
+        return filteredStories;
+    }
+
+    private boolean searchCriteria(Story story, AdvancedSearchRequest request) {
+        if (request.getRadius() != null) {
+            GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+            Point searchCenter = geometryFactory
+                    .createPoint(new Coordinate(request.getLongitude(), request.getLatitude()));
+            double radiusInDegrees = metersToDegrees(request.getRadius());
+            for (LocationsAdvanced location : story.getLocationsAdvanced()) {
+                if (locationMatches(location, searchCenter, radiusInDegrees, geometryFactory))
+                    return true;
+            }
+            return false;
+        } else
+            return true;
+    }
+
+    private double metersToDegrees(double meters) {
+        return meters / 111320.0;
+    }
+
+    private boolean locationMatches(LocationsAdvanced location, Point searchCenter, double radiusInDegrees,
+            GeometryFactory geometryFactory) {
+        switch (location.getType()) {
+            case "Point":
+                return markerMatches(location, searchCenter, radiusInDegrees, geometryFactory);
+            case "Circle":
+                return circleMatches(location, searchCenter, radiusInDegrees, geometryFactory);
+            case "Polygon":
+                return polygonMatches(location, searchCenter, radiusInDegrees, geometryFactory);
+            default:
+                return false;
+        }
+    }
+
+    private boolean markerMatches(LocationsAdvanced location, Point searchCenter, double radiusInDegrees,
+            GeometryFactory geometryFactory) {
+        List<Double> latLng = location.getCoordinates().get(0); 
+        Point locationPoint = geometryFactory.createPoint(new Coordinate(latLng.get(0), latLng.get(1))); 
+        return locationPoint.isWithinDistance(searchCenter, radiusInDegrees);
+    }
+
+    private boolean circleMatches(LocationsAdvanced location, Point searchCenter, double radiusInDegrees,
+            GeometryFactory geometryFactory) {
+        List<Double> centerLatLng = location.getCoordinates().get(0);
+        Point center = geometryFactory.createPoint(new Coordinate(centerLatLng.get(0), centerLatLng.get(1)));
+        double localRadiusInDegrees = metersToDegrees(location.getRadius());
+        Geometry circle = createCircle(center, localRadiusInDegrees, geometryFactory);
+        return circle.intersects(searchCenter.buffer(radiusInDegrees));
+    }
+
+    private Geometry createCircle(Point center, double radius, GeometryFactory geometryFactory) {
+        int sides = 32;
+        Coordinate coords[] = new Coordinate[sides + 1];
+        for (int i = 0; i < sides; i++) {
+            double angle = ((double) i / (double) sides) * Math.PI * 2.0;
+            double dx = Math.cos(angle) * radius;
+            double dy = Math.sin(angle) * radius;
+            coords[i] = new Coordinate(center.getX() + dx, center.getY() + dy);
+        }
+        coords[sides] = coords[0];
+        LinearRing ring = geometryFactory.createLinearRing(coords);
+        Polygon circle = geometryFactory.createPolygon(ring, null);
+        return circle;
+    }
+
+    private boolean polygonMatches(LocationsAdvanced location, Point searchCenter, double radiusInDegrees,
+            GeometryFactory geometryFactory) {
+        List<List<Double>> coordinatesList = location.getCoordinates();
+        Coordinate[] coordinates = new Coordinate[coordinatesList.size()];
+        for (int i = 0; i < coordinatesList.size(); i++) {
+            List<Double> point = coordinatesList.get(i);
+            coordinates[i] = new Coordinate(point.get(0), point.get(1)); // Longitude, Latitude
+        }
+        Polygon polygon = geometryFactory
+                .createPolygon(new LinearRing(new CoordinateArraySequence(coordinates), geometryFactory), null);
+        return polygon.intersects(searchCenter.buffer(radiusInDegrees));
     }
 
     public List<Story> intervalSearch(SearchRequest searchRequest) {

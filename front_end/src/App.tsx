@@ -7,7 +7,7 @@ import LoginPage from "./Components/Pages/LoginPage";
 import RegisterUser from "./Components/Pages/RegisterUser";
 import EditUser from "./Components/Pages/EditUser";
 import LandingPage from "./Components/Pages/LandingPage";
-import { LoadScript, LoadScriptNext } from "@react-google-maps/api";
+import { LoadScript, LoadScriptNext, useJsApiLoader } from "@react-google-maps/api";
 import ProfilePage from "./Components/Pages/ProfilePage";
 import StoryEdit from "./Components/Pages/StoryEdit";
 import Search from "./Components/Pages/Search";
@@ -18,11 +18,11 @@ const api_key = import.meta.env.VITE_GOOGLE_API_KEY;
 const App = () => {
   return (
     <Router>
-      <LoadScriptNext googleMapsApiKey={api_key} libraries={["places"]}>
+      <LoadScriptNext googleMapsApiKey={api_key} libraries={["places", "drawing"]}>
         <Routes>
           <Route path="/search" element={<Search />} />
           <Route path="/home" element={<HomePage />} />
-          <Route path="/story" element={<StoryCreate />}></Route>
+          <Route path="/story" element={<StoryCreate />} />
           <Route path="/stories/:id" element={<StoryPage />} />
           <Route path="/stories/edit/:id" element={<StoryEdit />} />
           <Route path="/user/:name" element={<ProfilePage />} />

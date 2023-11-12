@@ -1,4 +1,5 @@
 package com.swe573.living_stories.Models;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,8 +9,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,106 +18,81 @@ import java.util.List;
 @Getter
 @Setter
 
+public class Story {
 
-    public class Story {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @JsonIgnore
+    private String text;
 
+    @NotBlank
+    private String header;
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+    @Column
+    private ArrayList<String> labels = new ArrayList<>();
 
+    @Column
+    private ArrayList<Long> likes = new ArrayList<>();
 
-        @JsonIgnore
-        private String text;
+    @Column
+    private String startSeason;
 
-        @NotBlank
-        private String header;
+    @Column
+    private String endSeason;
 
-        @Column
-        private ArrayList<String> labels = new ArrayList<>();
+    @JsonIgnore
+    @Column
+    private Date startDate;
 
-        @Column
-        private ArrayList<Long> likes = new ArrayList<>();
+    @JsonIgnore
+    @Column
+    private Date endDate;
 
-        @Column
-        private String startSeason;
+    @NotBlank
+    @Column(columnDefinition = "TEXT")
+    private String richText;
 
-        @Column
-        private String endSeason;
+    private String decade;
 
+    @JsonProperty("startDate")
+    public String returnStartDate() {
 
-        @JsonIgnore
-        @Column
-        private Date startDate;
+        return DateParser.getDateFromDate(startDate);
+    }
 
-        @JsonIgnore
-        @Column
-        private Date endDate;
+    @JsonProperty("endDate")
+    public String returnEndDate() {
 
-        @NotBlank
-        @Column(columnDefinition = "TEXT")
-        private String richText;
+        return DateParser.getDateFromDate(endDate);
+    }
 
-        private String decade;
+    @JsonIncludeProperties(value = { "id", "name", "photo" })
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Media> media = new ArrayList<>();
 
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
+    private List<Locations> locations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
+    private List<LocationsAdvanced> locationsAdvanced = new ArrayList<>();
 
-        @JsonProperty("startDate")
-        public String returnStartDate(){
-
-            return DateParser.getDateFromDate(startDate);
+    @JsonProperty("meida")
+    public ArrayList<MediaDTO> getMediaDTOList() {
+        ArrayList<MediaDTO> mediaDTOList = new ArrayList<>();
+        for (Media photos : media) {
+            mediaDTOList.add(new MediaDTO(photos.getType(), photos.getData()));
         }
-        @JsonProperty("endDate")
-        public String returnEndDate(){
-
-            return DateParser.getDateFromDate(endDate);
-        }
-
-
-
-
-
-
-
-
-
-    @JsonIncludeProperties(value = {"id" , "name", "photo"})
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "user_id", nullable = false)
-        private User user;
-
-        @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-        private List<Comment> comments = new ArrayList<>();
-
-
-
-
-        @JsonIgnore
-        @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-        private List<Media> media = new ArrayList<>();
-
-        @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
-        private List<Locations> locations = new ArrayList<>();
-
-
-
-
-
-        @JsonProperty("meida")
-        public ArrayList<MediaDTO> getMediaDTOList() {
-            ArrayList<MediaDTO> mediaDTOList = new ArrayList<>();
-            for (Media photos : media) {
-                mediaDTOList.add(new MediaDTO(photos.getType(),photos.getData()));
-            }
-            return mediaDTOList;
-        }
-
-
-
-
-
+        return mediaDTOList;
+    }
 
 }
