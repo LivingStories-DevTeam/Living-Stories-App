@@ -129,7 +129,7 @@ const Profile = ({ route, navigation }: any) => {
   });
   const handleFollowedChange = (followed: boolean) => {
     // Update the follower count based on whether the user followed or unfollowed
-    setFollowed(!followed);
+    setFollowed(!followed)
   };
 
   return (
@@ -161,7 +161,7 @@ const Profile = ({ route, navigation }: any) => {
                       }
                       style={styles.avatar}
                     />
-                    
+                   
                       <FollowButton
                         followers={user.followers}
                         id={user.id}
