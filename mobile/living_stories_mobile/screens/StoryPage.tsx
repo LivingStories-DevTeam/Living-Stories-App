@@ -167,7 +167,7 @@ const StoryPage = ({ route, navigation }: any) => {
         setComment("");
         setTrigger(!trigger);
         
-        Alert.alert("You commented on story!");
+       
 
       } catch (error) {
         console.error("Error:", error);
@@ -439,9 +439,9 @@ const StoryPage = ({ route, navigation }: any) => {
                     <TouchableOpacity
                       style={{
                         width: "25%",
-                        backgroundColor: "#007BFF",
+                        backgroundColor: "#1f6c5c",
                         paddingVertical: 10,
-                        borderRadius: 5,
+                        borderRadius: 20,
                         alignItems: "center",
                         marginLeft: 5, 
                         marginRight: 5,
@@ -473,10 +473,9 @@ const StoryPage = ({ route, navigation }: any) => {
                             {comment.text}
                           </Text>
                         </View>
-                        <Text style={secondStyles.likeCount}>
-                          <Feather name="thumbs-up" size={22} color="#212121" />{" "}
-                          {comment.likes.length}
-                        </Text>
+                        <View style={secondStyles.likeCount}>
+                         <LikeButton id={storyId} type="comment" commentId={comment.id} likeNumber={comment.likes.length}/>
+                        </View>
                       </View>
                     ))}
                 </View>
@@ -650,7 +649,8 @@ const secondStyles = StyleSheet.create({
   },
   likeCount: {
     fontSize: 14,
-    marginRight: 4,
+    marginRight: 8,
+    flexDirection : "row"
   },
 });
 
