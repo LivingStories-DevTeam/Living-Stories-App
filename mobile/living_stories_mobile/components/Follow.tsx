@@ -28,17 +28,17 @@ function FollowButton({ followers, id }: Props) {
     const fetchUser = async () => {
       try {
         
-        const response = await axios.get<User>(`${API_URL}/users/profile`, {
+        const response = await axios.get<number>(`${API_URL}/users/isfollower/${id}`, {
           withCredentials: true,
         });
-        const user = response.data;
-        setUser(user);
-        if (followers?.some((follower) => follower.id === user.id)) {
-          setFollowed(true);
-        } else {
-          setFollowed(false);
+        const result = response.data;
+        if(result ===1){
+          setFollowed(true)
         }
-        console.log(followed)
+        else{
+          setFollowed(false)
+        }
+       
       } catch (error) {
         console.error(error);
       }
