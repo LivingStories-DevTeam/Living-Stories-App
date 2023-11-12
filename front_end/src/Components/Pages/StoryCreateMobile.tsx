@@ -94,6 +94,8 @@ const StoryCreateMobile: React.FC = () => {
   const [selectedDateInput, setSelectedDateInput] = useState<string>("date");
   const [selectedDecadeValue, setSelectedDecadeValue] = useState<number>();
   const [decade, setDecade] = useState<string>();
+  const [posted, setPosted] = useState(false);
+
 
   const seasonOptions = [
     { value: "spring", label: "Spring" },
@@ -305,6 +307,7 @@ const StoryCreateMobile: React.FC = () => {
         return;
       } else {
         try {
+          setPosted(true);
           console.log(storyRequest);
           const response = await axios.post(
             `${import.meta.env.VITE_BACKEND_URL}/stories`,
@@ -916,6 +919,7 @@ const StoryCreateMobile: React.FC = () => {
             type="submit"
             className="btn btn-primary"
             onClick={handleSubmit}
+            disabled={posted}
           >
             Create Story!
           </button>
