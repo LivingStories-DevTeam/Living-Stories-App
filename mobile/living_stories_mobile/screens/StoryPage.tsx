@@ -17,6 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TextInput } from "react-native";
+import LikeButton from "../components/LikeButton";
 
 interface Location {
   lat: number;
@@ -361,11 +362,9 @@ const StoryPage = ({ route, navigation }: any) => {
                 </View>
               )}
               <View style={styles.likeCommentContainer}>
-                <Text style={styles.likeAndComment}>
-                  <Feather name="thumbs-up" size={25} color="#212121" />{" "}
-                  {storyResponse?.likes.length}
-                </Text>
-                <Text style={styles.likeAndComment}>
+                <LikeButton id={storyResponse.id} type="story" likeNumber={storyResponse?.likes.length}/>
+                
+                <Text style={styles.comment}>
                   <Feather name="message-circle" size={25} color="#212121" />{" "}
                   {storyResponse?.comments.length}
                 </Text>
@@ -491,8 +490,14 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 10,
   },
-  likeAndComment: {
+  comment: {
     marginLeft: 15,
+    fontSize: 15,
+    color: "#1f6c5c",
+  },
+  like: {
+    marginLeft: 10,
+    marginTop:7,
     fontSize: 15,
     color: "#1f6c5c",
   },
