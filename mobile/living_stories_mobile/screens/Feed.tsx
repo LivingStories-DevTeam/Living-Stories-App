@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import {
   Alert,
@@ -15,6 +15,7 @@ import { ScrollView } from "react-native";
 
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import LottieView from "lottie-react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Feed = ({ navigation }: any) => {
   const { onLogout } = useAuth();
@@ -58,6 +59,14 @@ const Feed = ({ navigation }: any) => {
     if(selectedIndex ===0){fetchData()};
     if(selectedIndex===1) {fetchFollowerData()}
   }, [selectedIndex]);
+
+  useFocusEffect(
+    useCallback(() => {
+
+      fetchFollowerData()
+      fetchData();
+    }, [])
+  );
 
   const handleCardPress = (storyId: number) => {
     navigation.navigate("Story", { storyId });

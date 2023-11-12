@@ -274,7 +274,7 @@ const StoryPage = ({ route, navigation }: any) => {
                         {storyResponse.decade ? (
                           <Text>{storyResponse.decade}</Text>
                         ) : (
-                          <View style={{ flexDirection: "row" }}>
+                          <View style={{ flexDirection: "column" }}>
                             <Text>
                               <Feather
                                 name="sunrise"
