@@ -376,7 +376,7 @@ const StoryCreateMobile: React.FC = () => {
     }
   }, []);
   return (
-    <div style={{ backgroundColor: "#1f6c5c", touchAction: "pan-y",  }}>
+    <div style={{ backgroundColor: "#1f6c5c", touchAction: "pan-y", }}>
   
       <div style={{ marginLeft: 5, marginRight: 5, touchAction: "pan-y" }}>
         <Container>
@@ -530,7 +530,8 @@ const StoryCreateMobile: React.FC = () => {
                             width: "100%",
                             minWidth: "100px",
                             maxWidth: "200px",
-                            touchAction: "pan-y"
+                            touchAction: "pan-y",
+                            caretColor: "transparent",
                           }}
                         />
                       </Col>
@@ -547,6 +548,7 @@ const StoryCreateMobile: React.FC = () => {
                             minWidth: "100px",
                             touchAction: "pan-y",
                             maxWidth: "200px",
+                            caretColor: "transparent",
                           }}
                         />
                       </Col>
@@ -864,7 +866,8 @@ const StoryCreateMobile: React.FC = () => {
             marginTop: "35px",
             height: "350px",
             boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
-            touchAction: "pan-y"
+            touchAction: "pan-y",
+            caretColor: "transparent",
           }}
         >
           <ReactQuill
@@ -873,7 +876,7 @@ const StoryCreateMobile: React.FC = () => {
             onChange={handleEditorChange}
             formats={formats}
             modules={modules}
-            style={{ height: "80%", backgroundColor: "#fff",touchAction: "pan-y" }}
+            style={{ height: "80%", backgroundColor: "#fff",touchAction: "pan-y",caretColor: "transparent", }}
           />
         </div>
 
