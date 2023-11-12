@@ -134,7 +134,7 @@ public class UserController {
         if (user.isPresent() && otherUser.isPresent() ) {
             User user1 = user.get();
             User user2 = otherUser.get();
-            List<User> following = user2.getFollowers();
+            Set<User> following = user2.getFollowers();
             
 
             for (User followedUser : following) {
