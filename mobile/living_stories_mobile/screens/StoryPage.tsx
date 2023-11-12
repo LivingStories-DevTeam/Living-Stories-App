@@ -85,7 +85,8 @@ const StoryPage = ({ route, navigation }: any) => {
   const { storyId } = route.params;
 
   const [storyResponse, setStoryResponse] = useState<StoryInt>();
-  const [comment, setComment] = useState<string>()
+  const [comment, setComment] = useState<string>();
+  const [trigger, setTrigger] = useState(false);
   const fetchData = async () => {
     try {
       const response = await axios.get(`${API_URL}/stories/${storyId}`);
@@ -99,7 +100,7 @@ const StoryPage = ({ route, navigation }: any) => {
 
   useEffect(() => {
     fetchData(); // Fetch data when the component mountsr
-  }, []); // The empty dependency array ensures this effect runs only once
+  }, [trigger]); // The empty dependency array ensures this effect runs only once
   const markers = storyResponse?.locations || [];
   let center = {
     latitude: 0,
@@ -146,35 +147,33 @@ const StoryPage = ({ route, navigation }: any) => {
       longitude: markers![0].lng,
     };
   }
-  const handleCommentChange = (text:string) => {
+  const handleCommentChange = (text: string) => {
     setComment(text);
-    console.log(comment)
-    console.log(storyId)
+    console.log(comment);
+    console.log(storyId);
   };
   const sendComment = async () => {
     const CommentData: CommentRequestInt = {
       text: comment!,
-      storyId:storyId,
+      storyId: storyId,
     };
-    if(comment){
+    if (comment) {
       try {
-      
         console.log(CommentData);
         const response = await axios.post(
           `${API_URL}/stories/comments`,
           CommentData
         );
-        Alert.alert("You commented on story!")
-  
+        setComment("");
+        setTrigger(!trigger);
+        
+        Alert.alert("You commented on story!");
+
       } catch (error) {
         console.error("Error:", error);
       }
     }
-    
-   
   };
-
- 
 
   return (
     <>
@@ -422,22 +421,48 @@ const StoryPage = ({ route, navigation }: any) => {
                   </Text>
                 </View>
                 <View style={styles.commentContainer}>
-                  
                   <Text style={{ color: "gray" }}>Comment</Text>
-                  <TextInput
-                    style={styles.commentInput}
-                    placeholder="Write your comment here!"
-                    multiline={true}
-                   onChangeText={handleCommentChange}
-                   value= {comment}
-                  />
-                  <Button title = "Comment" onPress={sendComment}></Button>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TextInput
+                      style={styles.commentInput}
+                      placeholder="Write your comment here!"
+                      multiline={true}
+                      onChangeText={handleCommentChange}
+                      value={comment}
+                    />
+                    <TouchableOpacity
+                      style={{
+                        width: "25%",
+                        backgroundColor: "#007BFF",
+                        paddingVertical: 10,
+                        borderRadius: 5,
+                        alignItems: "center",
+                        marginLeft: 5, 
+                        marginRight: 5,
+                      }}
+                      onPress={sendComment}
+                    >
+                      <Text style={{ color: "white" }}>Comment</Text>
+                    </TouchableOpacity>
+                  </View>
 
-                   {storyResponse.comments &&
-                    storyResponse.comments.map((comment, index) => (
+                  {storyResponse.comments &&
+                    storyResponse.comments.reverse().map((comment, index) => (
                       <View style={secondStyles.container}>
                         <Image
-                          source={{ uri: comment.user.photo }}
+                          source={
+                            comment?.user?.photo
+                              ? { uri: comment.user.photo }
+                              : {
+                                  uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                                }
+                          }
                           style={secondStyles.avatar}
                         />
                         <View style={secondStyles.commentContainer}>
@@ -449,7 +474,7 @@ const StoryPage = ({ route, navigation }: any) => {
                           </Text>
                         </View>
                         <Text style={secondStyles.likeCount}>
-                          <Feather name="thumbs-up" size={16} color="#212121" />{" "}
+                          <Feather name="thumbs-up" size={22} color="#212121" />{" "}
                           {comment.likes.length}
                         </Text>
                       </View>
@@ -574,10 +599,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   commentInput: {
-    width: "100%",
+    width: "75%",
     padding: 10,
     color: "black",
-    backgroundColor: "rgba(242, 242, 242, 0.8)",
+    backgroundColor: "white",
     borderRadius: 4,
     borderWidth: 1,
     borderColor: "black",
@@ -625,6 +650,7 @@ const secondStyles = StyleSheet.create({
   },
   likeCount: {
     fontSize: 14,
+    marginRight: 4,
   },
 });
 
