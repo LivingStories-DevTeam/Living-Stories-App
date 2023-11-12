@@ -27,7 +27,7 @@ const containerStyle = {
   margin: "auto",
   border: "1px solid #ccc",
   boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
-  touchAction: "pan-y",
+  touchAction: "pan-y"
 };
 
 interface Location {
@@ -323,6 +323,8 @@ const StoryCreateMobile: React.FC = () => {
     }
 
     postData();
+
+    
   };
 
   const handleHeaderChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -374,7 +376,8 @@ const StoryCreateMobile: React.FC = () => {
     }
   }, []);
   return (
-    <div style={{ backgroundColor: "#1f6c5c", touchAction: "pan-y" }}>
+    <div style={{ backgroundColor: "#1f6c5c", touchAction: "pan-y", }}>
+  
       <div style={{ marginLeft: 5, marginRight: 5, touchAction: "pan-y" }}>
         <Container>
           <Row>
@@ -390,7 +393,7 @@ const StoryCreateMobile: React.FC = () => {
                   marginBottom: 10,
                   marginTop: 10,
                   boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
-                  touchAction: "pan-y",
+                  touchAction: "pan-y"
                 }}
               >
                 <div className="form-group" style={{ marginTop: 10 }}>
@@ -422,7 +425,7 @@ const StoryCreateMobile: React.FC = () => {
                       flexDirection: "row",
                       backgroundColor: "#fff",
                       borderRadius: "8px",
-                      touchAction: "pan-y",
+                      touchAction: "pan-y"
                     }}
                   >
                     {labels.map((value, index) => (
@@ -434,7 +437,7 @@ const StoryCreateMobile: React.FC = () => {
                           backgroundColor: "#fff",
                           paddingTop: 5,
                           paddingBottom: 5,
-                          touchAction: "pan-y",
+                          touchAction: "pan-y"
                         }}
                       >
                         <Chip
@@ -467,7 +470,7 @@ const StoryCreateMobile: React.FC = () => {
               border: "1px solid #ccc",
               marginBottom: 10,
               boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
-              touchAction: "pan-y",
+              touchAction: "pan-y"
             }}
           >
             <Row>
@@ -482,7 +485,7 @@ const StoryCreateMobile: React.FC = () => {
                   width: "100%",
                   minWidth: "100px",
                   maxWidth: "200px",
-                  touchAction: "pan-y",
+                  touchAction: "pan-y"
                 }}
               />
             </Row>
@@ -505,7 +508,7 @@ const StoryCreateMobile: React.FC = () => {
                     width: "100%",
                     minWidth: "100px",
                     maxWidth: "200px",
-                    touchAction: "pan-y",
+                    touchAction: "pan-y"
                   }}
                 />
               </Row>
@@ -528,7 +531,7 @@ const StoryCreateMobile: React.FC = () => {
                             minWidth: "100px",
                             maxWidth: "200px",
                             touchAction: "pan-y",
-                            userSelect: "none",
+                            
                           }}
                         />
                       </Col>
@@ -545,20 +548,13 @@ const StoryCreateMobile: React.FC = () => {
                             minWidth: "100px",
                             touchAction: "pan-y",
                             maxWidth: "200px",
-                            userSelect: "none",
                           }}
                         />
                       </Col>
                     </Row>
                   </Col>
                 </div>
-                <div
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    touchAction: "pan-y",
-                  }}
-                >
+                <div style={{ justifyContent: "center", alignItems: "center", touchAction: "pan-y"}}>
                   <Radio.Group
                     options={options}
                     onChange={onRadioChange}
@@ -571,7 +567,7 @@ const StoryCreateMobile: React.FC = () => {
                       width: "100%",
                       justifyContent: "center",
                       alignItems: "center",
-                      touchAction: "pan-y",
+                      touchAction: "pan-y"
                     }}
                   />
                 </div>
@@ -621,7 +617,7 @@ const StoryCreateMobile: React.FC = () => {
                       width: "100%",
                       minWidth: "100px",
                       maxWidth: "200px",
-                      touchAction: "pan-y",
+                      touchAction: "pan-y"
                     }}
                     inputReadOnly={true}
                     status="error"
@@ -673,7 +669,7 @@ const StoryCreateMobile: React.FC = () => {
                       margin: "auto",
                       marginBottom: "10px",
                       width: "100%",
-                      touchAction: "pan-y",
+                      touchAction: "pan-y"
                     }}
                   />
                 </div>
@@ -689,7 +685,7 @@ const StoryCreateMobile: React.FC = () => {
                         width: "100%",
                         minWidth: "100px",
                         maxWidth: "200px",
-                        touchAction: "pan-y",
+                        touchAction: "pan-y"
                       }}
                     />
                     <DatePicker
@@ -699,7 +695,7 @@ const StoryCreateMobile: React.FC = () => {
                         width: "100%",
                         minWidth: "100px",
                         maxWidth: "200px",
-                        touchAction: "pan-y",
+                        touchAction: "pan-y"
                       }}
                       placeholder="Select end date"
                       picker="date"
@@ -721,7 +717,7 @@ const StoryCreateMobile: React.FC = () => {
                       width: "100%",
                       minWidth: "100px",
                       maxWidth: "200px",
-                      touchAction: "pan-y",
+                      touchAction: "pan-y"
                     }}
                     inputReadOnly={true}
                     placeholder="Select end date"
@@ -769,7 +765,7 @@ const StoryCreateMobile: React.FC = () => {
               border: "1px solid #ccc",
               marginBottom: 10,
               boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
-              touchAction: "pan-y",
+              touchAction: "pan-y"
             }}
           >
             <div>
@@ -790,7 +786,7 @@ const StoryCreateMobile: React.FC = () => {
                       width: "100%",
                       minWidth: "100px",
                       maxWidth: "200px",
-                      touchAction: "pan-y",
+                      touchAction: "pan-y"
                     }}
                   />
                 </Autocomplete>
@@ -801,7 +797,7 @@ const StoryCreateMobile: React.FC = () => {
                     borderTop: "1px solid #ccc",
                     borderBottom: "1px solid #ccc",
                     marginBottom: 2,
-                    touchAction: "pan-y",
+                    touchAction: "pan-y"
                   }}
                 >
                   {locations.map((loc, index) => (
@@ -815,7 +811,7 @@ const StoryCreateMobile: React.FC = () => {
                         marginBottom: "8px",
                         marginTop: "8px",
                         padding: "8px",
-                        touchAction: "pan-y",
+                        touchAction: "pan-y"
                       }}
                     >
                       <p
@@ -849,6 +845,7 @@ const StoryCreateMobile: React.FC = () => {
               center={mapCenter}
               zoom={20}
               onClick={handleMapClick}
+              
             >
               {locations.map((loc, index) => (
                 <Marker key={index} position={{ lat: loc.lat, lng: loc.lng }} />
@@ -868,8 +865,7 @@ const StoryCreateMobile: React.FC = () => {
             marginTop: "35px",
             height: "350px",
             boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
-            touchAction: "pan-y",
-            userSelect: "none",
+            touchAction: "pan-y"
           }}
         >
           <ReactQuill
@@ -878,12 +874,7 @@ const StoryCreateMobile: React.FC = () => {
             onChange={handleEditorChange}
             formats={formats}
             modules={modules}
-            style={{
-              height: "80%",
-              backgroundColor: "#fff",
-              touchAction: "pan-y",
-              userSelect: "none",
-            }}
+            style={{ height: "80%", backgroundColor: "#fff",touchAction: "pan-y" }}
           />
         </div>
 
@@ -893,7 +884,7 @@ const StoryCreateMobile: React.FC = () => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            touchAction: "pan-y",
+            touchAction: "pan-y"
           }}
         >
           <button
@@ -905,7 +896,7 @@ const StoryCreateMobile: React.FC = () => {
               border: "1px solid #fff",
               borderRadius: "30px",
               color: "#fff",
-              touchAction: "pan-y",
+              touchAction: "pan-y"
             }}
             type="submit"
             className="btn btn-primary"
