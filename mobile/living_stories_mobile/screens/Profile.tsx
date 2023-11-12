@@ -9,6 +9,7 @@ import { Image } from "react-native";
 import Card from "../components/Card";
 import { Feather } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import FollowButton from "../components/Follow";
 
 interface Story {
   id: number;
@@ -48,6 +49,7 @@ interface User {
 const Profile = ({ route, navigation }: any) => {
   const { name } = route.params;
   const [user, setUser] = useState<User | null>(null);
+  const [followed, setFollowed] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -61,10 +63,10 @@ const Profile = ({ route, navigation }: any) => {
     };
 
     fetchUser();
-  }, [name]);
+  }, [name ]);
 
   const handleCardPress = (storyId: number) => {
-    navigation.navigate("Story", { storyId });
+    navigation.push("Story", { storyId });
   };
 
   const styles = StyleSheet.create({
@@ -125,118 +127,126 @@ const Profile = ({ route, navigation }: any) => {
       flex: 1,
     },
   });
+  const handleFollowedChange = (followed: boolean) => {
+    // Update the follower count based on whether the user followed or unfollowed
+    setFollowed(!followed);
+  };
 
   return (
     <>
-    {user?(
-      <>
-    <ImageBackground
-      source={require("../assets/fall.gif")} // Replace with the actual path to your GIF
-      style={styles.background}
-    >
-      <SafeAreaView style={styles.container}>
-        <ScrollView>
-          <View style={styles.back}>
-            <View style={styles.header}>
-              <TouchableOpacity
-                style={{ marginRight: 20 }}
-                onPress={() => navigation.goBack()}
-              >
-                <Feather name="arrow-left" size={30} color="white" />
-              </TouchableOpacity>
-
-              <Image
-                source={
-                  user?.photo
-                    ? { uri: user.photo }
-                    : {
-                        uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
-                      }
-                }
-                style={styles.avatar}
-              />
-
-              <TouchableOpacity style={{ marginLeft: 20 }}>
-                <Feather name="user-plus" size={30} color="white" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.content}>
-            <Text style={styles.title}>{user?.name}</Text>
-            <Text style={styles.bio}>{user?.biography}</Text>
-
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                marginTop: 10,
-              }}
-            >
-              <Text style={{ marginRight: 4 }}>
-                <Feather name="book" size={25} color="#212121" />{" "}
-                {user?.stories?.length}
-              </Text>
-              <Text>
-                <Feather name="users" size={25} color="#212121" />{" "}
-                {user?.followers?.length}
-              </Text>
-            </View>
-            <View style={{ marginTop: 10, backgroundColor: "white" }}>
-              <View>
-                {user?.stories?.map((item: Story, index: number) => (
-                  <>
-                    <TouchableOpacity onPress={() => handleCardPress(item.id)}>
-                      <Card
-                        key={index}
-                        title={item.header}
-                        date={
-                          item.decade
-                            ? item.decade
-                            : item.endDate
-                            ? item.startDate + " - " + item.endDate
-                            : item.startDate
-                        }
-                        location={
-                          item.locations
-                            ?.map((location) => location.country)
-                            .join(", ") || ""
-                        }
-                        avatar={
-                          user.photo
-                            ? user.photo
-                            : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd"
-                        }
-                        labels={item.labels}
-                        name={user.name}
-                        likes={item.likes.length}
-                        comments={item.comments.length}
-                      />
+      {user ? (
+        <>
+          <ImageBackground
+            source={require("../assets/fall.gif")} // Replace with the actual path to your GIF
+            style={styles.background}
+          >
+            <SafeAreaView style={styles.container}>
+              <ScrollView>
+                <View style={styles.back}>
+                  <View style={styles.header}>
+                    <TouchableOpacity
+                      style={{ marginRight: 20 }}
+                      onPress={() => navigation.goBack()}
+                    >
+                      <Feather name="arrow-left" size={30} color="white" />
                     </TouchableOpacity>
-                  </>
-                ))}
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </ImageBackground>
 
-</>
-) : (
-  <>
-    <View style={styles.animationContainer}>
-      <LottieView
-        style={styles.animation}
-        source={require("./globe.json")} // Replace with the path to your Lottie animation JSON file
-        autoPlay
-        loop
-      />
-      <Text style={{ marginTop: 20 }}>Loading Profile...!</Text>
-    </View>
-  </>
-)}
-</>
+                    <Image
+                      source={
+                        user?.photo
+                          ? { uri: user.photo }
+                          : {
+                              uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                            }
+                      }
+                      style={styles.avatar}
+                    />
+                    
+                      <FollowButton
+                        followers={user.followers}
+                        id={user.id}
+                        onFollowedChange={handleFollowedChange}
+                      />
+                    
+                  </View>
+                </View>
+
+                <View style={styles.content}>
+                  <Text style={styles.title}>{user?.name}</Text>
+                  <Text style={styles.bio}>{user?.biography}</Text>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      marginTop: 10,
+                    }}
+                  >
+                    <Text style={{ marginRight: 4 }}>
+                      <Feather name="book" size={25} color="#212121" />{" "}
+                      {user?.stories?.length}
+                    </Text>
+                    <Text>
+                      <Feather name="users" size={25} color="#212121" />{" "}
+                      {user.followers?.length}
+                    </Text>
+                  </View>
+                  <View style={{ marginTop: 10, backgroundColor: "white" }}>
+                    <View>
+                      {user?.stories?.map((item: Story, index: number) => (
+                        <>
+                          <TouchableOpacity
+                            onPress={() => handleCardPress(item.id)}
+                          >
+                            <Card
+                              key={index}
+                              title={item.header}
+                              date={
+                                item.decade
+                                  ? item.decade
+                                  : item.endDate
+                                  ? item.startDate + " - " + item.endDate
+                                  : item.startDate
+                              }
+                              location={
+                                item.locations
+                                  ?.map((location) => location.country)
+                                  .join(", ") || ""
+                              }
+                              avatar={
+                                user.photo
+                                  ? user.photo
+                                  : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd"
+                              }
+                              labels={item.labels}
+                              name={user.name}
+                              likes={item.likes.length}
+                              comments={item.comments.length}
+                            />
+                          </TouchableOpacity>
+                        </>
+                      ))}
+                    </View>
+                  </View>
+                </View>
+              </ScrollView>
+            </SafeAreaView>
+          </ImageBackground>
+        </>
+      ) : (
+        <>
+          <View style={styles.animationContainer}>
+            <LottieView
+              style={styles.animation}
+              source={require("./globe.json")} // Replace with the path to your Lottie animation JSON file
+              autoPlay
+              loop
+            />
+            <Text style={{ marginTop: 20 }}>Loading Profile...!</Text>
+          </View>
+        </>
+      )}
+    </>
   );
 };
 export default Profile;
