@@ -377,7 +377,11 @@ const Story: React.FC = () => {
     switch (event.type) {
       case "marker":
         backendLocationData = {
-          name: await getLocationName(event.overlay.getPosition().lat(), event.overlay.getPosition().lng()),
+          lat: event.overlay.getPosition().lat(),
+          lng: event.overlay.getPosition().lng(),
+          name: await getLocationName(event.overlay.getPosition().lat(), event.overlay.getPosition().lng(), 0),
+          city: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 1),
+          country: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 2),
           type: "Point",
           coordinates: [[event.overlay.getPosition().lng(), event.overlay.getPosition().lat()]],
           radius: null
@@ -395,7 +399,11 @@ const Story: React.FC = () => {
           [sw.lng(), sw.lat()]
         ];
         backendLocationData = {
-          name: await getLocationName((ne.lat() + sw.lat()) / 2, (ne.lng() + sw.lng()) / 2),
+          lat: (ne.lat() + sw.lat()),
+          lng: (ne.lng() + sw.lng()),
+          name: await getLocationName((ne.lat() + sw.lat()) / 2, (ne.lng() + sw.lng()) / 2, 0),
+          city: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 1),
+          country: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 2),
           type: "Polygon",
           coordinates: rectangleCoordinates,
           radius: null
@@ -406,7 +414,11 @@ const Story: React.FC = () => {
         const coordinates = path.map((p: any) => [p.lng(), p.lat()]);
         coordinates.push([path[0].lng(), path[0].lat()]);
         backendLocationData = {
-          name: await getLocationName(path[0].lat(), path[0].lng()),
+          lat: path[0].lat(),
+          lng: path[0].lng(),
+          name: await getLocationName(path[0].lat(), path[0].lng(), 0),
+          city: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 1),
+          country: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 2),
           type: "Polygon",
           coordinates: coordinates,
           radius: null
@@ -414,7 +426,11 @@ const Story: React.FC = () => {
         break;
       case "circle":
         backendLocationData = {
-          name: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng()),
+          lat: event.overlay.getCenter().lat(),
+          lng: event.overlay.getCenter().lng(),
+          name: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 0),
+          city: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 1),
+          country: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 2),
           type: "Circle",
           coordinates: [[event.overlay.getCenter().lng(), event.overlay.getCenter().lat()]],
           radius: event.overlay.getRadius()
@@ -428,14 +444,29 @@ const Story: React.FC = () => {
     setLocationsBackend(prevLocations => [...prevLocations, backendLocationData]);
     //onAddLocation(backendLocationData); 
   };
-  async function getLocationName(lat: any, lng: any) {
+  async function getLocationName(lat: any, lng: any, type: any) {
     try {
       const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${api_key}`);
       const { results } = response.data;
-      if (results.length > 0) {
+      let city = "";
+      let country = "";
+      results.forEach((item: any) => {
+        item.address_components.forEach((subItem: any) => {
+          if (subItem.types.includes("administrative_area_level_1") || subItem.types.includes("locality"))
+            city = subItem.long_name;
+          if (subItem.types.includes("country"))
+            country = subItem.long_name;
+        })
+      });
+      if (results.length > 0 && type === 0) {
         return results[0].formatted_address;
       }
-      return "Unnamed location";
+      else if (type === 1)
+        return city;
+      else if (type === 2)
+        return country;
+      else 
+        return "Unnamed location";
     } catch (error) {
       console.error("Error fetching location name:", error);
       return "Unnamed location";

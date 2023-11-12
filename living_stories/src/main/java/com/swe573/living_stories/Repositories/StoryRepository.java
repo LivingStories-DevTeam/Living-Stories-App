@@ -46,7 +46,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
     );
 
     @Query("SELECT DISTINCT s FROM Story s" +
-            " LEFT JOIN s.locationsAdvanced l" +
+            " LEFT JOIN s.locations l" +
             " WHERE" +
             " (:key is null OR LOWER(s.user.name) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.richText) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.city) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.country) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.header) LIKE CONCAT('%', LOWER(:key), '%'))" +
             " AND (s.startDate >= :startDate) " +

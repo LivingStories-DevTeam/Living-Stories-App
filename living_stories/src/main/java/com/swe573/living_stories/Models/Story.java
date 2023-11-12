@@ -84,7 +84,7 @@ public class Story {
     private List<Locations> locations = new ArrayList<>();
 
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
-    private List<LocationsAdvanced> locationsAdvanced = new ArrayList<>();
+    private List<Locations> locationsAdvanced = new ArrayList<>();
 
     @JsonProperty("meida")
     public ArrayList<MediaDTO> getMediaDTOList() {

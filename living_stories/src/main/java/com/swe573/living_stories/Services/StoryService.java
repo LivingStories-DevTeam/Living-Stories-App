@@ -135,11 +135,11 @@ public class StoryService {
         return false;
     }
 
-    public boolean addLocationAdvanced(Long storyId, List<LocationsAdvanced> locationsList) {
+    public boolean addLocationAdvanced(Long storyId, List<Locations> locationsList) {
         Optional<Story> optionalStory = storyRepository.findById(storyId);
         if (optionalStory.isPresent()) {
             Story story = optionalStory.get();
-            for (LocationsAdvanced location : locationsList) {
+            for (Locations location : locationsList) {
                 location.setStory(story);
                 location.setType(location.getType());
                 location.setCoordinates(location.getCoordinates());
@@ -236,7 +236,7 @@ public class StoryService {
             Point searchCenter = geometryFactory
                     .createPoint(new Coordinate(request.getLongitude(), request.getLatitude()));
             double radiusInDegrees = metersToDegrees(request.getRadius());
-            for (LocationsAdvanced location : story.getLocationsAdvanced()) {
+            for (Locations location : story.getLocationsAdvanced()) {
                 if (locationMatches(location, searchCenter, radiusInDegrees, geometryFactory))
                     return true;
             }
@@ -249,7 +249,7 @@ public class StoryService {
         return meters / 111320.0;
     }
 
-    private boolean locationMatches(LocationsAdvanced location, Point searchCenter, double radiusInDegrees,
+    private boolean locationMatches(Locations location, Point searchCenter, double radiusInDegrees,
             GeometryFactory geometryFactory) {
         switch (location.getType()) {
             case "Point":
@@ -263,14 +263,14 @@ public class StoryService {
         }
     }
 
-    private boolean markerMatches(LocationsAdvanced location, Point searchCenter, double radiusInDegrees,
+    private boolean markerMatches(Locations location, Point searchCenter, double radiusInDegrees,
             GeometryFactory geometryFactory) {
         List<Double> latLng = location.getCoordinates().get(0); 
         Point locationPoint = geometryFactory.createPoint(new Coordinate(latLng.get(0), latLng.get(1))); 
         return locationPoint.isWithinDistance(searchCenter, radiusInDegrees);
     }
 
-    private boolean circleMatches(LocationsAdvanced location, Point searchCenter, double radiusInDegrees,
+    private boolean circleMatches(Locations location, Point searchCenter, double radiusInDegrees,
             GeometryFactory geometryFactory) {
         List<Double> centerLatLng = location.getCoordinates().get(0);
         Point center = geometryFactory.createPoint(new Coordinate(centerLatLng.get(0), centerLatLng.get(1)));
@@ -294,7 +294,7 @@ public class StoryService {
         return circle;
     }
 
-    private boolean polygonMatches(LocationsAdvanced location, Point searchCenter, double radiusInDegrees,
+    private boolean polygonMatches(Locations location, Point searchCenter, double radiusInDegrees,
             GeometryFactory geometryFactory) {
         List<List<Double>> coordinatesList = location.getCoordinates();
         Coordinate[] coordinates = new Coordinate[coordinatesList.size()];

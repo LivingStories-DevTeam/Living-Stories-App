@@ -2,7 +2,7 @@ package com.swe573.living_stories.Requests;
 
 import com.swe573.living_stories.DTO.MediaDTO;
 import com.swe573.living_stories.Models.Locations;
-import com.swe573.living_stories.Models.LocationsAdvanced;
+import com.swe573.living_stories.Models.Locations;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +21,7 @@ public class StoryRequest {
 
     private ArrayList<Locations> locations;
 
-    private ArrayList<LocationsAdvanced> locationsAdvanced;
+    private ArrayList<Locations> locationsAdvanced;
 
     private ArrayList<MediaDTO> mediaString;
 
