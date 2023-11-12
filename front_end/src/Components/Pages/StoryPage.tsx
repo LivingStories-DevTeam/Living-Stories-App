@@ -83,10 +83,11 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
   }, []);
 
   const slocations = (story as any).locationsAdvanced;
+  const slocationsold = (story as any).locations;
   const StoryMarkers: React.FC<any> = useMemo(
     () =>
-      ({ slocations }) => {
-        const overlays = slocations.map((location: any, index: any) => {
+      ({ slocations, slocationsold }) => {
+        let overlays = slocations.map((location: any, index: any) => {
           switch (location.type) {
             case "Point":
               return (
@@ -153,12 +154,25 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
               );
             default:
               return null;
-
           }
         });
+        if (overlays.some((item: any) => !item)) {
+          overlays = slocationsold.map((item: any, index: any) => {
+            return (
+              <Marker
+                key={`marker-${index}`}
+                icon={icon}
+                position={{
+                  lat: item.lat,
+                  lng: item.lng,
+                }}
+              />
+            );
+          });
+        }
         return <>{overlays}</>;
       },
-    [slocations]
+    [slocations, slocationsold]
   );
 
 
@@ -168,7 +182,9 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
   console.log(story);
 
   let latSum = 0;
+  let latSumOld = 0
   let lngSum = 0;
+  let lngSumOld = 0;
   let count = 0;
 
   (story as any).locationsAdvanced.forEach((loc: any) => {
@@ -203,7 +219,10 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
   const latAvg = latSum / count
   const lngAvg = lngSum / count;
 
-  const mapCenter = { lat: latAvg, lng: lngAvg };
+  latSumOld = story.locations[0].lat;
+  lngSumOld = story.locations[0].lng;
+
+  const mapCenter = { lat: !latAvg ? latSumOld : latAvg, lng: !lngAvg ? lngSumOld : lngAvg };
 
   const handleCommentChange: React.ChangeEventHandler<HTMLTextAreaElement> = (
     event
@@ -340,7 +359,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                 mapContainerStyle={containerStyle}
                 center={mapCenter}
               >
-                <StoryMarkers slocations={(story as any).locationsAdvanced} />
+                <StoryMarkers slocations={(story as any).locationsAdvanced} slocationsold={(story as any).locations} />
               </GoogleMap>
             </Col>
           )}
