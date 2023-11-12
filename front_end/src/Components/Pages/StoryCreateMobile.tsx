@@ -549,7 +549,6 @@ const StoryCreateMobile: React.FC = () => {
                     options={options}
                     onChange={onRadioChange}
                     value={selectedOption}
-                    inputReadOnly={true}
                     optionType="button"
                     buttonStyle="solid"
                     style={{
