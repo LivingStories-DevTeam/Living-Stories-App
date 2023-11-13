@@ -1,93 +1,65 @@
 package com.swe573.living_stories.Services;
+
 import com.swe573.living_stories.Models.Activity;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Models.User;
 import com.swe573.living_stories.Repositories.ActivityRepository;
 import com.swe573.living_stories.Repositories.StoryRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
-import com.swe573.living_stories.Services.ActivityService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Collections;
-import java.util.Date;
+import org.mockito.MockitoAnnotations;
 
-@SpringBootTest
+import java.util.Collections;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 class ActivityServiceTest {
 
     @Mock
-    private ActivityRepository activityRepository;
+    private StoryRepository storyRepository;
 
     @Mock
     private UserRepository userRepository;
 
     @Mock
-    private StoryRepository storyRepository;
+    private ActivityRepository activityRepository;
 
     @InjectMocks
-    private ActivityService activityService; // Replace with the actual name of your service class
+    private ActivityService activityService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
-    void testRecordActivity() {
-        // Prepare test data
+    void testRecordLikeActivity() {
         Long storyId = 1L;
         Long userId = 2L;
-        String actionType = "Action";
 
-        // Mock the behavior of the CheckByUserIdAndStoryId method
-        Mockito.when(activityRepository.CheckByUserIdAndStoryId(userId, storyId, actionType))
-                .thenReturn(Collections.emptyList()); // Assuming no existing entries
+        when(userRepository.getReferenceById(userId)).thenReturn(new User());
 
-        // Mock the behavior of userRepository.getReferenceById and storyRepository.getReferenceById
-        User mockUser = new User();
-        mockUser.setId(userId);
-        mockUser.setName("John Doe");
-        mockUser.setPhoto("user_photo_url");
+        when(storyRepository.getReferenceById(storyId)).thenReturn(new Story());
 
-        Story mockStory = new Story();
-        mockStory.setId(storyId);
-        mockStory.setHeader("Sample Story");
+        assertDoesNotThrow(() -> activityService.recordLikeActivity(storyId, userId));
 
-        Mockito.when(userRepository.getReferenceById(userId)).thenReturn(mockUser);
-        Mockito.when(storyRepository.getReferenceById(storyId)).thenReturn(mockStory);
-
-        // Call the method to be tested
-        activityService.recordActivity(storyId, userId, actionType);
-
-        // Verify that activityRepository.save was called with the expected parameters
-        Mockito.verify(activityRepository).save(Mockito.any(Activity.class));
+        verify(activityRepository, times(1)).save(any(Activity.class));
     }
 
     @Test
-    void testRecordFollowAction() {
-        // Prepare test data
-        Long userId = 1L;
-        Long followingId = 2L;
+    void testCheckDuplicateActivity() {
+        Long actionItemId = 1L;
+        Long userId = 2L;
+        String actionType = "L";
 
-        // Mock the behavior of the CheckByUserIdAndFollowingId method
-        Mockito.when(activityRepository.CheckByUserIdAndFollowingId(userId, followingId))
-                .thenReturn(Collections.emptyList()); // Assuming no existing entries
+        when(userRepository.getReferenceById(userId)).thenReturn(new User());
+        when(activityRepository.CheckByUserIdAndStoryId(userId, actionItemId, actionType)).thenReturn(Collections.emptyList());
 
-        // Mock the behavior of userRepository.getReferenceById
-        User mockUser = new User();
-        mockUser.setId(userId);
-        mockUser.setName("John Doe");
-        mockUser.setPhoto("user_photo_url");
-
-        User mockFollowingUser = new User();
-        mockFollowingUser.setId(followingId);
-        mockFollowingUser.setName("Jane Doe");
-
-        Mockito.when(userRepository.getReferenceById(userId)).thenReturn(mockUser);
-        Mockito.when(userRepository.getReferenceById(followingId)).thenReturn(mockFollowingUser);
-
-        // Call the method to be tested
-        activityService.recordFollowAction(userId, followingId);
-
-        // Verify that activityRepository.save was called with the expected parameters
-        Mockito.verify(activityRepository).save(Mockito.any(Activity.class));
+        assertTrue(activityService.checkDuplicateActivity(actionItemId, userId, actionType));
     }
-
 }
