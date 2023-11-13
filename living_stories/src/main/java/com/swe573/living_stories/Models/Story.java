@@ -62,6 +62,8 @@ import java.util.List;
 
         private String decade;
 
+        private Date timestamp;
+
 
 
 

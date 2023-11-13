@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +54,7 @@ public class StoryController {
         story.setHeader(storyRequest.getHeader());
         story.setLabels(storyRequest.getLabels());
         story.setRichText(storyRequest.getRichText());
+        story.setTimestamp(new Date());
         Story savedStory = storyService.createStory(story);
         if (storyRequest.getLocations() != null) {
             storyService.addLocation(savedStory.getId(), storyRequest.getLocations());
