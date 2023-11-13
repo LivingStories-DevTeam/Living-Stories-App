@@ -1,14 +1,13 @@
 package com.swe573.living_stories.Controllers;
 
-import com.swe573.living_stories.Models.Comment;
-import com.swe573.living_stories.Models.Like;
-import com.swe573.living_stories.Models.Story;
-import com.swe573.living_stories.Models.User;
+import com.swe573.living_stories.Models.*;
+import com.swe573.living_stories.Repositories.ActivityRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
 import com.swe573.living_stories.Services.CommentService;
 import com.swe573.living_stories.Services.StoryService;
 import com.swe573.living_stories.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,32 +26,35 @@ public class ActivityController {
 
     final private UserRepository userRepository;
 
-    public ActivityController(StoryService storyService, UserService userService, CommentService commentService, UserRepository userRepository) {
+    final private ActivityRepository activityRepository;
+
+    public ActivityController(StoryService storyService, UserService userService, CommentService commentService,
+                              UserRepository userRepository, ActivityRepository activityRepository) {
         this.storyService = storyService;
         this.userService = userService;
         this.commentService = commentService;
         this.userRepository = userRepository;
+        this.activityRepository = activityRepository;
     }
 
     @GetMapping
-    public List<Story> getActivityStream(HttpServletRequest request){
-        List<Story> storiesFromBase = getStoriesPostedBy(request);
-        List<Story> storiesFromComments = getStoriesCommentedBy(request);
-        List<Story> storiesFromLikes = getStoriesLikedBy(request);
+    public ResponseEntity<List<Activity>> getActivityStream(HttpServletRequest request){
 
-        Map<Long, Story> storyMap = new HashMap<>();
-        List<Story> uniqueStories = new ArrayList<>();
+        Long id = userService.isUserLoggedIn(request);
+        Optional<User> optionalUser = userRepository.findById(id);
 
-        for (List<Story> stories : Arrays.asList(storiesFromBase, storiesFromComments, storiesFromLikes)) {
-            for (Story story : stories) {
-                if (!storyMap.containsKey(story.getId())) {
-                    storyMap.put(story.getId(), story);
-                    uniqueStories.add(story);
-                }
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            List<Long> followingIds = user.getFollowing().stream().map(User::getId).collect(Collectors.toList());
+            List<Activity> activities = new ArrayList<>();
+            for (Long followingId : followingIds) {
+                List<Activity> activitiesByUserId = activityRepository.findByUserId(followingId);
+                activities.addAll(activitiesByUserId);
             }
+            return ResponseEntity.ok(activities);
         }
 
-        return uniqueStories;
+        return ResponseEntity.notFound().build();
     }
 
     public List<Story> getStoriesPostedBy(HttpServletRequest request){
