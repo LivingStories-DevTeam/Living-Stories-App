@@ -10,6 +10,7 @@ import com.swe573.living_stories.Requests.SearchRequest;
 import com.swe573.living_stories.Requests.StoryRequest;
 import com.swe573.living_stories.Services.StoryService;
 import com.swe573.living_stories.Services.UserService;
+import com.swe573.living_stories.Services.ActivityService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +31,11 @@ public class StoryController {
 
     @Autowired
     private StoryService storyService;
+
+    @Autowired
+    ActivityService activityService;
+
+
 
     @PostMapping
     public ResponseEntity<Story> createStory(@RequestBody StoryRequest storyRequest, HttpServletRequest request) {
@@ -47,6 +54,7 @@ public class StoryController {
         story.setHeader(storyRequest.getHeader());
         story.setLabels(storyRequest.getLabels());
         story.setRichText(storyRequest.getRichText());
+        story.setTimestamp(new Date());
         Story savedStory = storyService.createStory(story);
         if (storyRequest.getLocations() != null) {
             storyService.addLocation(savedStory.getId(), storyRequest.getLocations());
@@ -67,6 +75,8 @@ public class StoryController {
         if (storyRequest.getEndSeason() != null) {
             storyService.addSeason(savedStory.getId(), storyRequest.getEndSeason(), 1);
         }
+
+        activityService.recordPostStoryActivity(savedStory.getId(),optionalUser.get().getId());
 
         return ResponseEntity.ok(savedStory);
     }
@@ -203,7 +213,10 @@ public class StoryController {
     @PostMapping("/like/{storyId}")
     public String likeStory(HttpServletRequest request, @PathVariable Long storyId) {
         Long userId = userService.isUserLoggedIn(request);
-        return storyService.likeStory(storyId, userId);
+        String return_string = storyService.likeStory(storyId, userId);
+        if (return_string.equals("User liked story!")) activityService.recordLikeActivity(storyId,userId);
+
+        return return_string;
     }
 
 }
