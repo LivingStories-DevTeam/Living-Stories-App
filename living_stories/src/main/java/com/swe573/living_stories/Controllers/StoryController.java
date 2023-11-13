@@ -74,7 +74,7 @@ public class StoryController {
             storyService.addSeason(savedStory.getId(), storyRequest.getEndSeason(), 1);
         }
 
-        activityService.recordActivity(savedStory.getId(),optionalUser.get().getId(), "Post");
+        activityService.recordPostStoryActivity(savedStory.getId(),optionalUser.get().getId());
 
         return ResponseEntity.ok(savedStory);
     }
@@ -212,7 +212,7 @@ public class StoryController {
     public String likeStory(HttpServletRequest request, @PathVariable Long storyId) {
         Long userId = userService.isUserLoggedIn(request);
         String return_string = storyService.likeStory(storyId, userId);
-        if (return_string.equals("User liked story!")) activityService.recordActivity(storyId,userId,"Like");
+        if (return_string.equals("User liked story!")) activityService.recordLikeActivity(storyId,userId);
 
         return return_string;
     }

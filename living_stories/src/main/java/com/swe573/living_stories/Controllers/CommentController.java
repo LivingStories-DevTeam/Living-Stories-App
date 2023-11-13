@@ -55,7 +55,7 @@ public class CommentController {
         comment.setStory(optionalStory);
         commentService.addCommentToStory(optionalStory.getId(), comment);
 
-        activityService.recordActivity(optionalStory.getId(),optionalUser.get().getId(),"Comment");
+        activityService.recordCommentActivity(optionalStory.getId(),optionalUser.get().getId());
 
         return ResponseEntity.ok().build();
     }

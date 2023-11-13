@@ -49,8 +49,10 @@ public class UserController {
         Long userId = userService.isUserLoggedIn(request);
         String response  = userService.followUser(userId, followingId);
 
-       if (!response.contains("unfollowed")) activityService.recordFollowAction(userId,followingId); //Just record follow action can be improved using ActivityRepository
-        return ResponseEntity.ok( response);
+       if (!response.contains("unfollowed")) {
+           activityService.recordFollowActivity(followingId,userId); //Just record follow action can be improved using ActivityRepository
+       }
+       return ResponseEntity.ok( response);
     }
 
 
