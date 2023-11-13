@@ -20,6 +20,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     List<Activity> CheckByUserIdAndFollowingId(@Param("user_id") Long user_id, @Param("following_id") Long following_id);
 
 
-    @Query(value = "SELECT * FROM Activity a WHERE a.user_id = :user_id", nativeQuery = true)
+    @Query(value = "SELECT * FROM Activity a WHERE a.user_id = :user_id ORDER BY a.action_timestamp DESC", nativeQuery = true)
     List<Activity> findByUserId(@Param("user_id") Long user_id);
 }
