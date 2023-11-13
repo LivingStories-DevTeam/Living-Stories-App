@@ -19,20 +19,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/activity")
 public class ActivityController {
 
-
-    final private StoryService storyService;
     final private UserService userService;
-    final private CommentService commentService;
 
     final private UserRepository userRepository;
 
     final private ActivityRepository activityRepository;
 
-    public ActivityController(StoryService storyService, UserService userService, CommentService commentService,
-                              UserRepository userRepository, ActivityRepository activityRepository) {
-        this.storyService = storyService;
+    public ActivityController(UserService userService, UserRepository userRepository,
+                              ActivityRepository activityRepository) {
         this.userService = userService;
-        this.commentService = commentService;
         this.userRepository = userRepository;
         this.activityRepository = activityRepository;
     }
@@ -55,40 +50,6 @@ public class ActivityController {
         }
 
         return ResponseEntity.notFound().build();
-    }
-
-    public List<Story> getStoriesPostedBy(HttpServletRequest request){
-        Long id = userService.isUserLoggedIn(request);
-        return  storyService.getFollowingStories(id);
-    }
-
-    public List<Story> getStoriesCommentedBy(HttpServletRequest request) {
-
-        Long id = userService.isUserLoggedIn(request);
-        Optional<User> optionalUser = userRepository.findById(id);
-
-        if (optionalUser.isPresent()) {
-
-            User user = optionalUser.get();
-            List<Long> followingIds = user.getFollowing().stream().map(User::getId).collect(Collectors.toList());
-            List<Comment> comments = new ArrayList<>();
-            for (Long followingId : followingIds) {
-                List<Comment> commentsByUserId = commentService.getAllCommentsByUserId(followingId);
-                comments.addAll(commentsByUserId);
-            }
-
-            List<Story> stories = new ArrayList<>();
-            for (Comment comment : comments) {
-                stories.add(comment.getStory());
-            }
-
-            return stories;
-        }
-        return null;
-    }
-
-    public List<Story> getStoriesLikedBy(HttpServletRequest request) {
-        return null;
     }
 }
 
