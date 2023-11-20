@@ -7,10 +7,10 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Story from "./StoryCard";
 interface User {
-    id: number;
-    name: string;
-    photo?: ArrayBuffer | null;
-  }
+  id: number;
+  name: string;
+  photo?: ArrayBuffer | null;
+}
 const NavBar: React.FC = () => {
 
   const [user, setUser] = useState<User | null>(null);
@@ -29,7 +29,7 @@ const NavBar: React.FC = () => {
     };
 
     fetchUser();
-  },[]);
+  }, []);
 
   const navigate = useNavigate();
   const logout = async () => {
@@ -41,37 +41,38 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <Navbar  expand="lg" variant="dark" style={{fontFamily: 'HandWriting' , fontSize:"xx-large",backgroundColor: '#1F6C5C'}}>
+    <Navbar expand="lg" variant="dark" style={{ fontFamily: 'HandWriting', fontSize: "xx-large", backgroundColor: '#1F6C5C' }}>
       <Container>
-        
-        
+
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav  className="me-auto">
-           
-            <Nav.Link href="/search">Search</Nav.Link>
+          <Nav className="me-auto">
+
             <Nav.Link href={`/user/${user?.name}`}>{user?.name}</Nav.Link>
-            
+            <Nav.Link href="/search">Search</Nav.Link>
+            <Nav.Link href={"/timeline"}>Timeline</Nav.Link>
+
           </Nav>
         </Navbar.Collapse>
         <Navbar.Brand href="/home" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-            <img
-              src="../src/assets/images/logo_kare.png"
-              width="270px"
-              height="auto"
-              className="d-inline-block align-top"
-              alt="React Bootstrap logo"
-            /></Navbar.Brand>
+          <img
+            src="../src/assets/images/logo_kare.png"
+            width="270px"
+            height="auto"
+            className="d-inline-block align-top"
+            alt="React Bootstrap logo"
+          /></Navbar.Brand>
       </Container>
       <Button variant='secondary'
         onClick={() => {
           navigate("/story", { replace: true });
         }}
-        style={{ minWidth:"fit-content",fontSize:"xx-large" , backgroundColor: '#1F6C5C', outline:"none"}}
+        style={{ minWidth: "fit-content", fontSize: "xx-large", backgroundColor: '#1F6C5C', outline: "none" }}
       >
         Create Story
       </Button>
-      <Button variant='secondary' onClick={logout} style={{ minWidth:"fit-content", fontSize:"xx-large", backgroundColor: '#1F6C5C' }}>Log Out</Button>
+      <Button variant='secondary' onClick={logout} style={{ minWidth: "fit-content", fontSize: "xx-large", backgroundColor: '#1F6C5C' }}>Log Out</Button>
     </Navbar>
   );
 };
