@@ -1,5 +1,5 @@
-python-dotenv==1.0.0
-langchain==0.0.137
-pinecone-client==2.2.1
-openai==1.2.2
-streamlit==1.28.1
+Flask==1.1.2
+pandas==1.2.3
+scikit-learn==0.24.1
+scipy==1.6.2
+
