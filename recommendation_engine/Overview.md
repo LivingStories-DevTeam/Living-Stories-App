@@ -13,6 +13,12 @@ We want to check how similar users are based on the labels of the stories they l
 - We're constructing a matrix (`user_label_matrix`) where rows represent users and columns represent story labels. Each entry denotes the count of stories liked by that user with that label.
   
 - We then use **cosine similarity** to determine how similar users are based on these labels.
+    - **cosine similarity:** Each user is represented as vectors based on the story labels of the stories they liked. Each dimension of the vector corresponds to a feature (labels in our case) of the user entity. Then, the cosine of the angle between these two vectors is calculated. 
+    The cosine value ranges from -1 to 1.
+       - 1 means the vectors are identical (the angle is 0°).
+        - 0 indicates orthogonality (no similarity, the angle is 90°).
+        - -1 implies exactly opposite directions (the angle is 180°).
+    In short, a higher cosine similarity means greater similarity between two users. 
 
 #### b. Story Location Similarity:
 The premise here is that if two users often post or like stories from similar geographical locations, they might have shared interests or experiences.
@@ -43,7 +49,7 @@ The premise here is that if two users often post or like stories from similar ge
 
 3. **Hybrid Model**: Combines different recommendation methodologies to overcome the limitations of individual methods and provide more accurate recommendations.
 
-### What This Means for Your Users:
+### What Does This Mean for Our Users:
 For a user, this recommendation system ensures that:
 
 - They get story recommendations based on the content they've shown an interest in (via labels).
@@ -70,6 +76,3 @@ By considering multiple factors in the recommendation process, this system aims 
 
 7. **Location Average**: Averaging out story locations to get a "mean location" is a simplification. Users might have multi-modal distributions of story locations (e.g., they post both from home and a vacation spot). The average might not capture this nuance.
 
-8. **Static Model**: The system, as described, doesn't adapt in real-time. If a user suddenly changes their preference or behavior, it might take time before the recommendations reflect this change.
-
-9. **Lack of Diverse Inputs**: The current model doesn't consider other potential inputs, like the time a user spends reading a story, the time of interaction, and the device used. These factors can sometimes provide more depth to a recommendation engine.
