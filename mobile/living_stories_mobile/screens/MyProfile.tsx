@@ -15,6 +15,9 @@ import { Feather } from "@expo/vector-icons";
 import Card from "../components/Card";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { TextInput } from "react-native-gesture-handler";
+import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 
 interface Story {
   id: number;
@@ -51,26 +54,76 @@ interface User {
   followers?: User[];
   following?: User[];
 }
+interface EditUserData {
+  biography?: string;
+  photo?: string;
+}
 
 const MyProfile = ({ navigation }: any) => {
   const [user, setUser] = useState<User | null>(null);
   const { onLogout } = useAuth();
+  const [editing, setEditing] = useState(false);
+  const [bio, setBio] = useState<string | undefined>(undefined);
+  const [photo, setPhoto] = useState<string | undefined>(undefined);
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      // Manipulate the image to get its base64 representation
+      const manipulatedImage = await ImageManipulator.manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: 300 } }],
+        { format: ImageManipulator.SaveFormat.JPEG, base64: true }
+      );
+
+      // Set the base64 string in the state
+      setPhoto("data:image/png;base64," + manipulatedImage.base64!);
+    }
+  };
+
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get<User>(`${API_URL}/users/profile`);
+      setUser(response.data);
+      console.log("User: " + JSON.stringify(response.data, null, 2));
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useFocusEffect(
     useCallback(() => {
-      const fetchUser = async () => {
-        try {
-          const response = await axios.get<User>(`${API_URL}/users/profile`);
-          setUser(response.data);
-          console.log("User: " + JSON.stringify(response.data, null, 2));
-        } catch (error) {
-          console.error(error);
-        }
-      };
-  
       fetchUser();
     }, [])
   );
+
+  const handleSubmit = async () => {
+    const editUserData: EditUserData = {
+      photo,
+      biography: bio,
+    };
+    console.log(editUserData);
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/users/update`,
+        editUserData,
+        { withCredentials: true }
+      );
+      console.log(response.data);
+      setEditing(false);
+      fetchUser();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleCardPress = (storyId: number) => {
     navigation.navigate("Story", { storyId });
@@ -101,6 +154,15 @@ const MyProfile = ({ navigation }: any) => {
       borderRadius: 75,
       margin: 35,
     },
+    avatarInput: {
+      width: 150,
+      height: 150,
+      borderRadius: 75,
+      margin: 35,
+      backgroundColor: "rgba(0, 0, 0, 0.7)",
+      alignItems: "center",
+      justifyContent: "center",
+    },
     title: {
       fontSize: 35,
       fontWeight: "bold",
@@ -111,6 +173,16 @@ const MyProfile = ({ navigation }: any) => {
       fontSize: 17,
       textAlign: "center",
       marginTop: 10,
+    },
+    bioInput: {
+      fontSize: 17,
+      textAlign: "center",
+      marginTop: 10,
+      borderRadius: 4,
+      borderWidth: 1,
+      padding: 4,
+      marginHorizontal: 6,
+      borderColor: "black",
     },
     background: {
       flex: 1,
@@ -136,7 +208,7 @@ const MyProfile = ({ navigation }: any) => {
   });
   return (
     <>
-      {user?(
+      {user ? (
         <>
           <ImageBackground
             source={require("../assets/fall.gif")}
@@ -144,35 +216,186 @@ const MyProfile = ({ navigation }: any) => {
           >
             <ScrollView>
               <SafeAreaView style={styles.container}>
-                <View style={styles.back}>
-                  <View style={styles.header}>
-                    <TouchableOpacity style={{ marginRight: 20 }}>
-                      <Feather name="edit" size={30} color="white" />
-                    </TouchableOpacity>
+                {editing ? (
+                  <>
+                    <View style={styles.back}>
+                      <View style={styles.header}>
+                        <TouchableOpacity
+                          onPress={handleSubmit}
+                          style={{ marginRight: 20 }}
+                        >
+                          <Feather
+                            name="save"
+                            size={35}
+                            color="white"
+                            style={{
+                              shadowColor: "black",
+                              shadowOffset: { width: 0, height: 2 },
+                              shadowOpacity: 0.8,
+                              shadowRadius: 4,
+                              elevation: 5,
+                            }}
+                          />
+                        </TouchableOpacity>
+                        {photo != undefined ? (
+                          <>
+                            <TouchableOpacity onPress={pickImage}>
+                              <Image
+                                source={
+                                  user?.photo
+                                    ? { uri: photo }
+                                    : {
+                                        uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                                      }
+                                }
+                                style={styles.avatar}
+                              />
+                              <Feather
+                                style={{
+                                  position: "absolute",
+                                  top: "50%",
+                                  left: "50%",
+                                  transform: [
+                                    { translateX: -25 },
+                                    { translateY: -25 },
+                                  ],
+                                  shadowColor: "black",
+                                  shadowOffset: { width: 0, height: 2 },
+                                  shadowOpacity: 0.8,
+                                  shadowRadius: 4,
+                                  elevation: 5,
+                                }}
+                                name="upload"
+                                size={50}
+                                color="white"
+                              />
+                            </TouchableOpacity>
+                          </>
+                        ) : (
+                          <>
+                            <TouchableOpacity onPress={pickImage}>
+                              <Image
+                                source={
+                                  user?.photo
+                                    ? { uri: user.photo }
+                                    : {
+                                        uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                                      }
+                                }
+                                style={styles.avatar}
+                              />
+                              <Feather
+                                style={{
+                                  position: "absolute",
+                                  top: "50%",
+                                  left: "50%",
+                                  transform: [
+                                    { translateX: -25 },
+                                    { translateY: -25 },
+                                  ],
+                                  shadowColor: "black",
+                                  shadowOffset: { width: 0, height: 2 },
+                                  shadowOpacity: 0.8,
+                                  shadowRadius: 4,
+                                  elevation: 5,
+                                }}
+                                name="upload"
+                                size={50}
+                                color="white"
+                              />
+                            </TouchableOpacity>
+                          </>
+                        )}
 
-                    <Image
-                      source={
-                        user?.photo
-                          ? { uri: user.photo }
-                          : {
-                              uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
-                            }
-                      }
-                      style={styles.avatar}
-                    />
-
-                    <TouchableOpacity
-                      onPress={() => onLogout!()}
-                      style={{ marginLeft: 20 }}
-                    >
-                      <Feather name="log-out" size={30} color="white" />
-                    </TouchableOpacity>
-                  </View>
-                </View>
+                        <TouchableOpacity
+                          onPress={() => setEditing(false)}
+                          style={{ marginLeft: 20 }}
+                        >
+                          <Feather
+                            name="x"
+                            size={35}
+                            color="white"
+                            style={{
+                              shadowColor: "black",
+                              shadowOffset: { width: 0, height: 2 },
+                              shadowOpacity: 0.8,
+                              shadowRadius: 4,
+                              elevation: 5,
+                            }}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <View style={styles.back}>
+                      <View style={styles.header}>
+                        <TouchableOpacity
+                          onPress={() => setEditing(true)}
+                          style={{ marginRight: 20 }}
+                        >
+                          <Feather
+                            name="edit"
+                            size={35}
+                            color="white"
+                            style={{
+                              shadowColor: "black",
+                              shadowOffset: { width: 0, height: 2 },
+                              shadowOpacity: 0.8,
+                              shadowRadius: 4,
+                              elevation: 5,
+                            }}
+                          />
+                        </TouchableOpacity>
+                        <Image
+                          source={
+                            user?.photo
+                              ? { uri: user.photo }
+                              : {
+                                  uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                                }
+                          }
+                          style={styles.avatar}
+                        />
+                        <TouchableOpacity
+                          onPress={() => onLogout!()}
+                          style={{ marginLeft: 20 }}
+                        >
+                          <Feather
+                            name="log-out"
+                            size={35}
+                            color="white"
+                            style={{
+                              shadowColor: "black",
+                              shadowOffset: { width: 0, height: 2 },
+                              shadowOpacity: 0.8,
+                              shadowRadius: 4,
+                              elevation: 5,
+                            }}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </>
+                )}
 
                 <View style={styles.content}>
                   <Text style={styles.title}>{user?.name}</Text>
-                  <Text style={styles.bio}>{user?.biography}</Text>
+                  {editing ? (
+                    <>
+                      <TextInput
+                        style={styles.bioInput}
+                        placeholder="Bio"
+                        onChangeText={(text) => setBio(text)}
+                        defaultValue={user.biography ?? ""}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.bio}>{user?.biography}</Text>
+                    </>
+                  )}
 
                   <View
                     style={{
