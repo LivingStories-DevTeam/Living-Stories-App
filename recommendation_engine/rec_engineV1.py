@@ -8,6 +8,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# Global data variable
+data = None
+
 #Load the data IF we choose to send the backend database periodically to rec-engines local database
 #data = pd.read_csv('dataset.csv')
 
@@ -19,17 +22,22 @@ def validate_data(data):
 
 @app.route('/receive_data', methods=['POST'])
 def receive_data():
+    global data
     json_data = request.get_json()
     try:
-        data = pd.DataFrame(json_data)
-        is_valid, message = validate_data(data)
+        received_data = pd.DataFrame(json_data)
+        print("Received data:", received_data) 
+
+        is_valid, message = validate_data(received_data)
         if not is_valid:
+            print("Data validation failed:", message)  
             return jsonify({"error": message}), 400
-        global dataset
-        dataset = data
+        data = received_data
         return jsonify({"message": "Data received successfully"}), 200
     except ValueError as e:
+        print("Error:", e) 
         return jsonify({"error": str(e)}), 400
+
 
 @functools.lru_cache(maxsize=100)
 def compute_label_similarity(data):
@@ -80,6 +88,8 @@ def hybrid_recommendations(user_id, data, top_n=5):
 def get_recommendations(user_id):
     user_id = int(user_id)
     global data
+    if data is None:
+        return []  # Return an empty list or handle the error if 'data' is not set
     # Call the hybrid_recommendations function with the global 'data'
     return hybrid_recommendations(user_id, data, top_n=5)
 
@@ -94,6 +104,7 @@ def recommend():
     return jsonify(recommendations)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5002)
+
 
 
