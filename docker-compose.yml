@@ -3,9 +3,22 @@ services:
 
   frontend:
     build: 
-        context: ./front_end
+      context: ./front_end
     container_name: living_stories_frontend
     ports:
-      - "3000:3000"
+      - "3001:3000"
     env_file:
       - ./front_end/.env
+
+  flask-app:
+    build: 
+      context: ./recommendation_engine
+    container_name: flask_app
+    ports:
+      - "5001:5000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
