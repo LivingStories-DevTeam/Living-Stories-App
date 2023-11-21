@@ -1,23 +1,56 @@
 version: '3.7'
 services:
+  backend:
+    build:
+      context: ./living_stories
+    container_name: living_stories_backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./front_end/.env
+    volumes:
+      - backend-data:/path/to/backend/data
+    depends_on:
+      - db
+    networks:
+      - app-network
 
   frontend:
     build: 
-      context: ./front_end
+        context: ./front_end
     container_name: living_stories_frontend
     ports:
-      - "3001:3000"
+      - "3000:3000"
     env_file:
       - ./front_end/.env
+    depends_on:
+      - backend
 
+  db:
+    image: postgres
+    restart: always
+    container_name: db
+    ports:
+      - "5433:5432"
+    env_file:
+      - ./front_end/.env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+  
   flask-app:
     build: 
       context: ./recommendation_engine
     container_name: flask_app
     ports:
-      - "5001:5000"
+      - "5002:5002"
+    depends_on:
+      - backend
     networks:
       - app-network
+    
+volumes:
+  backend-data:
+  db-data:
 
 networks:
   app-network:
