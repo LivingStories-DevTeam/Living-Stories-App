@@ -3,8 +3,10 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.spatial import distance
 import functools
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 #Load the data IF we choose to send the backend database periodically to rec-engines local database
 #data = pd.read_csv('dataset.csv')
@@ -76,8 +78,8 @@ def hybrid_recommendations(user_id, data, top_n=5):
     return recommended_stories
 
 def get_recommendations(user_id):
-    # Assuming user_id is an integer. Convert if necessary.
     user_id = int(user_id)
+    global data
     # Call the hybrid_recommendations function with the global 'data'
     return hybrid_recommendations(user_id, data, top_n=5)
 
@@ -93,3 +95,5 @@ def recommend():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
+
