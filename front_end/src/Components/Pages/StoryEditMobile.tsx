@@ -123,7 +123,6 @@ const StoryEditMobile: React.FC = () => {
     }
 
     postData();
-    navigate("/home");
   };
 
   const handleHeaderChange = (event: ChangeEvent<HTMLInputElement>) => {
