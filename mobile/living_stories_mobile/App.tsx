@@ -9,6 +9,7 @@ import Login from "./screens/Login";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Register from "./screens/Register";
 import Profile from "./screens/Profile";
+import EditStory from "./screens/EditStory";
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,7 @@ export const Layout = () => {
                 }}
               />
               <Stack.Screen name="Story" component={StoryPage} />
+              <Stack.Screen name="EditStory" component={EditStory} />
               <Stack.Screen name="Profile" component={Profile} 
                options={{
                 headerShown: false,

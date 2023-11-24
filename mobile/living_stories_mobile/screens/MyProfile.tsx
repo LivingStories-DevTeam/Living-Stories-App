@@ -13,6 +13,7 @@ import {
 import { API_URL, useAuth } from "../contexts/AuthContext";
 import { Feather } from "@expo/vector-icons";
 import Card from "../components/Card";
+import ProfileCard from "../components/ProfileCard";
 import LottieView from "lottie-react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TextInput } from "react-native-gesture-handler";
@@ -124,11 +125,9 @@ const MyProfile = ({ navigation }: any) => {
       console.error(error);
     }
   };
-
   const handleCardPress = (storyId: number) => {
     navigation.navigate("Story", { storyId });
   };
-
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -420,7 +419,7 @@ const MyProfile = ({ navigation }: any) => {
                           <TouchableOpacity
                             onPress={() => handleCardPress(item.id)}
                           >
-                            <Card
+                            <ProfileCard
                               key={index}
                               title={item.header}
                               date={
@@ -444,6 +443,8 @@ const MyProfile = ({ navigation }: any) => {
                               name={user.name}
                               likes={item.likes.length}
                               comments={item.comments.length}
+                              id={item.id}
+                              navigation={navigation}
                             />
                           </TouchableOpacity>
                         </>
