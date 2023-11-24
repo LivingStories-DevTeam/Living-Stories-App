@@ -13,6 +13,7 @@ import ProfilePage from "./Components/Pages/ProfilePage";
 import StoryEdit from "./Components/Pages/StoryEdit";
 import Search from "./Components/Pages/Search";
 import Timeline from "./Components/Pages/Timeline";
+import StoryEditMobile from "./Components/Pages/StoryEditMobile";
 
 const api_key = import.meta.env.VITE_GOOGLE_API_KEY;
 
@@ -27,6 +28,7 @@ const App = () => {
           <Route path="/story" element={<StoryCreate />} />
           <Route path="/stories/:id" element={<StoryPage />} />
           <Route path="/stories/edit/:id" element={<StoryEdit />} />
+          <Route path="/stories/editMobile/:id" element={<StoryEditMobile />} />
           <Route path="/user/:name" element={<ProfilePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterUser />} />
