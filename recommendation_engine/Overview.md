@@ -1,9 +1,13 @@
-### Overview:
-The recommendation engine we're constructing is a **hybrid model**, which means it merges various recommendation techniques to offer suggestions. Here, we're combining:
+## Overview:
+We have built two recommendation engine models. After testing and discussion, the chosen one will be implemented into the final product!
+
+The recommendation engines we've constructed are a **hybrid model**, which means it merges various recommendation techniques to offer suggestions. Here, we're combining:
 
 1. **Content-Based Recommendation**: Based on the content of the stories (story labels and location).
 2. **Collaborative Filtering**: Based on user behavior, i.e., stories liked by similar users.
 3. **Social Recommendation**: Recommendations based on users followed.
+
+### rec_engineV1:
 
 ### 1. Data Preprocessing:
 
@@ -64,15 +68,69 @@ By considering multiple factors in the recommendation process, this system aims 
 
 1. **Cold Start Problem**: For new users or items, the system might struggle since there's limited data to compute recommendations. This is a typical issue for recommendation engines.
 
-2. **Over-specialization**: The recommendations could become too narrow, only focusing on what the user has already liked or shown interest in. This might hinder the discovery of diverse or new content.
+2. **Weights Arbitrary**: The weights used (e.g., `0.4`, `0.4`, `0.2`) to combine different recommendation techniques are set arbitrarily. They might not represent the best combination and may need fine-tuning based on actual user interactions.
 
-3. **Weights Arbitrary**: The weights used (e.g., `0.4`, `0.4`, `0.2`) to combine different recommendation techniques are set arbitrarily. They might not represent the best combination and may need fine-tuning based on actual user interactions.
+3. **Scalability**: As the data grows, computing cosine similarities for every user and every label, as well as location distances, can become computationally intensive.
 
-4. **Scalability**: As the data grows, computing cosine similarities for every user and every label, as well as location distances, can become computationally intensive.
+4. **Reliance on Explicit Data**: This model heavily relies on explicit data like story labels, likes, and follows. If a user is passive and doesn't interact much, the recommendations might not be as accurate.
 
-5. **Reliance on Explicit Data**: This model heavily relies on explicit data like story labels, likes, and follows. If a user is passive and doesn't interact much, the recommendations might not be as accurate.
+5. **Sensitivity to Noise**: Incorrect labels or outliers in location data can affect the recommendations. For instance, a single story with a wrongly tagged location might skew the average location used in the location similarity computation.
 
-6. **Sensitivity to Noise**: Incorrect labels or outliers in location data can affect the recommendations. For instance, a single story with a wrongly tagged location might skew the average location used in the location similarity computation.
+6. **Location Average**: Averaging out story locations to get a "mean location" is a simplification. Users might have multi-modal distributions of story locations (e.g., they post both from home and a vacation spot). The average might not capture this nuance.
 
-7. **Location Average**: Averaging out story locations to get a "mean location" is a simplification. Users might have multi-modal distributions of story locations (e.g., they post both from home and a vacation spot). The average might not capture this nuance.
+## rec_engineV2:
+
+### 1. Data Preprocessing:
+
+#### a. Label-Based Similarity:
+This measures how similar a story is to the user’s interests, based on the labels of stories they have liked.
+
+- We calculate the proportion of overlapping labels between the user's liked stories and each story in the dataset.
+- A higher overlap indicates a higher similarity in content preferences.
+
+#### b. Location Proximity:
+This focuses on the geographical aspect, assuming users might prefer stories from locations similar to those they've shown interest in.
+
+- We calculate the average location (latitude and longitude) of the stories liked by the user.
+- The Euclidean distance between this average location and the location of each story in the dataset is computed. A smaller distance indicates closer proximity.
+
+### 2. Hybrid Recommendation Mechanism:
+
+#### a. Compute Individual Scores:
+- **Label Similarity**: For each story, we calculate how many labels match with the user's liked stories.
+- **Location Proximity**: For each story, we find its distance to the average location of the user's liked stories.
+- **Social Connections**: We check if the story is liked by users that the target user follows.
+
+#### b. Aggregate Scores:
+- We combine these individual scores into a single score for each story. This combined score is a simple sum of the individual scores.
+
+#### c. Recommend:
+- Stories are ranked by their combined score, and the top `n` stories are recommended to the user.
+
+### Key Concepts Used:
+
+1. **Label-Based Similarity**: A measure of content preference based on the overlap of labels/tags between the user's liked stories and each story in the dataset.
+
+2. **Euclidean Distance for Location Proximity**: Used to calculate the geographical closeness of stories to the user’s preferred locations, with closer stories receiving higher scores.
+
+3. **Social Influence in Recommendations**: Stories liked by followed users are given preference, incorporating a social dimension into the recommendations.
+
+### What Does This Mean for Our Users:
+Users will receive story recommendations that:
+
+- Align with their content preferences as indicated by the labels of stories they have liked.
+  
+- Are geographically relevant or similar to locations they have shown interest in.
+
+- Include stories popular among users they follow, adding a social layer to the recommendations.
+
+### Potential Drawbacks:
+
+1. **Data Dependency**: The accuracy of recommendations heavily relies on the user's past interactions (likes, follows).
+
+2. **New User Challenge**: New users with few interactions might receive less accurate recommendations (cold start problem).
+
+3. **Overfitting to User's Past Preferences**: The model might over-emphasize the user's existing preferences, potentially limiting exposure to a broader range of content.
+
+4. **Simplicity of Location Calculation**: Averaging locations might oversimplify and not capture the diversity of a user's geographical interests.
 
