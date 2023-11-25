@@ -40,6 +40,18 @@ db_config = {
     'password': 'senan'
 }
 
+def fetch_most_liked_stories(top_m):
+    query = """
+    SELECT stories.*, COUNT(likes.story_id) as like_count
+    FROM stories
+    JOIN likes ON stories.id = likes.story_id
+    GROUP BY stories.id
+    ORDER BY like_count DESC
+    LIMIT %s;
+    """
+    return fetch_data(query, (top_m,))
+
+
 def connect_to_database():
     return psycopg2.connect(**db_config)
 
@@ -110,6 +122,26 @@ def get_recommendations():
     
     recommendations = recommend_stories(user_id)
     return jsonify(recommendations.to_dict(orient='records'))
+
+@app.route('/recommendations', methods=['GET'])
+def get_recommendations():
+    user_id = request.args.get('user_id', type=int)
+    if not user_id:
+        return jsonify({"error": "User ID is required"}), 400
+
+    cold_start_threshold = 5  
+    top_m_stories = 5  # Top stories to recommend for new users
+    
+    # Check the number of interactions for the user
+    user_interactions = len(likes_df[likes_df['user_id'] == user_id]) + len(users_df.loc[user_id - 1, 'followed_users'])
+
+    if user_interactions < cold_start_threshold:
+        most_liked_stories = fetch_most_liked_stories(top_m_stories)
+        return jsonify(most_liked_stories.to_dict(orient='records'))
+    else:
+        recommendations = recommend_stories(user_id, top_n=5)
+        return jsonify(recommendations.to_dict(orient='records'))
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5002)
