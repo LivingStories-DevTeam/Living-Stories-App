@@ -2,9 +2,12 @@ from flask import Flask, request, jsonify
 import pandas as pd
 from scipy.spatial.distance import cdist
 import numpy as np
+import psycopg2
 
 app = Flask(__name__)
 
+#Dummy Data
+'''
 users_df = pd.DataFrame({
     'id': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     'name': ['Salih', 'Senan', 'Omar', 'Cansel', 'Burak', 'Erhan', 'Suzan', 'Asya', 'Ali Hakan', 'Ayse'],
@@ -27,14 +30,41 @@ locations_df = pd.DataFrame({
     'lat': [34.05, 48.85, 51.51, 40.71, 35.68, 34.05, 48.85, 51.51, 40.71, 35.68, 34.05, 48.85, 51.51, 40.71, 35.68, 34.05, 48.85, 51.51, 40.71, 35.68],
     'lng': [-118.25, 2.35, -0.13, -74.01, 139.69, -118.25, 2.35, -0.13, -74.01, 139.69, -118.25, 2.35, -0.13, -74.01, 139.69, -118.25, 2.35, -0.13, -74.01, 139.69]
 })
+'''
 
-'''
-Will update with database fetch functions once approved!
-users_df = pd.DataFrame(...) 
-stories_df = pd.DataFrame(...)  
-likes_df = pd.DataFrame(...)  
-locations_df = pd.DataFrame(...)  
-'''
+# Database Functions
+db_config = {
+    'host': 'jdbc:postgresql://db:5432/living_stories',
+    'dbname': 'living_stories',
+    'user': 'postgres',
+    'password': 'senan'
+}
+
+def connect_to_database():
+    return psycopg2.connect(**db_config)
+
+def fetch_data(query):
+    with connect_to_database() as conn:
+        return pd.read_sql_query(query, conn)
+
+# Fetch functions for each table
+def fetch_users():
+    return fetch_data("SELECT * FROM users")
+
+def fetch_stories():
+    return fetch_data("SELECT * FROM stories")
+
+def fetch_likes():
+    return fetch_data("SELECT * FROM likes")
+
+def fetch_locations():
+    return fetch_data("SELECT * FROM locations")
+
+users_df = fetch_users()
+stories_df = fetch_stories()
+likes_df = fetch_likes()
+locations_df = fetch_locations()
+
 
 def calculate_label_similarity(user_id, stories_df):
     user_liked_stories = likes_df[likes_df['user_id'] == user_id]['story_id']
