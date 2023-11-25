@@ -17,9 +17,7 @@ import java.util.Objects;
 @RequestMapping("/recommend")
 public class RecommendationController {
 
-    final private String PYTHON_FLASK_URL = "http://localhost:5000";
-
-    //final private String PYTHON_FLASK_URL = "http://flask-app:5000";
+    final private String PYTHON_FLASK_URL = "http://flask-app:5000";
 
 
     final private UserService userService;
