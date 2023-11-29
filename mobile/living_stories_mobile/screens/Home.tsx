@@ -35,7 +35,11 @@ const Home = ({ navigation }: any) => {
           headerLeft: () => (
             <Button
               title="Activities"
+              onPress={() =>{
+                navigation.navigate("Activity")
+              }}
             />
+            
           ),
         }}
       />
