@@ -27,6 +27,9 @@ const Home = ({ navigation }: any) => {
           headerRight: () => (
             <Button
               title="Search"
+              onPress={() =>{
+                navigation.navigate("Search")
+              }}
             />
           ),
           headerLeft: () => (

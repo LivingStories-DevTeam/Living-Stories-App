@@ -10,7 +10,8 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Register from "./screens/Register";
 import Profile from "./screens/Profile";
 import EditStory from "./screens/EditStory";
-
+import SearchMap from "./screens/SearchMap";
+import Search from "./screens/Search";
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -50,6 +51,8 @@ export const Layout = () => {
                options={{
                 headerShown: false,
               }}/>
+              <Stack.Screen name="SearchMap" component={SearchMap} options={{headerTitle:"Map"}}/>
+              <Stack.Screen name="Search" component={Search} options={{headerShown:false}}/>
             </>
           ) : (
             <>
