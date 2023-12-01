@@ -26,7 +26,6 @@ public class RecommendUserService {
     }
 
     public void saveAction(Long userId, Long storyId, String actionType) {
-        System.out.println(storyId);
         Optional<RecommendUser> optional = recommendUserRepository.findByUserId(userId);
         if (optional.isPresent()) {
             RecommendUser userAction = optional.get();
