@@ -75,6 +75,10 @@ public class Story {
 
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+    
+    
+    private Date timestamp;
+
 
     @JsonIgnore
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

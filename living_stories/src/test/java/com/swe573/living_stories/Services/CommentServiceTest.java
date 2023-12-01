@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,8 +110,35 @@ class CommentServiceTest {
         verify(commentRepository, never()).save(any(Comment.class));
     }
 
+    @Test
+    public void testGetAllCommentsByUserId() {
+        // Given
+        Long userId = 1L;
 
+        Comment comment1 = new Comment();
+        comment1.setId(1L);
+        comment1.setText("First comment");
+        comment1.setUser(new User());
+        comment1.setStory(new Story());
+        comment1.getLikes().add(1L);
+        Comment comment2 = new Comment();
+        comment2.setId(2L);
+        comment2.setText("Second comment");
+        comment2.setUser(new User());
+        comment2.setStory(new Story());
+        comment2.getLikes().add(2L);
+        List<Comment> comments = new ArrayList<>();
+        comments.add(comment1);
+        comments.add(comment2);
 
+        when(commentRepository.findByUserId(userId)).thenReturn(comments);
 
+        // When
+        List<Comment> result = commentService.getAllCommentsByUserId(userId);
 
+        // Then
+        assertEquals(2, result.size());
+        assertEquals(comment1, result.get(0));
+        assertEquals(comment2, result.get(1));
+    }
 }
