@@ -5,7 +5,6 @@ import com.swe573.living_stories.Repositories.RecommendUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -15,6 +14,16 @@ public class RecommendUserService {
 
     @Autowired
     private RecommendUserRepository recommendUserRepository;
+
+    public RecommendUser getUserById(Long userId) {
+        Optional<RecommendUser> optional = recommendUserRepository.findByUserId(userId);
+        if (optional.isPresent()) {
+            return optional.get();
+        }
+        else {
+            return null;
+        }
+    }
 
     public void saveAction(Long userId, Long storyId, String actionType) {
         System.out.println(storyId);
