@@ -2,6 +2,7 @@ package com.swe573.living_stories.Controllers;
 
 import com.swe573.living_stories.Models.Comment;
 import com.swe573.living_stories.Models.Media;
+import com.swe573.living_stories.Models.RecommendUser;
 import com.swe573.living_stories.DTO.MediaDTO;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Models.User;
@@ -244,6 +245,11 @@ public class StoryController {
     public String delete(@PathVariable Long id) {
         storyService.deleteStoryById(id);
         return "done";
+    }
+
+    @GetMapping("/userActionDetails/{userId}")
+    public RecommendUser userActionDetails(@PathVariable Long userId) {
+        return recommendUserService.getUserById(userId);
     }
 
     @PostMapping("/like/{storyId}")
