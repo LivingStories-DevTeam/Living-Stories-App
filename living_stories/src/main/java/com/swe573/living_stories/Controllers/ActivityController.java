@@ -42,8 +42,14 @@ public class ActivityController {
             User user = optionalUser.get();
             List<Long> followingIds = user.getFollowing().stream().map(User::getId).collect(Collectors.toList());
             List<Activity> activities = new ArrayList<>();
+            Date lastDate = new Date();
             for (Long followingId : followingIds) {
                 List<Activity> activitiesByUserId = activityRepository.findByUserId(followingId);
+
+                activitiesByUserId.forEach(activity -> {
+                    activity.setNew(activity.getAction_timestamp().after(lastDate));
+                });
+
                 activities.addAll(activitiesByUserId);
             }
             return ResponseEntity.ok(activities);
