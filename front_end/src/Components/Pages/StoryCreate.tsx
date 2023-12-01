@@ -141,7 +141,7 @@ const Story: React.FC = () => {
     setEditorContent(content);
   };
 
-  const handleLocationSelect = () => {
+  const handleLocationSelect = async () => {
     if (!autocompleteRef.current) {
       return;
     }
@@ -161,21 +161,26 @@ const Story: React.FC = () => {
       latitude: Number(place.geometry.location.lat().toFixed(6)),
       longitude: Number(place.geometry.location.lng().toFixed(6))
     };
+    const backendLocationData = {
+      lat: Number(place.geometry.location.lat().toFixed(6)),
+      lng: Number(place.geometry.location.lng().toFixed(6)),
+      name: place.name,
+      city: await getLocationName(Number(place.geometry.location.lat().toFixed(6)), Number(place.geometry.location.lat().toFixed(6)), 1),
+      country: await getLocationName(Number(place.geometry.location.lat().toFixed(6)), Number(place.geometry.location.lat().toFixed(6)), 2),
+      type: "Point",
+      coordinates: [[Number(place.geometry.location.lng().toFixed(6)), Number(place.geometry.location.lat().toFixed(6))]],
+      radius: null
+    };
     setLocations(prevLocations => {
       const updatedLocations = [...prevLocations, newLocation];
       console.log("New locations array:", updatedLocations);
       return updatedLocations;
     });
+    setLocationsBackend(prevLocations => [...prevLocations, backendLocationData]);
     setMapCenter({
       lat: newLocation.latitude,
       lng: newLocation.longitude
     });
-    // if (inputRef.current) {
-    //   inputRef.current.value = "";
-    // }
-    // if (onAddLocation) {
-    //   onAddLocation(newLocation);
-    // }
   };
 
   const disabledDate = (currentDate: dayjs.Dayjs): boolean => {
