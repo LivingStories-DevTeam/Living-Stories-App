@@ -80,8 +80,8 @@ const SearchMap = ({ route, navigation }: any) => {
       <View style={styles.slider}>
       <Text style={styles.radiusText}>Radius: {radius}</Text>
         <Slider
-          minimumValue={100}
-          maximumValue={1000}
+          minimumValue={1000}
+          maximumValue={10000}
           minimumTrackTintColor="#1f6c5c"
           maximumTrackTintColor="#000000"
           onValueChange={(value) => {
@@ -98,7 +98,7 @@ const SearchMap = ({ route, navigation }: any) => {
             navigation.replace("Search", {
               lat: region.latitude,
               lng: region.longitude,
-              radius: radius,
+              radius: radius/1000,
             });
           }}
         >
