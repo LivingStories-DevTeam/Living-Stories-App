@@ -80,7 +80,7 @@ public class StoryService {
         if (optionalStory.isPresent()) {
             storyRepository.deleteById(storyId);
         }
-
+        
     }
 
     public List<Story> getFollowingStories(Long id) {
