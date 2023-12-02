@@ -25,7 +25,7 @@ const Feed = ({ navigation }: any) => {
 
   const fetchData = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const response = await axios.get(`${API_URL}/stories`);
       setResponseData(response.data);
       setIsLoading(false);
@@ -37,10 +37,10 @@ const Feed = ({ navigation }: any) => {
   };
   const fetchFollowerData = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const response = await axios.get(`${API_URL}/stories/following`);
       setFollowersResponseData(response.data);
-      
+
       console.log(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -48,7 +48,7 @@ const Feed = ({ navigation }: any) => {
       setIsLoading(false);
     }
   };
-  
+
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   const handleTabChange = (index: number) => {
@@ -56,14 +56,17 @@ const Feed = ({ navigation }: any) => {
   };
 
   useEffect(() => {
-    if(selectedIndex ===0){fetchData()};
-    if(selectedIndex===1) {fetchFollowerData()}
+    if (selectedIndex === 0) {
+      fetchData();
+    }
+    if (selectedIndex === 1) {
+      fetchFollowerData();
+    }
   }, [selectedIndex]);
 
   useFocusEffect(
     useCallback(() => {
-
-      fetchFollowerData()
+      fetchFollowerData();
       fetchData();
     }, [])
   );
@@ -72,10 +75,19 @@ const Feed = ({ navigation }: any) => {
     navigation.navigate("Story", { storyId });
   };
 
-
   return (
     <ScrollView>
       <SafeAreaView>
+        <View style={{ margin: 5 }}>
+          <SegmentedControlTab
+            values={["All", "Following", "Recommendation"]}
+            selectedIndex={selectedIndex}
+            onTabPress={handleTabChange}
+            tabStyle={{ borderColor: "#1f6c5c", backgroundColor: "white" }}
+            activeTabStyle={{ backgroundColor: "#1f6c5c" }}
+            tabTextStyle={{ color: "#1f6c5c" }}
+          />
+        </View>
         {isLoading ? (
           <>
             <View style={styles.animationContainer}>
@@ -85,26 +97,15 @@ const Feed = ({ navigation }: any) => {
                 autoPlay
                 loop
               />
-              <Text style={{ marginTop: 60,  fontSize:20}}>Loading Feed...</Text>
+              <Text style={{ marginTop: 60, fontSize: 20 }}>
+                Loading Feed...
+              </Text>
             </View>
           </>
-        ) : responseData ?(
+        ) : responseData ? (
           <>
-            <View style={{ margin: 5 }}>
-              <SegmentedControlTab
-                values={["All", "Following"]}
-                selectedIndex={selectedIndex}
-                onTabPress={handleTabChange}
-                tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white', borderRadius: 20 }}
-                activeTabStyle={{ backgroundColor: '#1f6c5c' }}
-                tabTextStyle={{ color: '#1f6c5c' }}
-
-              />
-            </View>
             {selectedIndex === 0 && (
               <>
-                
-                
                 {responseData &&
                   responseData.map((item: any, index: any) => (
                     <>
@@ -180,11 +181,9 @@ const Feed = ({ navigation }: any) => {
                     </>
                   ))}
               </>
-
-              
             )}
           </>
-        ): (
+        ) : (
           <Text>No data available.</Text>
         )}
       </SafeAreaView>
