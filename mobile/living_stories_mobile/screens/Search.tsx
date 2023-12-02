@@ -17,6 +17,7 @@ import { Picker } from "@react-native-picker/picker";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import { Feather } from "@expo/vector-icons";
 import dayjs from "dayjs";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface StoryInt {
   id: number;
@@ -55,14 +56,26 @@ interface StoryInt {
   endSeason?: string;
   decade?: string;
 }
+
+interface User {
+  id: number;
+  name: string;
+  photo?: string | null;
+  followers?: User[];
+  stories?: StoryInt[];
+  following?: User[];
+}
+
 interface Language {
   label: string;
   value: string;
 }
 const Search = ({ route, navigation }: any) => {
   const [stories, setStories] = useState<StoryInt[]>();
+  const [users, setUsers] = useState<User[]>();
   const [header, setHeader] = useState<string>();
   const [name, setName] = useState<string>();
+  const [username, setUsername] = useState<string>();
   const [city, setCity] = useState<string>();
   const [label, setLabel] = useState<string>();
   const [country, setCountry] = useState<string>();
@@ -117,11 +130,17 @@ const Search = ({ route, navigation }: any) => {
   const lat = route.params?.lat;
   const lng = route.params?.lng;
   const radius = route.params?.radius;
-  const apiUrl = `${API_URL}/stories/search`;
+  const apiSearchUrl = `${API_URL}/stories/search`;
+  const apiUserSearchUrl = `${API_URL}/users/findusers`;
   const handleCardPress = (storyId: number) => {
     navigation.navigate("Story", { storyId });
   };
 
+  const [selectedSearchIndex, setSelectedSearchIndex] = useState<number>(0);
+
+  const handleSearchTabChange = (index: number) => {
+    setSelectedSearchIndex(index);
+  };
   ///////////////////////// TABS END //////////////////////
   const handleYearChange = (value: number) => {
     const selectedDate = dayjs(`${value}-01-01`, yearFormat); // Assuming the date is January 1st of the selected year
@@ -150,7 +169,7 @@ const Search = ({ route, navigation }: any) => {
   };
   const sendData = async () => {
     try {
-      const response = await axios.post(apiUrl, {
+      const response = await axios.post(apiSearchUrl, {
         ...(name && { name: name }),
         ...(textStory && { text: textStory }),
         ...(header && { header: header }),
@@ -175,6 +194,22 @@ const Search = ({ route, navigation }: any) => {
       // Handle errors
     }
   };
+  /////////////////////// USER SEARCH
+  const GetUsers = async () => {
+    try {
+      const response = await axios.post(apiUserSearchUrl, {name:username});
+
+      console.log(
+        "Response:", response
+      );
+      setUsers(response.data);
+      // Handle the response as needed
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle errors
+    }
+  };
+  ///////////////////////////////////
   //////////////// Month Selector ///////////
 
   const handleMonthChange = (itemValue: number) => {
@@ -344,6 +379,17 @@ const Search = ({ route, navigation }: any) => {
   };
   return (
     <SafeAreaView style={styles.container}>
+      <View style={{ backgroundColor: "white", padding: 4, borderRadius: 10 }}>
+        <SegmentedControlTab
+          values={["Story", "User"]}
+          selectedIndex={selectedSearchIndex}
+          onTabPress={handleSearchTabChange}
+          tabStyle={{ borderColor: "#1f6c5c", backgroundColor: "white" }}
+          activeTabStyle={{ backgroundColor: "#1f6c5c" }}
+          tabTextStyle={{ color: "#1f6c5c" }}
+        />
+      </View>
+      {selectedSearchIndex === 0 && <>
       <ScrollView>
         <View
           style={{
@@ -396,9 +442,9 @@ const Search = ({ route, navigation }: any) => {
               values={["Decade", "Date"]}
               selectedIndex={selectedIndex}
               onTabPress={handleTabChange}
-              tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
-              activeTabStyle={{ backgroundColor: '#1f6c5c' }}
-              tabTextStyle={{ color: '#1f6c5c' }}
+              tabStyle={{ borderColor: "#1f6c5c", backgroundColor: "white" }}
+              activeTabStyle={{ backgroundColor: "#1f6c5c" }}
+              tabTextStyle={{ color: "#1f6c5c" }}
             />
           </View>
           {selectedIndex === 0 && (
@@ -435,9 +481,12 @@ const Search = ({ route, navigation }: any) => {
                 <SegmentedControlTab
                   values={["Exact Date", "Interval Date"]}
                   selectedIndex={selectedSecondIndex}
-                  tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
-                  activeTabStyle={{ backgroundColor: '#1f6c5c' }}
-                  tabTextStyle={{ color: '#1f6c5c' }}
+                  tabStyle={{
+                    borderColor: "#1f6c5c",
+                    backgroundColor: "white",
+                  }}
+                  activeTabStyle={{ backgroundColor: "#1f6c5c" }}
+                  tabTextStyle={{ color: "#1f6c5c" }}
                   onTabPress={handleSecondTabChange}
                 />
               </View>
@@ -475,9 +524,12 @@ const Search = ({ route, navigation }: any) => {
                       values={["Date", "Month", "Year"]}
                       selectedIndex={selectedThirdIndex}
                       onTabPress={handleThirdTabChange}
-                      tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
-                      activeTabStyle={{ backgroundColor: '#1f6c5c' }}
-                      tabTextStyle={{ color: '#1f6c5c' }}
+                      tabStyle={{
+                        borderColor: "#1f6c5c",
+                        backgroundColor: "white",
+                      }}
+                      activeTabStyle={{ backgroundColor: "#1f6c5c" }}
+                      tabTextStyle={{ color: "#1f6c5c" }}
                     />
                   </View>
                   {selectedThirdIndex === 0 && (
@@ -585,9 +637,12 @@ const Search = ({ route, navigation }: any) => {
                       values={["Start Date", "Start Month", "Start Year"]}
                       selectedIndex={selectedThirdIndex}
                       onTabPress={handleThirdTabChange}
-                      tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
-                      activeTabStyle={{ backgroundColor: '#1f6c5c' }}
-                      tabTextStyle={{ color: '#1f6c5c' }}
+                      tabStyle={{
+                        borderColor: "#1f6c5c",
+                        backgroundColor: "white",
+                      }}
+                      activeTabStyle={{ backgroundColor: "#1f6c5c" }}
+                      tabTextStyle={{ color: "#1f6c5c" }}
                     />
                   </View>
                   {selectedThirdIndex === 0 && (
@@ -688,9 +743,12 @@ const Search = ({ route, navigation }: any) => {
                       values={["End Date", "End Month", "End Year"]}
                       selectedIndex={selectedThirdIndex}
                       onTabPress={handleThirdTabChange}
-                      tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
-                      activeTabStyle={{ backgroundColor: '#1f6c5c' }}
-                      tabTextStyle={{ color: '#1f6c5c' }}
+                      tabStyle={{
+                        borderColor: "#1f6c5c",
+                        backgroundColor: "white",
+                      }}
+                      activeTabStyle={{ backgroundColor: "#1f6c5c" }}
+                      tabTextStyle={{ color: "#1f6c5c" }}
                     />
                   </View>
                   {selectedThirdIndex === 0 && (
@@ -824,9 +882,6 @@ const Search = ({ route, navigation }: any) => {
           <Text>
             {lat && lng ? (
               <>
-                <Text style={{ color: "white" }}>
-                  {lat} {lng}
-                </Text>
                 <TouchableOpacity
                   onPress={() => {
                     navigation.setParams({ lat: 0, lng: 0 });
@@ -854,27 +909,31 @@ const Search = ({ route, navigation }: any) => {
             )}
           </Text>
         </View>
-<View style={{  alignItems: "center",
-              justifyContent: "center",}}>
-        <View
-          style={{
-            backgroundColor: "white",
-            padding: 15,
-            borderRadius: 50,
-            margin: 10,
-            width:80,
-            flex:1,
-            flexDirection:"row",
-          }}
-        ><TouchableOpacity style={{
-       flex:1,
-          flexDirection:"row",
-        }} onPress={() => {
-              sendData();
-            }}>
-            <Feather name="search" size={50} color="#212121" />
-         </TouchableOpacity>
-        </View></View>
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 15,
+              borderRadius: 50,
+              margin: 10,
+              width: 80,
+              flex: 1,
+              flexDirection: "row",
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                flexDirection: "row",
+              }}
+              onPress={() => {
+                sendData();
+              }}
+            >
+              <Feather name="search" size={50} color="#212121" />
+            </TouchableOpacity>
+          </View>
+        </View>
         <View>
           {stories?.map((item: StoryInt, index: number) => (
             <>
@@ -906,7 +965,73 @@ const Search = ({ route, navigation }: any) => {
             </>
           ))}
         </View>
-      </ScrollView>
+      </ScrollView></>}
+      {selectedSearchIndex === 1 && <><ScrollView><View
+          style={{
+            backgroundColor: "white",
+            padding: 15,
+            borderRadius: 10,
+            margin: 10,
+          }}
+        ><View style={{
+         flex:1,
+         flexDirection:"row"
+        }}><TextInput
+        style={styles.Userinput}
+        placeholder="Username"
+        onChangeText={(text) => setUsername(text)}
+      />
+      <TouchableOpacity
+              style={{
+                flex: 1,
+                flexDirection: "row",
+              }}
+              onPress={() => {
+                GetUsers();
+              }}
+            >
+              <MaterialIcons
+                                  name="person-search"
+                                  size={50}
+                                  color="black"
+                                />
+            </TouchableOpacity>
+            </View>
+            {users?.map((user) => (<><TouchableOpacity  onPress={() => {
+                            navigation.navigate("Profile", {
+                              name: user?.name,
+                            });
+                          }}>
+            <View style={secondStyles.container}>
+                        <Image
+                          source={
+                            user?.photo
+                              ? { uri: user.photo }
+                              : {
+                                  uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                                }
+                          }
+                          style={secondStyles.avatar}
+                        />
+                        <View style={secondStyles.commentContainer}>
+                          <Text style={secondStyles.userName}>
+                            {user.name}
+                          </Text>
+                        </View>
+                        <View style={secondStyles.likeCount}>
+                        <Text>
+                      <Feather name="users" size={25} color="#212121" />
+                      {user.followers?.length}
+                    </Text>
+                    <Text style={{ marginRight: 4 }}>
+                      <Feather name="book" size={25} color="#212121" />{" "}
+                      {user?.stories?.length}
+                    </Text>
+                        </View>
+                      </View></TouchableOpacity>
+            </>))}
+            
+            </View></ScrollView></>}
     </SafeAreaView>
   );
 };
@@ -935,6 +1060,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
   },
+  Userinput: {
+    width: "70%",
+    padding: 8,
+    color: "black",
+    backgroundColor: "rgba(242, 242, 242, 0.8)",
+    marginBottom: 16,
+    marginRight:20,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "white",
+  },
   selectedDateContainer: {
     marginTop: 20,
     alignItems: "center",
@@ -957,27 +1093,41 @@ const styles = StyleSheet.create({
     alignItems: "center", // Center the content horizontally
   },
 });
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 4,
-    color: "black",
-    paddingRight: 28,
+const secondStyles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+    backgroundColor: "white",
+    borderRadius: 22,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 7,
+    padding: 8,
+    margin: 7,
   },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: "purple",
-    borderRadius: 8,
-    color: "black",
-    paddingRight: 30,
+  avatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    marginRight: 8,
+  },
+  commentContainer: {
+    flex: 1,
+  },
+  userName: {
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  commentText: {
+    fontSize: 17,
+  },
+  likeCount: {
+    fontSize: 14,
+    marginRight: 8,
+    flexDirection : "row"
   },
 });
 
