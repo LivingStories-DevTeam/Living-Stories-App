@@ -1,23 +1,22 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Button,
   TextInput,
   TouchableOpacity,
-  Modal,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_URL } from "../contexts/AuthContext";
 import { ScrollView } from "react-native-gesture-handler";
 import Card from "../components/Card";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import MonthSelector from "../components/MonthSelector";
-import moment from "moment";
+import { Picker } from "@react-native-picker/picker";
 import SegmentedControlTab from "react-native-segmented-control-tab";
-import RNPickerSelect from "react-native-picker-select";
+import { Feather } from "@expo/vector-icons";
+import dayjs from "dayjs";
 
 interface StoryInt {
   id: number;
@@ -56,28 +55,52 @@ interface StoryInt {
   endSeason?: string;
   decade?: string;
 }
-
+interface Language {
+  label: string;
+  value: string;
+}
 const Search = ({ route, navigation }: any) => {
   const [stories, setStories] = useState<StoryInt[]>();
-  const [locations, setLocations] = useState<Location>();
   const [header, setHeader] = useState<string>();
   const [name, setName] = useState<string>();
   const [city, setCity] = useState<string>();
   const [label, setLabel] = useState<string>();
   const [country, setCountry] = useState<string>();
   const [textStory, setText] = useState<string>();
-  const [showPicker, setShowPicker] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [selectedMonth, setSelectedMonth] = useState<moment.Moment | null>(
-    null
-  );
+  const [datePickerStart, setDatePickerStart] = useState(new Date());
+  const [datePickerEnd, setDatePickerEnd] = useState(new Date());
+  ///// Select Season
   const [selectedSeason, setSelectedSeason] = useState(null);
-  const [selectedDecade, setSelectedDecade] = useState(null);
-  const [isModalVisible, setModalVisible] = useState(false);
+  ///// Select Month
+  const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState(1);
+  const [selectedMonthYear, setSelectedMonthYear] = useState(2023);
+  const [selectedStartMonth, setSelectedStartMonth] = useState(1);
+  const [selectedStartMonthYear, setSelectedStartMonthYear] = useState(2023);
+  const [selectedEndMonth, setSelectedEndMonth] = useState(1);
+  const [selectedEndMonthYear, setSelectedEndMonthYear] = useState(2023);
+  const [selectedDate, setSelectedDate] = useState(
+    `${selectedMonth}/${selectedMonthYear}`
+  );
+  const [selectedStartDate, setSelectedStartDate] = useState(
+    `${selectedStartMonth}/${selectedStartMonthYear}`
+  );
+  const [selectedEndDate, setSelectedEndDate] = useState(
+    `${selectedEndMonth}/${selectedEndMonthYear}`
+  );
 
+  /////Select Decade
+  const [selectedDecade, setSelectedDecade] = useState(0);
+  /////Select Year
+  const [selectedYear, setSelectedYear] = useState(0);
+  const [selectedEndYear, setSelectedEndYear] = useState(0);
   ///////////////////////// TABS //////////////////////
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const handleTabChange = (index: number) => {
     setSelectedIndex(index);
   };
@@ -100,11 +123,31 @@ const Search = ({ route, navigation }: any) => {
   };
 
   ///////////////////////// TABS END //////////////////////
+  const handleYearChange = (value: number) => {
+    const selectedDate = dayjs(`${value}-01-01`, yearFormat); // Assuming the date is January 1st of the selected year
+    const start = selectedDate.subtract(1, "year");
+    const endDate = selectedDate.add(1, "year");
 
-  const showDatepicker = () => {
-    setShowPicker(true);
+    setStartDate(start);
+    setSelectedYear(value);
+    setEndDate(endDate);
   };
 
+  const handleStartYearChange = (value: number) => {
+    const selectedDate = dayjs(`${value}-01-01`, yearFormat); // Assuming the date is January 1st of the selected year
+    const start = selectedDate.subtract(1, "year");
+
+    setStartDate(start);
+    setSelectedYear(value);
+  };
+  const handleEndYearChange = (value: number) => {
+    const selectedDate = dayjs(`${value}-01-01`, yearFormat); // Assuming the date is January 1st of the selected year
+
+    const endDate = selectedDate.add(1, "year");
+
+    setEndDate(endDate);
+    setSelectedEndYear(value);
+  };
   const sendData = async () => {
     try {
       const response = await axios.post(apiUrl, {
@@ -117,9 +160,14 @@ const Search = ({ route, navigation }: any) => {
         ...(city && { city: city }),
         ...(country && { country: country }),
         ...(label && { label: label }),
+        ...(startDate && { startDate: startDate?.format(exactDateFormat) }),
+        ...(endDate && { endDate: endDate?.format(exactDateFormat) }),
       });
 
-      console.log("Response:", label);
+      console.log(
+        "Response:",
+        label + "date: " + startDate?.format(exactDateFormat)
+      );
       setStories(response.data);
       // Handle the response as needed
     } catch (error) {
@@ -128,18 +176,70 @@ const Search = ({ route, navigation }: any) => {
     }
   };
   //////////////// Month Selector ///////////
-  const handleMonthTapped = (selectedMonth: moment.Moment) => {
-    console.log("Selected Month:", selectedMonth);
-    setSelectedMonth(selectedMonth);
-    toggleModal();
+
+  const handleMonthChange = (itemValue: number) => {
+    setSelectedMonth(itemValue);
+    updateSelectedDate(itemValue, selectedMonthYear);
   };
 
-  const handleYearChanged = (selectedYear: moment.Moment) => {
-    console.log("Selected Year:", selectedYear);
+  const handleMonthYearChange = (itemValue: number) => {
+    setSelectedMonthYear(itemValue);
+    updateSelectedDate(selectedMonth, itemValue);
   };
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+  const updateSelectedDate = (month: number, year: number) => {
+    const formattedDate = `${year}-${month}-01`;
+
+    const start = dayjs(formattedDate, monthFormat);
+    const endDate = dayjs(formattedDate, monthFormat);
+    setStartDate(start.subtract(1, "month"));
+
+    setEndDate(endDate.add(1, "month"));
+
+    setSelectedDate(formattedDate);
+  };
+  ////////////////////////////
+  //////////////// Month Start Selector ///////////
+
+  const handleStartMonthChange = (itemValue: number) => {
+    setSelectedMonth(itemValue);
+    updateStartSelectedDate(itemValue, selectedStartMonthYear);
+  };
+
+  const handleStartMonthYearChange = (itemValue: number) => {
+    setSelectedStartMonthYear(itemValue);
+    updateStartSelectedDate(selectedStartMonth, itemValue);
+  };
+
+  const updateStartSelectedDate = (month: number, year: number) => {
+    const formattedDate = `${year}-${month}-01`;
+
+    const start = dayjs(formattedDate, monthFormat);
+    setStartDate(start.subtract(1, "month"));
+
+    setSelectedStartDate(formattedDate);
+  };
+  ////////////////////////////
+  //////////////// Month End Selector ///////////
+
+  const handleEndMonthChange = (itemValue: number) => {
+    setSelectedEndMonth(itemValue);
+    updateEndSelectedDate(itemValue, selectedEndMonthYear);
+  };
+
+  const handleEndMonthYearChange = (itemValue: number) => {
+    setSelectedEndMonthYear(itemValue);
+    updateEndSelectedDate(selectedEndMonth, itemValue);
+  };
+
+  const updateEndSelectedDate = (month: number, year: number) => {
+    const formattedDate = `${year}-${month}-01`;
+
+    const endDate = dayjs(formattedDate, monthFormat);
+
+    setEndDate(endDate.add(1, "month"));
+
+    setSelectedEndDate(formattedDate);
   };
   ////////////////////////////
 
@@ -150,20 +250,98 @@ const Search = ({ route, navigation }: any) => {
     { label: "Winter", value: "Winter" },
   ];
   const decades = [
-    { label: "1900s", value: "1900s" },
-    { label: "1910s", value: "1910s" },
-    { label: "1920s", value: "1920s" },
-    { label: "1930s", value: "1930s" },
-    { label: "1940s", value: "1940s" },
-    { label: "1950s", value: "1950s" },
-    { label: "1960s", value: "1960s" },
-    { label: "1970s", value: "1970s" },
-    { label: "1980s", value: "1980s" },
-    { label: "1990s", value: "1990s" },
-    { label: "2000s", value: "2000s" },
-    { label: "2010s", value: "2010s" },
-    { label: "2020s", value: "2020s" },
+    { value: 1901, label: "1900s" },
+    { value: 1911, label: "1910s" },
+    { value: 1921, label: "1920s" },
+    { value: 1931, label: "1930s" },
+    { value: 1941, label: "1940s" },
+    { value: 1951, label: "1950s" },
+    { value: 1961, label: "1960s" },
+    { value: 1971, label: "1970s" },
+    { value: 1981, label: "1980s" },
+    { value: 1991, label: "1990s" },
+    { value: 2001, label: "2000s" },
+    { value: 2011, label: "2010s" },
+    { value: 2021, label: "2020s" },
   ];
+  const months = [
+    { value: 1, label: "January" },
+    { value: 2, label: "February" },
+    { value: 3, label: "March" },
+    { value: 4, label: "April" },
+    { value: 5, label: "May" },
+    { value: 6, label: "June" },
+    { value: 7, label: "July" },
+    { value: 8, label: "August" },
+    { value: 9, label: "September" },
+    { value: 10, label: "October" },
+    { value: 11, label: "November" },
+    { value: 12, label: "December" },
+  ];
+  const exactDateFormat = "DD/MM/YYYY";
+  const yearFormat = "YYYY";
+  const monthFormat = "MM/YYYY";
+
+  const generateYears = (startYear: number, endYear: number) => {
+    const years = [];
+    for (let year = startYear; year <= endYear; year++) {
+      years.push({ value: year, label: year.toString() });
+    }
+    return years;
+  };
+  const years = generateYears(1880, 2023);
+
+  const handleDecadeChange = (value: number) => {
+    const decStartString = (value - 2).toString();
+    const decEndString = (value + 8).toString();
+    setStartDate(dayjs(decStartString, yearFormat));
+    setEndDate(dayjs(decEndString, yearFormat));
+    console.log(endDate);
+    setSelectedDecade(value);
+  };
+
+  console.log(startDate);
+
+  const showDatepicker = () => {
+    setShowDatePicker(true);
+  };
+  const showStartDatepicker = () => {
+    setShowStartDatePicker(true);
+  };
+  const showEndDatepicker = () => {
+    setShowEndDatePicker(true);
+  };
+  const handleDateChange = (_: any, selectedDate?: Date) => {
+    if (selectedDate) {
+      const start = dayjs(selectedDate, exactDateFormat);
+      const end = dayjs(selectedDate, exactDateFormat);
+      setDate(selectedDate);
+      setStartDate(start.subtract(1, "day"));
+      setEndDate(end.add(1, "day"));
+    }
+
+    setShowDatePicker(false);
+  };
+  const handleStartDateChange = (_: any, selectedDate?: Date) => {
+    if (selectedDate) {
+      const start = dayjs(selectedDate, exactDateFormat);
+
+      setDatePickerStart(selectedDate);
+      setStartDate(start.subtract(1, "day"));
+    }
+
+    setShowStartDatePicker(false);
+  };
+  const handleEndDateChange = (_: any, selectedDate?: Date) => {
+    if (selectedDate) {
+      const end = dayjs(selectedDate, exactDateFormat);
+      setDatePickerEnd(selectedDate);
+
+      setEndDate(end.add(1, "day"));
+    }
+
+    setShowEndDatePicker(false);
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -175,32 +353,35 @@ const Search = ({ route, navigation }: any) => {
             margin: 10,
           }}
         >
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <TextInput
+              style={styles.input}
+              placeholder="Header"
+              onChangeText={(text) => setHeader(text)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Label"
+              onChangeText={(text) => setLabel(text)}
+            />
+          </View>
           <TextInput
             style={styles.input}
             placeholder="Text"
             onChangeText={(text) => setText(text)}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Header"
-            onChangeText={(text) => setHeader(text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Label"
-            onChangeText={(text) => setLabel(text)}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="City"
-            onChangeText={(text) => setCity(text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Country"
-            onChangeText={(text) => setCountry(text)}
-          />
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <TextInput
+              style={styles.input}
+              placeholder="City"
+              onChangeText={(text) => setCity(text)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Country"
+              onChangeText={(text) => setCountry(text)}
+            />
+          </View>
         </View>
         <View
           style={{
@@ -229,12 +410,19 @@ const Search = ({ route, navigation }: any) => {
                   marginRight: "35%", // Adjust this value based on your design
                 }}
               >
-                <RNPickerSelect
-                  placeholder={{ label: "Select a Decade", value: null }}
-                  items={decades}
-                  onValueChange={(value) => setSelectedDecade(value)}
-                  style={pickerSelectStyles}
-                />
+                <Picker
+                  selectedValue={selectedDecade}
+                  onValueChange={handleDecadeChange}
+                  style={{ width: 150 }}
+                >
+                  {decades.map((decade, index) => (
+                    <Picker.Item
+                      key={index}
+                      label={decade.label}
+                      value={decade.value}
+                    />
+                  ))}
+                </Picker>
               </View>
             </>
           )}
@@ -259,12 +447,21 @@ const Search = ({ route, navigation }: any) => {
                       marginRight: "35%", // Adjust this value based on your design
                     }}
                   >
-                    <RNPickerSelect
-                      placeholder={{ label: "Select a season", value: null }}
-                      items={seasons}
-                      onValueChange={(value) => setSelectedSeason(value)}
-                      style={pickerSelectStyles}
-                    />
+                    <Picker
+                      selectedValue={selectedSeason}
+                      onValueChange={(itemValue, itemIndex) =>
+                        setSelectedSeason(itemValue)
+                      }
+                      style={{ width: 150 }} // Adjust the width as needed
+                    >
+                      {seasons.map((season, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={season.label}
+                          value={season.value}
+                        />
+                      ))}
+                    </Picker>
                   </View>
 
                   <View style={{ margin: 5 }}>
@@ -283,11 +480,27 @@ const Search = ({ route, navigation }: any) => {
                           alignItems: "center",
                         }}
                       >
-                        <DateTimePicker
-                          value={date}
-                          mode="date" // You can also use 'date' or 'time' mode
-                          display="default" // 'default', 'spinner', or 'calendar' on Android, 'default' or 'spinner' on iOS
-                        />
+                        <TouchableOpacity
+                          onPress={showDatepicker}
+                          style={{
+                            backgroundColor: "#f2f2f2",
+                            padding: 7,
+                            borderRadius: 8,
+                          }}
+                        >
+                          <Text>
+                            {startDate?.format(exactDateFormat)}-
+                            {endDate?.format(exactDateFormat)}
+                          </Text>
+                          {showDatePicker && (
+                            <DateTimePicker
+                              value={date}
+                              mode="date"
+                              display="spinner"
+                              onChange={handleDateChange}
+                            />
+                          )}
+                        </TouchableOpacity>
                       </View>
                     </>
                   )}
@@ -295,29 +508,37 @@ const Search = ({ route, navigation }: any) => {
                     <>
                       <View
                         style={{
-                          flex: 1,
+                          flexDirection: "row",
                           justifyContent: "center",
                           alignItems: "center",
                         }}
                       >
-                        <TouchableOpacity
-                          onPress={() => {
-                            toggleModal();
-                          }}
+                        <Picker
+                          selectedValue={selectedMonth}
+                          onValueChange={handleMonthChange}
+                          style={{ width: 150 }}
                         >
-                          <Text
-                            style={{
-                              backgroundColor: "#e3e3e3",
-                              padding: 10,
-                              borderRadius: 8,
-                              fontSize: 18,
-                            }}
-                          >
-                            {selectedMonth
-                              ? selectedMonth.format("MMMM YYYY")
-                              : "Select Month"}
-                          </Text>
-                        </TouchableOpacity>
+                          {months.map((month, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={month.label}
+                              value={month.value}
+                            />
+                          ))}
+                        </Picker>
+                        <Picker
+                          selectedValue={selectedMonthYear}
+                          onValueChange={handleMonthYearChange}
+                          style={{ width: 150 }}
+                        >
+                          {years.map((year, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={year.label}
+                              value={year.value}
+                            />
+                          ))}
+                        </Picker>
                       </View>
                     </>
                   )}
@@ -330,7 +551,223 @@ const Search = ({ route, navigation }: any) => {
                           alignItems: "center",
                         }}
                       >
-                        <Text>Select Year</Text>
+                        <Picker
+                          selectedValue={selectedYear}
+                          onValueChange={handleYearChange}
+                          style={{ width: 150 }}
+                        >
+                          {years.map((year, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={year.label}
+                              value={year.value}
+                            />
+                          ))}
+                        </Picker>
+                      </View>
+                    </>
+                  )}
+                </>
+              )}
+              {selectedSecondIndex === 1 && (
+                <>
+                  <View style={{ margin: 5 }}>
+                    <SegmentedControlTab
+                      values={["Start Date", "Start Month", "Start Year"]}
+                      selectedIndex={selectedThirdIndex}
+                      onTabPress={handleThirdTabChange}
+                    />
+                  </View>
+                  {selectedThirdIndex === 0 && (
+                    <>
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={showStartDatepicker}
+                          style={{
+                            backgroundColor: "#f2f2f2",
+                            padding: 7,
+                            borderRadius: 8,
+                          }}
+                        >
+                          <Text>{startDate?.format(exactDateFormat)}</Text>
+                          {showStartDatePicker && (
+                            <DateTimePicker
+                              value={datePickerStart}
+                              mode="date"
+                              display="spinner"
+                              onChange={handleStartDateChange}
+                            />
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                  )}
+                  {selectedThirdIndex === 1 && (
+                    <>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Picker
+                          selectedValue={selectedStartMonth}
+                          onValueChange={handleStartMonthChange}
+                          style={{ width: 150 }}
+                        >
+                          {months.map((month, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={month.label}
+                              value={month.value}
+                            />
+                          ))}
+                        </Picker>
+                        <Picker
+                          selectedValue={selectedStartMonthYear}
+                          onValueChange={handleStartMonthYearChange}
+                          style={{ width: 150 }}
+                        >
+                          {years.map((year, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={year.label}
+                              value={year.value}
+                            />
+                          ))}
+                        </Picker>
+                      </View>
+                    </>
+                  )}
+                  {selectedThirdIndex === 2 && (
+                    <>
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Picker
+                          selectedValue={selectedYear}
+                          onValueChange={handleStartYearChange}
+                          style={{ width: 150 }}
+                        >
+                          {years.map((year, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={year.label}
+                              value={year.value}
+                            />
+                          ))}
+                        </Picker>
+                      </View>
+                    </>
+                  )}
+                  <View style={{ margin: 5 }}>
+                    <SegmentedControlTab
+                      values={["End Date", "End Month", "End Year"]}
+                      selectedIndex={selectedThirdIndex}
+                      onTabPress={handleThirdTabChange}
+                    />
+                  </View>
+                  {selectedThirdIndex === 0 && (
+                    <>
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <TouchableOpacity
+                          onPress={showEndDatepicker}
+                          style={{
+                            backgroundColor: "#f2f2f2",
+                            padding: 7,
+                            borderRadius: 8,
+                          }}
+                        >
+                          <Text>{endDate?.format(exactDateFormat)}</Text>
+                          {showEndDatePicker && (
+                            <DateTimePicker
+                              value={datePickerEnd}
+                              mode="date"
+                              display="spinner"
+                              onChange={handleEndDateChange}
+                            />
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                  )}
+                  {selectedThirdIndex === 1 && (
+                    <>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Picker
+                          selectedValue={selectedEndMonth}
+                          onValueChange={handleEndMonthChange}
+                          style={{ width: 150 }}
+                        >
+                          {months.map((month, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={month.label}
+                              value={month.value}
+                            />
+                          ))}
+                        </Picker>
+                        <Picker
+                          selectedValue={selectedEndMonthYear}
+                          onValueChange={handleEndMonthYearChange}
+                          style={{ width: 150 }}
+                        >
+                          {years.map((year, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={year.label}
+                              value={year.value}
+                            />
+                          ))}
+                        </Picker>
+                      </View>
+                    </>
+                  )}
+                  {selectedThirdIndex === 2 && (
+                    <>
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Picker
+                          selectedValue={selectedEndYear}
+                          onValueChange={handleEndYearChange}
+                          style={{ width: 150 }}
+                        >
+                          {years.map((year, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={year.label}
+                              value={year.value}
+                            />
+                          ))}
+                        </Picker>
                       </View>
                     </>
                   )}
@@ -339,79 +776,90 @@ const Search = ({ route, navigation }: any) => {
             </>
           )}
         </View>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => {
-            toggleModal();
+        <View
+          style={{
+            alignItems: "center", // Center horizontally
+            justifyContent: "center", // Center vertically
           }}
         >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <MonthSelector
-                selectedDate={moment(date)} // Convert to moment object
-                currentDate={moment()} // Convert to moment object
-                minDate={moment("01-01-2000", "DD-MM-YYYY")} // Convert to moment object
-                maxDate={moment()} // Replace with your max date
-                onMonthTapped={handleMonthTapped}
-                onYearChanged={handleYearChanged}
-                selectedBackgroundColor="#000" // Replace with your color
-                selectedMonthTextStyle={{ color: "#fff" }} // Replace with your styles
-                seperatorColor="#b6c3cb" // Replace with your color
-                seperatorHeight={1} // Replace with your height
-                nextText="Next"
-                prevText="Prev"
-                monthFormat="MMM"
-                initialView={moment()} // Convert to moment object
-                monthDisabledStyle={{ color: "#00000050" }} // Replace with your styles
-                localeLanguage="en" // Replace with your desired locale
-                localeSettings={{}} // Replace with your locale settings
-                swipable={true}
-                velocityThreshold={0.3}
-                directionalOffsetThreshold={80}
-                gestureIsClickThreshold={5}
-              />
-
-              <Button
-                title="Close"
-                onPress={() => {
-                  toggleModal();
+          <View
+            style={{
+              backgroundColor: "white",
+              padding: 13,
+              borderRadius: 50,
+              width: 120,
+              margin: 10,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                navigation.replace("SearchMap");
+              }}
+            >
+              <Image
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/512/854/854929.png",
                 }}
+                style={{ width: 80, height: 80 }}
               />
-            </View>
+            </TouchableOpacity>
           </View>
-        </Modal>
-        <View
-          style={{
-            backgroundColor: "white",
-            padding: 15,
-            borderRadius: 10,
-            margin: 10,
-          }}
-        >
-          <Button
-            title="Select Location"
-            onPress={() => {
-              navigation.replace("SearchMap");
-            }}
-          ></Button>
+          <Text>
+            {lat && lng ? (
+              <>
+                <Text style={{ color: "white" }}>
+                  {lat} {lng}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.setParams({ lat: 0, lng: 0 });
+                  }}
+                  style={{
+                    backgroundColor: "#731300",
+                    margin: 10,
+                    borderRadius: 7,
+                    padding: 4,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    Clear Location
+                  </Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <Text></Text>
+            )}
+          </Text>
         </View>
+<View style={{  alignItems: "center",
+              justifyContent: "center",}}>
         <View
           style={{
             backgroundColor: "white",
             padding: 15,
-            borderRadius: 10,
+            borderRadius: 50,
             margin: 10,
+            width:80,
+            flex:1,
+            flexDirection:"row",
           }}
-        >
-          <Button
-            title="Search"
-            onPress={() => {
+        ><TouchableOpacity style={{
+       flex:1,
+          flexDirection:"row",
+        }} onPress={() => {
               sendData();
-            }}
-          ></Button>
-        </View>
+            }}>
+            <Feather name="search" size={50} color="#212121" />
+         </TouchableOpacity>
+        </View></View>
         <View>
           {stories?.map((item: StoryInt, index: number) => (
             <>
@@ -463,7 +911,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   input: {
-    width: "70%",
+    width: "50%",
     padding: 8,
     color: "black",
     backgroundColor: "rgba(242, 242, 242, 0.8)",

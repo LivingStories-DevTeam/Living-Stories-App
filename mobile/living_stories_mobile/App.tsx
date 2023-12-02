@@ -49,12 +49,25 @@ export const Layout = () => {
               <Stack.Screen name="Story" component={StoryPage} />
               <Stack.Screen name="Activity" component={Activity} />
               <Stack.Screen name="EditStory" component={EditStory} />
-              <Stack.Screen name="Profile" component={Profile} 
-               options={{
-                headerShown: false,
-              }}/>
-              <Stack.Screen name="SearchMap" component={SearchMap} options={{headerTitle:"Map"}}/>
-              <Stack.Screen name="Search" component={Search} />
+              <Stack.Screen
+                name="Profile"
+                component={Profile}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="SearchMap"
+                component={SearchMap}
+                options={{ headerTitle: "Map" }}
+              />
+              <Stack.Screen
+                name="Search"
+                component={Search}
+                options={{
+                  headerShown: true,
+                }}
+              />
             </>
           ) : (
             <>
