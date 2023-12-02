@@ -1,10 +1,9 @@
 package com.swe573.living_stories.Controllers;
 
-import com.swe573.living_stories.Models.*;
+import com.swe573.living_stories.Models.Activity;
+import com.swe573.living_stories.Models.User;
 import com.swe573.living_stories.Repositories.ActivityRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
-import com.swe573.living_stories.Services.CommentService;
-import com.swe573.living_stories.Services.StoryService;
 import com.swe573.living_stories.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
@@ -42,15 +41,25 @@ public class ActivityController {
             User user = optionalUser.get();
             List<Long> followingIds = user.getFollowing().stream().map(User::getId).collect(Collectors.toList());
             List<Activity> activities = new ArrayList<>();
-            Date lastDate = new Date();
+            Date lastDate = user.getLatestSeenActivityTime();
+
             for (Long followingId : followingIds) {
                 List<Activity> activitiesByUserId = activityRepository.findByUserId(followingId);
 
                 activitiesByUserId.forEach(activity -> {
-                    activity.setNew(activity.getAction_timestamp().after(lastDate));
+                    if (lastDate != null && activity.getAction_timestamp().before(lastDate)) {
+                        activity.setNewFlag("N");
+                    } else {
+                        activity.setNewFlag("Y");
+                    }
                 });
-
                 activities.addAll(activitiesByUserId);
+            }
+            activities.sort(Comparator.comparing(Activity::getAction_timestamp).reversed());
+
+            if (!activities.isEmpty()) {
+                user.setLatestSeenActivityTime(activities.get(0).getAction_timestamp());
+                userRepository.save(user);
             }
             return ResponseEntity.ok(activities);
         }
