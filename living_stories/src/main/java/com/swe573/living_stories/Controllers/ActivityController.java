@@ -66,6 +66,45 @@ public class ActivityController {
 
         return ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/newactivitycount")
+    public ResponseEntity<Integer> getNumberOfNewActivities(HttpServletRequest request){
+
+        Long id = userService.isUserLoggedIn(request);
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            List<Long> followingIds = user.getFollowing().stream().map(User::getId).collect(Collectors.toList());
+            List<Activity> activities = new ArrayList<>();
+            Date lastDate = user.getLatestSeenActivityTime();
+
+            for (Long followingId : followingIds) {
+                List<Activity> activitiesByUserId = activityRepository.findByUserId(followingId);
+
+                activitiesByUserId.forEach(activity -> {
+                    if (lastDate != null && activity.getAction_timestamp().before(lastDate)) {
+                        activity.setNewFlag("N");
+                    } else {
+                        activity.setNewFlag("Y");
+                    }
+                });
+                activities.addAll(activitiesByUserId);
+            }
+            activities.sort(Comparator.comparing(Activity::getAction_timestamp).reversed());
+
+            if (!activities.isEmpty()) {
+                long totalNoOfNewActivities = activities.stream()
+                        .filter(activity -> "Y".equals(activity.getNewFlag()))
+                        .count();
+                return ResponseEntity.ok((int) totalNoOfNewActivities);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
 }
 
 
