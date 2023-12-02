@@ -396,6 +396,9 @@ const Search = ({ route, navigation }: any) => {
               values={["Decade", "Date"]}
               selectedIndex={selectedIndex}
               onTabPress={handleTabChange}
+              tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
+              activeTabStyle={{ backgroundColor: '#1f6c5c' }}
+              tabTextStyle={{ color: '#1f6c5c' }}
             />
           </View>
           {selectedIndex === 0 && (
@@ -432,6 +435,9 @@ const Search = ({ route, navigation }: any) => {
                 <SegmentedControlTab
                   values={["Exact Date", "Interval Date"]}
                   selectedIndex={selectedSecondIndex}
+                  tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
+                  activeTabStyle={{ backgroundColor: '#1f6c5c' }}
+                  tabTextStyle={{ color: '#1f6c5c' }}
                   onTabPress={handleSecondTabChange}
                 />
               </View>
@@ -469,6 +475,9 @@ const Search = ({ route, navigation }: any) => {
                       values={["Date", "Month", "Year"]}
                       selectedIndex={selectedThirdIndex}
                       onTabPress={handleThirdTabChange}
+                      tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
+                      activeTabStyle={{ backgroundColor: '#1f6c5c' }}
+                      tabTextStyle={{ color: '#1f6c5c' }}
                     />
                   </View>
                   {selectedThirdIndex === 0 && (
@@ -576,6 +585,9 @@ const Search = ({ route, navigation }: any) => {
                       values={["Start Date", "Start Month", "Start Year"]}
                       selectedIndex={selectedThirdIndex}
                       onTabPress={handleThirdTabChange}
+                      tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
+                      activeTabStyle={{ backgroundColor: '#1f6c5c' }}
+                      tabTextStyle={{ color: '#1f6c5c' }}
                     />
                   </View>
                   {selectedThirdIndex === 0 && (
@@ -676,6 +688,9 @@ const Search = ({ route, navigation }: any) => {
                       values={["End Date", "End Month", "End Year"]}
                       selectedIndex={selectedThirdIndex}
                       onTabPress={handleThirdTabChange}
+                      tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white',  }}
+                      activeTabStyle={{ backgroundColor: '#1f6c5c' }}
+                      tabTextStyle={{ color: '#1f6c5c' }}
                     />
                   </View>
                   {selectedThirdIndex === 0 && (
