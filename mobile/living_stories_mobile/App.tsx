@@ -12,7 +12,7 @@ import Profile from "./screens/Profile";
 import EditStory from "./screens/EditStory";
 import SearchMap from "./screens/SearchMap";
 import Search from "./screens/Search";
-import Activity from "./Activity";
+import Activity from "./screens/Activity";
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -54,7 +54,7 @@ export const Layout = () => {
                 headerShown: false,
               }}/>
               <Stack.Screen name="SearchMap" component={SearchMap} options={{headerTitle:"Map"}}/>
-              <Stack.Screen name="Search" component={Search} options={{headerShown:false}}/>
+              <Stack.Screen name="Search" component={Search} />
             </>
           ) : (
             <>

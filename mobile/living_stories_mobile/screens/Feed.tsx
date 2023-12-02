@@ -95,6 +95,10 @@ const Feed = ({ navigation }: any) => {
                 values={["All", "Following"]}
                 selectedIndex={selectedIndex}
                 onTabPress={handleTabChange}
+                tabStyle={{ borderColor: '#1f6c5c',  backgroundColor: 'white', borderRadius: 20 }}
+                activeTabStyle={{ backgroundColor: '#1f6c5c' }}
+                tabTextStyle={{ color: '#1f6c5c' }}
+
               />
             </View>
             {selectedIndex === 0 && (

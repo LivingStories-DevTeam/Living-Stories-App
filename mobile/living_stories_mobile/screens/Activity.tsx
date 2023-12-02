@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
-import { API_URL } from "./contexts/AuthContext";
+import { API_URL } from "../contexts/AuthContext";
 
 type requestObject = {
     id: number;
@@ -24,72 +24,19 @@ type requestObject = {
     following_id: number;
     following_name: string;
     action_timestamp: string;
-    is_new: number;
+    newFlag: string;
   };
   
 
 const Activity = ({ route, navigation }: any) => {
-    const [activities,setActivities] = useState<requestObject[]>()
-  const dummy = [
-    {
-      id: 4,
-      user_id: 4,
-      user_name: "salih123",
-      user_media: null,
-      action_type: "F",
-      story_id: null,
-      story_title: null,
-      following_id: 5,
-      following_name: "Senan",
-      action_timestamp: "2023-11-13T16:56:07.820+00:00",
-      is_new: 1,
-    },
-    {
-      id: 3,
-      user_id: 4,
-      user_name: "salih123",
-      user_media: null,
-      action_type: "F",
-      story_id: null,
-      story_title: null,
-      following_id: 3,
-      following_name: "Salih",
-      action_timestamp: "2023-11-13T16:52:05.354+00:00",
-      is_new: 1,
-    },
-    {
-      id: 2,
-      user_id: 4,
-      user_name: "salih123",
-      user_media: null,
-      action_type: "C",
-      story_id: 1,
-      story_title:
-        "My first adventure, My first adventure, My first adventure, My first adventure",
-      following_id: null,
-      following_name: null,
-      action_timestamp: "2023-11-13T16:51:56.827+00:00",
-      is_new: 1,
-    },
-    {
-      id: 1,
-      user_id: 4,
-      user_name: "salih123",
-      user_media: null,
-      action_type: "L",
-      story_id: 26,
-      story_title: "Life in Derecik in 1970",
-      following_id: null,
-      following_name: null,
-      action_timestamp: "2023-11-10T18:18:52.384+00:00",
-      is_new: 0,
-    },
-  ];
+  const [activities,setActivities] = useState<requestObject[]>()
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${API_URL}/activity`); 
         setActivities(response.data)
+        console.log(response.data)
        
       } catch (error) {
         
@@ -115,13 +62,16 @@ const Activity = ({ route, navigation }: any) => {
     } else if (actionType === "F") {
       return `${user_name} followed the user ${following_name}!`;
     }
+    else if (actionType === "S") {
+      return `${user_name} posted story ${story_title}!`;
+    }
   };
   const onPressHandler = (
     actionType: string,
     story_id?: number,
     following_name?: string,
   ) => {
-    if (actionType === "L" || actionType === "C") {
+    if (actionType === "L" || actionType === "C" || actionType=='S') {
       navigation.navigate("Story", { storyId:story_id })
     } else if (actionType === "F") {
         navigation.navigate("Profile", {
@@ -133,12 +83,12 @@ const Activity = ({ route, navigation }: any) => {
   return (
     <>
       <ScrollView style={styles.container}>
-        {dummy?.map((item: any, index: number) => (
+        {activities?.map((item: any, index: number) => (
           <TouchableOpacity
             onPress={() => onPressHandler(item.action_type,item.story_id,item.following_name)}
           >
             <View key={index} style={styles.notBox}>
-              {item.is_new === 1 && <View style={styles.redAlert}></View>}
+              {item.newFlag === 'Y' &&<View style={styles.redAlert}></View>}
               <View style={styles.avatarContainer}>
                 <Image
                   source={{
@@ -194,12 +144,17 @@ const styles = StyleSheet.create({
     borderWidth: 0.1,
   },
   redAlert: {
+    
     height: 15,
     width: 15,
     borderRadius: 20,
     backgroundColor: "red",
-    left: 0,
-    marginRight: 5,
+    top:0,
+    marginTop:5,
+    marginLeft: 33,
+    position:'absolute',
+    zIndex:1
+
   },
 });
 export default Activity;
