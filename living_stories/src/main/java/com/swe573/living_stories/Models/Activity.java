@@ -44,4 +44,6 @@ public class Activity {
     @NotNull
     private Date action_timestamp;
 
+    private String newFlag;
+
 }
