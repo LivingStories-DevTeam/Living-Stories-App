@@ -410,12 +410,17 @@ const Search = ({ route, navigation }: any) => {
               placeholder="Label"
               onChangeText={(text) => setLabel(text)}
             />
-          </View>
+          </View><View style={{ flex: 1, flexDirection: "row" }}>
           <TextInput
             style={styles.input}
             placeholder="Text"
             onChangeText={(text) => setText(text)}
           />
+          <TextInput
+            style={styles.input}
+            placeholder="Author"
+            onChangeText={(text) => setName(text)}
+          /></View>
           <View style={{ flex: 1, flexDirection: "row" }}>
             <TextInput
               style={styles.input}
