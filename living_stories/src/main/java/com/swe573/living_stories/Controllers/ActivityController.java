@@ -1,15 +1,17 @@
 package com.swe573.living_stories.Controllers;
 
 import com.swe573.living_stories.Models.Activity;
+import com.swe573.living_stories.Models.Comment;
+import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Models.User;
 import com.swe573.living_stories.Repositories.ActivityRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
+import com.swe573.living_stories.Requests.RecommendationRequest;
+import com.swe573.living_stories.Services.StoryService;
 import com.swe573.living_stories.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,11 +26,15 @@ public class ActivityController {
 
     final private ActivityRepository activityRepository;
 
+    final private StoryService storyService;
+
     public ActivityController(UserService userService, UserRepository userRepository,
-                              ActivityRepository activityRepository) {
+                              ActivityRepository activityRepository,
+                              StoryService storyService) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.activityRepository = activityRepository;
+        this.storyService = storyService;
     }
 
     @GetMapping
@@ -105,6 +111,32 @@ public class ActivityController {
 
         return ResponseEntity.notFound().build();
     }
+
+    @RequestMapping(path = "/recommendedstories", method = RequestMethod.POST)
+    public ResponseEntity<List<Story>> postRecommendedStories(@RequestBody RecommendationRequest request) {
+        List<Long> storyIDs = request.getStoryIds();
+        List<Story> stories = new ArrayList<>();
+
+        for (Long id : storyIDs) {
+            stories.add(storyService.getStoryById(id));
+        }
+
+        if (!stories.isEmpty()) {
+            stories.forEach(story -> {
+                story.setRichText(null);
+                if (story.getComments() != null) {
+                    for (Comment comment : story.getComments()) {
+                        comment.setUser(null);
+                        comment.setText(null);
+                    }
+                }
+            });
+            return ResponseEntity.ok(stories);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
 
 
