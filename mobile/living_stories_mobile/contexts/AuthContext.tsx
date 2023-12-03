@@ -4,6 +4,7 @@ import axios from "axios";
 
 
 
+
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
   onRegister?: (email: string, password: string, name: string) => Promise<any>;
@@ -13,6 +14,9 @@ interface AuthProps {
 
 const TOKEN_KEY = "jtw_Token";
 export const API_URL = `http://35.246.216.172:8080`;
+export const RecApiUrl = `http://35.246.216.172:5002`;
+
+
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
