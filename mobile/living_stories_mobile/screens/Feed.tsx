@@ -48,9 +48,9 @@ const Feed = ({ navigation }: any) => {
 
       // Send the numberss to the second API endpoint using Axios
       const secondApiResponse = await axios.post(
-        `${API_URL}/stories/getRecommendedStories`,
+        `${API_URL}/activity/recommendedstories`,
         {
-          StoryID: numbersArray,
+          storyIds: numbersArray,
         }
       );
       console.log(secondApiResponse.request)
