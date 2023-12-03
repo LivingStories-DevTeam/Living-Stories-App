@@ -8,14 +8,11 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from flask_cors import CORS
 
-
 app = Flask(__name__)
-CORS(app)
-
 
 def vectorize_stories(stories_df):
     vectorizer = TfidfVectorizer(stop_words='english')
-    return vectorizer.fit_transform(stories_df['rich_text']), vectorizer
+    return vectorizer.fit_transform(stories_df['header']), vectorizer
 
 def cluster_stories(X):
     if X.shape[0] < 2:
@@ -68,18 +65,10 @@ def fetch_locations():
 def fetch_followers():
     return fetch_data("SELECT * FROM followers")
 
-def fetch_comments():
-    return fetch_data("SELECT * FROM comments")
-
-
-def fetch_read_stories(user_id):
-    return fetch_data(f"SELECT read_story_id FROM recommend_user WHERE user_id = {user_id}")
-
 users_df = fetch_users()
 stories_df = fetch_stories()
 locations_df = fetch_locations()
 followers_df = fetch_followers()
-comments_df = fetch_comments()
 
 def fetch_most_liked_stories(top_m):
     stories_df['like_count'] = stories_df['likes'].apply(len)
@@ -103,19 +92,16 @@ def calculate_location_proximity(user_id, stories_df, locations_df):
 
 def check_followed_users_likes(user_id, stories_df):
     followed_users = followers_df.loc[followers_df['follower_id'] == user_id, ['following_id']].values[0]
+    #Returns story['id']
     followed_user_likes = stories_df[stories_df['likes'].apply(lambda likes: any(user in followed_users for user in likes))]['id']
     followed_user_likes_scores = stories_df['id'].isin(followed_user_likes).astype(int)
     return followed_user_likes_scores
-
-def followed_users(user_id, stories_df):
-    followed_users = followers_df[followers_df['follower_id'] == user_id]['following_id'].tolist()
-    return followed_users
 
 def add_like_count(stories_df):
     stories_df['like_count'] = stories_df['likes'].apply(len)
     return stories_df
 
-def recommend_stories(user_id, top_n):
+def recommend_stories(user_id, top_n=3):
     add_like_count(stories_df)
     X, vectorizer = vectorize_stories(stories_df)
     stories_df['Cluster'] = cluster_stories(X)
@@ -135,11 +121,8 @@ def recommend_stories(user_id, top_n):
     top_recommendations = top_recommendations.drop(columns=columns_to_drop)
 
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]
-    user_read_stories = fetch_read_stories(user_id)
-    user_liked_and_read_stories = pd.concat([user_liked_stories, user_read_stories]).drop_duplicates()
-    
-    if not user_liked_and_read_stories.empty:
-        user_preferred_cluster = stories_df[stories_df['id'].isin(user_liked_and_read_stories)]['Cluster'].mode()[0]
+    if not user_liked_stories.empty:
+        user_preferred_cluster = user_liked_stories['Cluster'].mode()[0]
         clustered_stories = stories_df[stories_df['Cluster'] == user_preferred_cluster]
 
         clustered_stories['cluster_score'] = clustered_stories['like_count'] 
@@ -153,10 +136,10 @@ def recommend_stories(user_id, top_n):
     
         # Get unique top N recommendations
         unique_recommendations = combined_recommendations.drop_duplicates(subset='id').head(top_n)
-        return unique_recommendations['id']
+        return unique_recommendations[['id']]
 
     # If there are no preferred cluster, use it without
-    return top_recommendations['id']
+    return top_recommendations[['id']]
 
 @app.route('/recommendations', methods=['GET'])
 def get_recommendations():
@@ -168,12 +151,7 @@ def get_recommendations():
     cold_start_threshold = 3
     top_m_stories = 3
 
-    user_likes_count = len(stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)])
-    followed_users_count = len(followed_users(user_id, stories_df))
-    user_comments_count = len(comments_df[comments_df['user_id'] == user_id])
-
-    user_interactions = user_likes_count + followed_users_count + user_comments_count
-
+    user_interactions = len(stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)])
     if user_interactions < cold_start_threshold:
         most_liked_stories = fetch_most_liked_stories(top_m_stories)
         return jsonify(most_liked_stories['id'].tolist())
