@@ -80,7 +80,7 @@ public class StoryService {
         if (optionalStory.isPresent()) {
             storyRepository.deleteById(storyId);
         }
-        
+
     }
 
     public List<Story> getFollowingStories(Long id) {
@@ -220,11 +220,36 @@ public class StoryService {
         if (searchRequest.getEndDate() == null)
             searchRequest.setEndDate(new SimpleDateFormat("yyyy-MM-dd").parse("9999-12-31"));
         List<Story> stories = storyRepository.searchAdvanced(searchRequest.getKey(), searchRequest.getStartDate(),
-                searchRequest.getEndDate());
+                searchRequest.getEndDate(), searchRequest.getIsInterval());
+        List<Story> storiesAll = storyRepository.findAll();
         List<Story> filteredStories = new ArrayList<>();
         for (Story story : stories) {
-            if (searchCriteria(story, searchRequest))
+            if (searchCriteria(story, searchRequest)) {
                 filteredStories.add(story);
+            }
+        }
+        /**
+         * TODO: Refactor this method to leverage JPA's querying capabilities.
+         * Currently, the label matching is performed programmatically. To optimize
+         * this,
+         * the 'label' property in the corresponding entity should be converted to a
+         * collection-based relationship (e.g., @OneToMany or @ManyToMany). This change
+         * will enable
+         * direct and efficient querying for label matching using JPA's query methods,
+         * reducing the need for
+         * manual filtering and improving overall performance.
+         */
+        if (searchRequest.getKey() != null) {
+            for (Story story : storiesAll) {
+                boolean labelMatches = story.getLabels() != null && story.getLabels().stream()
+                        .anyMatch(label -> label.toLowerCase().contains(searchRequest.getKey().toLowerCase()));
+                boolean dateInRange = (story.getStartDate() == null
+                        || !story.getStartDate().before(searchRequest.getStartDate())) &&
+                        (story.getEndDate() == null || !story.getEndDate().after(searchRequest.getEndDate()));
+                if (searchCriteria(story, searchRequest) && labelMatches && dateInRange) {
+                    filteredStories.add(story);
+                }
+            }
         }
         filteredStories.sort(Comparator.comparing(Story::getStartDate));
         return filteredStories;
@@ -265,8 +290,8 @@ public class StoryService {
 
     private boolean markerMatches(Locations location, Point searchCenter, double radiusInDegrees,
             GeometryFactory geometryFactory) {
-        List<Double> latLng = location.getCoordinates().get(0); 
-        Point locationPoint = geometryFactory.createPoint(new Coordinate(latLng.get(0), latLng.get(1))); 
+        List<Double> latLng = location.getCoordinates().get(0);
+        Point locationPoint = geometryFactory.createPoint(new Coordinate(latLng.get(0), latLng.get(1)));
         return locationPoint.isWithinDistance(searchCenter, radiusInDegrees);
     }
 
