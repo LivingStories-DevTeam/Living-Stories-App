@@ -113,33 +113,32 @@ const NavBar: React.FC = () => {
             alt="React Bootstrap logo"
           /></Navbar.Brand>
       </Container>
-      <Space size={25}>
-        <a onClick={() => {
-          onActivityDrawerClick();
-          setOpenActivityDrawer(true);
-        }}>
-          <Badge
-            showZero
-            count={activityCount}>
-            <Avatar src={<BellFilled style={{ fontSize: "35px" }} />} shape="square" size="large" />
-          </Badge>
-        </a>
-        <div>
-          <Button variant='secondary'
-            onClick={() => {
-              navigate("/story", { replace: true });
-            }}
-            style={{ minWidth: "fit-content", fontSize: "xx-large", backgroundColor: '#1F6C5C', outline: "none" }}
-          >
-            Create Story
-          </Button>
-          <Button variant='secondary' onClick={logout} style={{ minWidth: "fit-content", fontSize: "xx-large", backgroundColor: '#1F6C5C' }}>Log Out</Button>
-        </div>
-      </Space>
+      <a style={{ marginRight: "20px" }} onClick={() => {
+        onActivityDrawerClick();
+        setOpenActivityDrawer(true);
+      }}>
+        <Badge
+          showZero
+          count={activityCount}>
+          <Avatar src={<BellFilled style={{ fontSize: "35px" }} />} shape="square" size="large" />
+        </Badge>
+      </a>
+      <Button variant='secondary'
+        onClick={() => {
+          navigate("/story", { replace: true });
+        }}
+        style={{ minWidth: "fit-content", fontSize: "xx-large", backgroundColor: '#1F6C5C', outline: "none" }}
+      >
+        Create Story
+      </Button>
+      <Button variant='secondary' onClick={logout} style={{ minWidth: "fit-content", fontSize: "xx-large", backgroundColor: '#1F6C5C' }}>Log Out</Button>
       <Drawer
         width={"50vh"}
         open={openActivityDrawer}
         onClose={() => setOpenActivityDrawer(false)}>
+        <Form.Item>
+          <Text style={{ color: "rgb(31, 108, 92)", fontWeight: 600, fontSize: "16px", marginLeft: "18px" }}>LATEST ACTIVITIES</Text>
+        </Form.Item>
         <List
           itemLayout="vertical"
           size="small"

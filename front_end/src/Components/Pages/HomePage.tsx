@@ -99,7 +99,6 @@ const HomePage: React.FC = () => {
           value={selectedOption}
           optionType="button"
           buttonStyle="solid"
-
         /></Row>
       <ul style={{ listStyle: "none", marginRight: "10px" }}>
         {stories.slice().reverse().map((story: Story) => (
