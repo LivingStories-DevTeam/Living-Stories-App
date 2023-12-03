@@ -47,7 +47,7 @@ public class ActivityController {
                 List<Activity> activitiesByUserId = activityRepository.findByUserId(followingId);
 
                 activitiesByUserId.forEach(activity -> {
-                    if (lastDate != null && activity.getAction_timestamp().before(lastDate)) {
+                    if (lastDate != null && !activity.getAction_timestamp().after(lastDate)) {
                         activity.setNewFlag("N");
                     } else {
                         activity.setNewFlag("Y");
@@ -83,7 +83,7 @@ public class ActivityController {
                 List<Activity> activitiesByUserId = activityRepository.findByUserId(followingId);
 
                 activitiesByUserId.forEach(activity -> {
-                    if (lastDate != null && activity.getAction_timestamp().before(lastDate)) {
+                    if (lastDate != null && !activity.getAction_timestamp().after(lastDate)) {
                         activity.setNewFlag("N");
                     } else {
                         activity.setNewFlag("Y");
