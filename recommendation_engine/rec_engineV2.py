@@ -10,7 +10,7 @@ from flask_cors import CORS
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 def vectorize_stories(stories_df):
     vectorizer = TfidfVectorizer(stop_words='english')
@@ -178,6 +178,10 @@ def get_recommendations():
     else:
         recommendations = recommend_stories(user_id, top_n=5)
         return jsonify(recommendations['id'].tolist())
+    
+@app.after_request
+def after_request(response):
+    return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002)
