@@ -11,6 +11,8 @@ import React from "react";
 import ReactQuill from "react-quill";
 import dayjs from "dayjs";
 import advancedFormat from 'dayjs/plugin/advancedFormat';
+import { Chrono } from "react-chrono";
+import icon from "../../assets/images/icon-resized.png";
 
 dayjs.extend(advancedFormat);
 
@@ -28,6 +30,8 @@ const Timeline: React.FC = () => {
     const [screenSpin, setScreenSpin] = useState<boolean>(false);
     const [circleOnce, setCircleOnce] = useState<boolean>(false);
     const [nativeCircle, setNativeCircle] = useState<google.maps.Circle | null>(null);
+    const [naturalWidth, setNaturalWidth] = useState<number>(500);
+    const [naturalHeight, setNaturalHeigth] = useState<number>(500);
     const radius = Form.useWatch("radius", form);
     const radiusVisual = Form.useWatch("radiusVisual", form);
     const key = Form.useWatch("key", form);
@@ -362,7 +366,19 @@ const Timeline: React.FC = () => {
                         imageData: imageDataList
                     };
                 });
-                setSearchResult(searchResult);
+                let searchResultMapped = searchResult.map((item: any) => ({
+                    key: item?.id,
+                    title: item?.endDate ? `${item.startDate} ${<MinusOutlined />} ${item.endDate}` : `${item.startDate}`,
+                    media: item?.imageData?.find(() => true) ? {
+                        name: "IMAGE",
+                        source: {
+                            url: item.imageData?.find(() => true) ?? item?.meida?.find(() => true)
+                        },
+                        type: "IMAGE"
+                    } : undefined,
+                    cardTitle: <a onClick={() => window.location.href = `/stories/${item.id}`}>{item.header}</a>
+                })).filter((item: any) => item.media);
+                setSearchResult(searchResultMapped);
             }
             setScreenSpin(false);
         } catch (error) {
@@ -435,6 +451,16 @@ const Timeline: React.FC = () => {
             setMapCenter({ lat: locationData.lat, lng: locationData.lng });
             onSearch(locationData);
         }
+    };
+
+    const calculateIntrinsicSize = (value: number) => {
+        const index = searchResult?.findIndex(item => item.cardTitle === value)
+        const img = new Image();
+        img.onload = function () {
+            setNaturalWidth(img.naturalWidth);
+            setNaturalHeigth(img.naturalHeight);
+        };
+        img.src = searchResult?.[index]?.media?.source?.url;
     };
 
     return (
@@ -618,7 +644,7 @@ const Timeline: React.FC = () => {
                                     </Space>
                                 </Form.Item>
                             </Form>
-                            <List
+                            {/* <List
                                 itemLayout="vertical"
                                 size="large"
                                 pagination={{ pageSize: 10, hideOnSinglePage: true }}
@@ -680,7 +706,32 @@ const Timeline: React.FC = () => {
                                         </>
                                     </List.Item>
                                 )}
-                            />
+                            /> */}
+                            <Chrono
+                                allowDynamicUpdate
+                                mode={"HORIZONTAL"}
+                                slideShow
+                                useReadMore
+                                mediaHeight={naturalHeight}
+                                mediaWidth={naturalWidth}
+                                cardHeight={naturalHeight}
+                                cardWidth={naturalWidth}
+                                onItemSelected={(item: any) => calculateIntrinsicSize(item.cardTitle)}
+                                timelineCircleDimension={32}
+                                enableOutline
+                                items={searchResult}
+                                fontSizes={{
+                                    title: "1.2rem"
+                                }}
+
+                                theme={{
+                                    titleColor: "black",
+                                    titleColorActive: "black",
+                                    cardBgColor: "white",
+                                    primary: "royalblue",
+                                    secondary: "white"
+                                }}>
+                            </Chrono>
                         </Spin>
                     </Content>
                 </Col>
