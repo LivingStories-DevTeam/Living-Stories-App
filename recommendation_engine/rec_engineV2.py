@@ -6,6 +6,11 @@ import psycopg2
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
+from flask_cors import CORS
+
+
+app = Flask(__name__)
+CORS(app, supports_credentials=True)
 
 def vectorize_stories(stories_df):
     vectorizer = TfidfVectorizer(stop_words='english')
@@ -81,10 +86,18 @@ def calculate_label_similarity(user_id, stories_df):
 def calculate_location_proximity(user_id, stories_df, locations_df):
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['id']
     if user_liked_stories.empty:
-        return pd.Series([0]*len(stories_df))
+        return pd.Series([0] * len(stories_df), index=stories_df.index)
     user_locations = locations_df[locations_df['story_id'].isin(user_liked_stories)][['lat', 'lng']].mean().to_numpy()
     story_locations = locations_df.set_index('story_id').loc[stories_df['id']][['lat', 'lng']].to_numpy()
-    proximity_scores = 1 / (1 + np.linalg.norm(story_locations - user_locations, axis=1))
+    if len(story_locations) != len(stories_df):
+        default_proximity = 0 
+        proximity_scores = pd.Series([default_proximity] * len(stories_df), index=stories_df.index)
+        valid_indices = locations_df.set_index('story_id').index.intersection(stories_df['id'])
+        valid_proximity_scores = 1 / (1 + np.linalg.norm(story_locations - user_locations, axis=1))
+        proximity_scores.loc[valid_indices] = valid_proximity_scores
+    else:
+        proximity_scores = 1 / (1 + np.linalg.norm(story_locations - user_locations, axis=1))
+    
     return proximity_scores
 
 def check_followed_users_likes(user_id, stories_df):
@@ -102,7 +115,7 @@ def recommend_stories(user_id, top_n=3):
     add_like_count(stories_df)
     X, vectorizer = vectorize_stories(stories_df)
     stories_df['Cluster'] = cluster_stories(X)
-    non_user_stories = stories_df[stories_df['user_id'] != user_id]
+    non_user_stories = stories_df[stories_df['user_id'] != user_id].copy()
 
     non_user_stories['label_similarity'] = calculate_label_similarity(user_id, non_user_stories)
     non_user_stories['location_proximity'] = calculate_location_proximity(user_id, non_user_stories, locations_df)
@@ -155,6 +168,10 @@ def get_recommendations():
     else:
         recommendations = recommend_stories(user_id, top_n=5)
         return jsonify(recommendations['id'].tolist())
+
+@app.after_request
+def after_request(response):
+    return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002)

@@ -292,10 +292,18 @@ public class StoryService {
         }
     }
 
-    private boolean markerMatches(Locations location, Point searchCenter, double radiusInDegrees,
-            GeometryFactory geometryFactory) {
-        List<Double> latLng = location.getCoordinates().get(0);
-        Point locationPoint = geometryFactory.createPoint(new Coordinate(latLng.get(0), latLng.get(1)));
+    private boolean markerMatches(Locations location, Point searchCenter, double radiusInDegrees, GeometryFactory geometryFactory) {
+        List<List<Double>> coordinates = location.getCoordinates();
+        double lat, lng;
+        if (coordinates.isEmpty() || coordinates.get(0).isEmpty()) {
+            lat = location.getLat();
+            lng = location.getLng();
+        } else {
+            List<Double> latLng = coordinates.get(0);
+            lat = latLng.get(0);
+            lng = latLng.get(1);
+        }
+        Point locationPoint = geometryFactory.createPoint(new Coordinate(lat, lng));
         return locationPoint.isWithinDistance(searchCenter, radiusInDegrees);
     }
 
