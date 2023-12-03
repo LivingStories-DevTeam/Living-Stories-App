@@ -64,9 +64,7 @@ const HomePage: React.FC = () => {
           ? `${import.meta.env.VITE_BACKEND_URL}/stories`
           : selectedOption === "followings" ? `${import.meta.env.VITE_BACKEND_URL}/stories/following`
             : `${import.meta.env.VITE_BACKEND_PYTHON_URL}/recommendations?user_id=${userId}`
-      const response = await axios.get<Story[]>(url, {
-        withCredentials: true
-      });
+      const response = await axios.get<Story[]>(url);
       if (selectedOption === "recommended") {
         const secondApiResponse = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/activity/recommendedstories`,
