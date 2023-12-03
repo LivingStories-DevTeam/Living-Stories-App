@@ -8,15 +8,20 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Button,
+  Alert,
 } from "react-native";
 import HTML from "react-native-render-html";
 import { API_URL } from "../contexts/AuthContext";
-import MapView, {PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import LottieView from "lottie-react-native";
 import { Feather } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TextInput } from "react-native";
+import LikeButton from "../components/LikeButton";
 
 interface Location {
   lat: number;
@@ -80,6 +85,8 @@ const StoryPage = ({ route, navigation }: any) => {
   const { storyId } = route.params;
 
   const [storyResponse, setStoryResponse] = useState<StoryInt>();
+  const [comment, setComment] = useState<string>();
+  const [trigger, setTrigger] = useState(false);
   const fetchData = async () => {
     try {
       const response = await axios.get(`${API_URL}/stories/${storyId}`);
@@ -93,7 +100,7 @@ const StoryPage = ({ route, navigation }: any) => {
 
   useEffect(() => {
     fetchData(); // Fetch data when the component mountsr
-  }, []); // The empty dependency array ensures this effect runs only once
+  }, [trigger]); // The empty dependency array ensures this effect runs only once
   const markers = storyResponse?.locations || [];
   let center = {
     latitude: 0,
@@ -140,263 +147,340 @@ const StoryPage = ({ route, navigation }: any) => {
       longitude: markers![0].lng,
     };
   }
+  const handleCommentChange = (text: string) => {
+    setComment(text);
+    console.log(comment);
+    console.log(storyId);
+  };
+  const sendComment = async () => {
+    const CommentData: CommentRequestInt = {
+      text: comment!,
+      storyId: storyId,
+    };
+    if (comment) {
+      try {
+        console.log(CommentData);
+        const response = await axios.post(
+          `${API_URL}/stories/comments`,
+          CommentData
+        );
+        setComment("");
+        setTrigger(!trigger);
+        
+       
+
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  };
 
   return (
     <>
       {storyResponse ? (
         <>
           <SafeAreaView style={styles.container}>
-            <ScrollView>
-              {storyResponse?.locations && (
-                <>
-                  <View style={styles.mapContainer}>
-                    <MapView
-                      provider={PROVIDER_GOOGLE}
-                      style={styles.map}
-                      initialRegion={{
-                        ...center,
-                        ...delta,
-                      }}
-                    >
-                      {markers!.map((location) => (
-                        <Marker
-                          key={location.id}
-                          coordinate={{
-                            latitude: location.lat,
-                            longitude: location.lng,
-                          }}
-                          title={location.name}
-                        />
-                      ))}
-                    </MapView>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      flexWrap: "wrap",
-                      margin: 10,
-                    }}
-                  >
-                    <ScrollView
-                      horizontal={true}
-                      showsHorizontalScrollIndicator={false}
-                      style={styles.locationsScroll}
-                    >
-                      {storyResponse.locations &&
-                        storyResponse.locations.map((location, index) => (
-                          <View key={index} style={{marginTop: 5, marginBottom:5}}>
-                            <Text>
-                              {" "}
-                              <Feather
-                                name="map-pin"
-                                size={14}
-                                color="#212121"
-                              />{" "}
-                              {location.city}, {location.country}
-                            </Text>
-                          </View>
-                        ))}
-                    </ScrollView>
-                  </View>
-                  <View style={styles.row}>
-                    <View>
-                      <Image
-                        source={
-                          storyResponse?.user?.photo
-                            ? { uri: storyResponse.user.photo }
-                            : {
-                                uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
-                              }
-                        }
-                        style={styles.avatar}
-                      />
-                    </View>
-
-                    <View>
-                      <Text style={styles.name}>{storyResponse.user.name}</Text>
-                      <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate("Profile", {
-                            name: storyResponse?.user.name,
-                          });
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={styles.container}
+              keyboardVerticalOffset={120}
+            >
+              <ScrollView>
+                {storyResponse?.locations && (
+                  <>
+                    <View style={styles.mapContainer}>
+                      <MapView
+                        provider={PROVIDER_GOOGLE}
+                        style={styles.map}
+                        initialRegion={{
+                          ...center,
+                          ...delta,
                         }}
                       >
-                        <Text style={styles.link}>See profile</Text>
-                      </TouchableOpacity>
+                        {markers!.map((location) => (
+                          <Marker
+                            key={location.id}
+                            coordinate={{
+                              latitude: location.lat,
+                              longitude: location.lng,
+                            }}
+                            title={location.name}
+                          />
+                        ))}
+                      </MapView>
                     </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        margin: 10,
+                      }}
+                    >
+                      <ScrollView
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        style={styles.locationsScroll}
+                      >
+                        {storyResponse.locations &&
+                          storyResponse.locations.map((location, index) => (
+                            <View
+                              key={index}
+                              style={{ marginTop: 5, marginBottom: 5 }}
+                            >
+                              <Text>
+                                {" "}
+                                <Feather
+                                  name="map-pin"
+                                  size={14}
+                                  color="#212121"
+                                />{" "}
+                                {location.city}, {location.country}
+                              </Text>
+                            </View>
+                          ))}
+                      </ScrollView>
+                    </View>
+                    <View style={styles.row}>
+                      <View>
+                        <Image
+                          source={
+                            storyResponse?.user?.photo
+                              ? { uri: storyResponse.user.photo }
+                              : {
+                                  uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                                }
+                          }
+                          style={styles.avatar}
+                        />
+                      </View>
 
-                    {/* Right section with dates and seasons */}
-                    <View style={styles.rightSection}>
-                      {storyResponse.decade ? (
-                        <Text>{storyResponse.decade}</Text>
-                      ) : (
-                        <View style={{ flexDirection: "row" }}>
-                          <Text>
-                            <Feather name="sunrise" size={16} color="#212121" />{" "}
-                            {storyResponse.startDate}{" "}
-                          </Text>
-                          {storyResponse.endDate && (
+                      <View>
+                        <Text style={styles.name}>
+                          {storyResponse.user.name}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => {
+                            navigation.navigate("Profile", {
+                              name: storyResponse?.user.name,
+                            });
+                          }}
+                        >
+                          <Text style={styles.link}>See profile</Text>
+                        </TouchableOpacity>
+                      </View>
+
+                      {/* Right section with dates and seasons */}
+                      <View style={styles.rightSection}>
+                        {storyResponse.decade ? (
+                          <Text>{storyResponse.decade}</Text>
+                        ) : (
+                          <View style={{ flexDirection: "column" }}>
                             <Text>
                               <Feather
-                                name="sunset"
+                                name="sunrise"
                                 size={16}
                                 color="#212121"
                               />{" "}
-                              {storyResponse.endDate}{" "}
+                              {storyResponse.startDate}{" "}
                             </Text>
-                          )}
-                        </View>
-                      )}
-                      {storyResponse.startSeason && (
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            marginTop: 5,
-                            alignItems: "center",
-                          }}
-                        >
-                          <Text>
-                            {storyResponse.startSeason === "summer" && (
-                              <MaterialIcons
-                                name="wb-sunny"
-                                size={16}
-                                color="black"
-                              />
+                            {storyResponse.endDate && (
+                              <Text>
+                                <Feather
+                                  name="sunset"
+                                  size={16}
+                                  color="#212121"
+                                />{" "}
+                                {storyResponse.endDate}{" "}
+                              </Text>
                             )}
-                            {storyResponse.startSeason === "fall" && (
-                              <MaterialIcons
-                                name="park"
-                                size={16}
-                                color="black"
-                              />
-                            )}
-                            {storyResponse.startSeason === "spring" && (
-                              <MaterialIcons
-                                name="spa"
-                                size={16}
-                                color="black"
-                              />
-                            )}
-                            {storyResponse.startSeason === "winter" && (
-                              <MaterialIcons
-                                name="ac-unit"
-                                size={16}
-                                color="black"
-                              />
-                            )}{" "}
-                            {storyResponse.startSeason}{" "}
-                          </Text>
-                          {storyResponse.endSeason && (
+                          </View>
+                        )}
+                        {storyResponse.startSeason && (
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              marginTop: 5,
+                              alignItems: "center",
+                            }}
+                          >
                             <Text>
-                              {storyResponse.endSeason === "summer" && (
+                              {storyResponse.startSeason === "summer" && (
                                 <MaterialIcons
                                   name="wb-sunny"
                                   size={16}
                                   color="black"
                                 />
                               )}
-                              {storyResponse.endSeason === "fall" && (
+                              {storyResponse.startSeason === "fall" && (
                                 <MaterialIcons
                                   name="park"
                                   size={16}
                                   color="black"
                                 />
                               )}
-                              {storyResponse.endSeason === "spring" && (
+                              {storyResponse.startSeason === "spring" && (
                                 <MaterialIcons
                                   name="spa"
                                   size={16}
                                   color="black"
                                 />
                               )}
-                              {storyResponse.endSeason === "winter" && (
+                              {storyResponse.startSeason === "winter" && (
                                 <MaterialIcons
                                   name="ac-unit"
                                   size={16}
                                   color="black"
                                 />
                               )}{" "}
-                              {storyResponse.endSeason}{" "}
+                              {storyResponse.startSeason}{" "}
                             </Text>
-                          )}
-                        </View>
-                      )}
+                            {storyResponse.endSeason && (
+                              <Text>
+                                {storyResponse.endSeason === "summer" && (
+                                  <MaterialIcons
+                                    name="wb-sunny"
+                                    size={16}
+                                    color="black"
+                                  />
+                                )}
+                                {storyResponse.endSeason === "fall" && (
+                                  <MaterialIcons
+                                    name="park"
+                                    size={16}
+                                    color="black"
+                                  />
+                                )}
+                                {storyResponse.endSeason === "spring" && (
+                                  <MaterialIcons
+                                    name="spa"
+                                    size={16}
+                                    color="black"
+                                  />
+                                )}
+                                {storyResponse.endSeason === "winter" && (
+                                  <MaterialIcons
+                                    name="ac-unit"
+                                    size={16}
+                                    color="black"
+                                  />
+                                )}{" "}
+                                {storyResponse.endSeason}{" "}
+                              </Text>
+                            )}
+                          </View>
+                        )}
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.storyContainer1}>
-                    <View style={styles.headerCont}>
-                      <Text style={styles.headerText}>
-                        {storyResponse.header}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                        marginLeft: 10,
-                      }}
-                    >
-                      <ScrollView
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                        style={{ marginTop: 8 }}
-                      >
-                        {storyResponse.labels &&
-                          storyResponse.labels.map((label, index) => (
-                            <View style={styles.tag} key={index}>
-                              <Text style={styles.tagText}>{label}</Text>
-                            </View>
-                          ))}
-                      </ScrollView>
-                    </View>
-                  </View>
-                </>
-              )}
-
-              {storyResponse?.user.name && (
-                <View style={styles.storyContainer2}>
-                  <View style={{ marginLeft: 15, marginRight: 15 }}>
-                    <HTML source={{ html: storyResponse?.richText }} />
-                  </View>
-                </View>
-              )}
-              <View style={styles.likeCommentContainer}>
-                <Text style={styles.likeAndComment}>
-                  <Feather name="thumbs-up" size={25} color="#212121" />{" "}
-                  {storyResponse?.likes.length}
-                </Text>
-                <Text style={styles.likeAndComment}>
-                  <Feather name="message-circle" size={25} color="#212121" />{" "}
-                  {storyResponse?.comments.length}
-                </Text>
-              </View>
-              <View style={styles.commentContainer}>
-                <Text style={{ color: "gray" }}>Comment</Text>
-                <TextInput style={styles.commentInput} placeholder="comment" />
-
-                {storyResponse.comments &&
-                  storyResponse.comments.map((comment, index) => (
-                    <View style={secondStyles.container}>
-                      <Image
-                        source={{ uri: comment.user.photo }}
-                        style={secondStyles.avatar}
-                      />
-                      <View style={secondStyles.commentContainer}>
-                        <Text style={secondStyles.userName}>
-                          {comment.user.name}
-                        </Text>
-                        <Text style={secondStyles.commentText}>
-                          {comment.text}
+                    <View style={styles.storyContainer1}>
+                      <View style={styles.headerCont}>
+                        <Text style={styles.headerText}>
+                          {storyResponse.header}
                         </Text>
                       </View>
-                      <Text style={secondStyles.likeCount}>
-                        <Feather name="thumbs-up" size={16} color="#212121" />{" "}
-                        {comment.likes.length}
-                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          flexWrap: "wrap",
+                          marginLeft: 10,
+                        }}
+                      >
+                        <ScrollView
+                          horizontal={true}
+                          showsHorizontalScrollIndicator={false}
+                          style={{ marginTop: 8 }}
+                        >
+                          {storyResponse.labels &&
+                            storyResponse.labels.map((label, index) => (
+                              <View style={styles.tag} key={index}>
+                                <Text style={styles.tagText}>{label}</Text>
+                              </View>
+                            ))}
+                        </ScrollView>
+                      </View>
                     </View>
-                  ))}
-              </View>
-            </ScrollView>
+                  </>
+                )}
+
+                {storyResponse?.user.name && (
+                  <View style={styles.storyContainer2}>
+                    <View style={{ marginLeft: 15, marginRight: 15 }}>
+                      <HTML source={{ html: storyResponse?.richText }} />
+                    </View>
+                  </View>
+                )}
+                <View style={styles.likeCommentContainer}>
+                  <LikeButton
+                    id={storyResponse.id}
+                    type="story"
+                    likeNumber={storyResponse?.likes.length}
+                  />
+
+                  <Text style={styles.comment}>
+                    <Feather name="message-circle" size={25} color="#212121" />{" "}
+                    {storyResponse?.comments.length}
+                  </Text>
+                </View>
+                <View style={styles.commentContainer}>
+                  <Text style={{ color: "gray" }}>Comment</Text>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TextInput
+                      style={styles.commentInput}
+                      placeholder="Write your comment here!"
+                      multiline={true}
+                      onChangeText={handleCommentChange}
+                      value={comment}
+                    />
+                    <TouchableOpacity
+                      style={{
+                        width: "25%",
+                        backgroundColor: "#1f6c5c",
+                        paddingVertical: 10,
+                        borderRadius: 20,
+                        alignItems: "center",
+                        marginLeft: 5, 
+                        marginRight: 5,
+                      }}
+                      onPress={sendComment}
+                    >
+                      <Text style={{ color: "white" }}>Comment</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {storyResponse.comments &&
+                    storyResponse.comments.reverse().map((comment, index) => (
+                      <View style={secondStyles.container}>
+                        <Image
+                          source={
+                            comment?.user?.photo
+                              ? { uri: comment.user.photo }
+                              : {
+                                  uri: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=826&t=st=1698542998~exp=1698543598~hmac=f1dde6bce65fc668784143b9e47139ffd1813927888979fa849950d62a7088fd",
+                                }
+                          }
+                          style={secondStyles.avatar}
+                        />
+                        <View style={secondStyles.commentContainer}>
+                          <Text style={secondStyles.userName}>
+                            {comment.user.name}
+                          </Text>
+                          <Text style={secondStyles.commentText}>
+                            {comment.text}
+                          </Text>
+                        </View>
+                        <View style={secondStyles.likeCount}>
+                         <LikeButton id={storyId} type="comment" commentId={comment.id} likeNumber={comment.likes.length}/>
+                        </View>
+                      </View>
+                    ))}
+                </View>
+              </ScrollView>
+            </KeyboardAvoidingView>
           </SafeAreaView>
         </>
       ) : (
@@ -491,8 +575,14 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 10,
   },
-  likeAndComment: {
+  comment: {
     marginLeft: 15,
+    fontSize: 15,
+    color: "#1f6c5c",
+  },
+  like: {
+    marginLeft: 10,
+    marginTop: 7,
     fontSize: 15,
     color: "#1f6c5c",
   },
@@ -508,10 +598,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   commentInput: {
-    width: "70%",
+    width: "75%",
     padding: 10,
     color: "black",
-    backgroundColor: "rgba(242, 242, 242, 0.8)",
+    backgroundColor: "white",
     borderRadius: 4,
     borderWidth: 1,
     borderColor: "black",
@@ -520,9 +610,9 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   locationsScroll: {
-    borderTopWidth:0.5, 
-    borderBottomWidth: 0.5, 
-    borderColor: "black", 
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
+    borderColor: "black",
   },
 });
 
@@ -559,6 +649,8 @@ const secondStyles = StyleSheet.create({
   },
   likeCount: {
     fontSize: 14,
+    marginRight: 8,
+    flexDirection : "row"
   },
 });
 

@@ -21,8 +21,13 @@ const Register = ({ navigation }: any) => {
 
   const register = async () => {
     const result = await onRegister!(email, password, name);
+    
     if (result && result.error) {
       Alert.alert("Something went wrong! Try again!", "If the error persists, contact the developers!");
+    }
+    else{
+      Alert.alert("Registration is successful")
+      navigation.navigate("Login")
     }
   };
 

@@ -25,6 +25,8 @@ public class Activity {
     @NotBlank
     private String user_name;
 
+
+    @Column(columnDefinition = "TEXT")
     private String user_media;
 
     @NotBlank
@@ -43,5 +45,7 @@ public class Activity {
 
     @NotNull
     private Date action_timestamp;
+
+    private String newFlag;
 
 }

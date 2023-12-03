@@ -1,6 +1,5 @@
 import { Autocomplete, Circle, GoogleMap, Marker } from "@react-google-maps/api";
 import NavBar from "../Components/NavBar";
-
 import { Avatar, Button, Col, Collapse, DatePicker, DatePickerProps, Form, Input, Layout, List, Row, Select, Space, Spin, Switch, TimeRangePickerProps, Tooltip, Tree, Typography } from "antd";
 import axios from "axios";
 import { Fragment, useEffect, useRef, useState, } from "react";
@@ -167,7 +166,6 @@ const Timeline: React.FC = () => {
     const onSelectChange = (value: any) => {
         let sortedResults = [...searchResult];
         if (value === "descending") {
-
             sortedResults.sort((a, b) =>
                 dayjs(b.startDate, "DD/MM/YYYY").unix() - dayjs(a.startDate, "DD/MM/YYYY").unix()
             );
@@ -213,6 +211,7 @@ const Timeline: React.FC = () => {
 
     const customFormat: DatePickerProps["format"] = (value) =>
         `${value.format("YYYY")}s`;
+
     const renderDateElement = () => {
         switch (dateClass) {
             case null:
@@ -225,43 +224,43 @@ const Timeline: React.FC = () => {
                 )
             case "0-0":
                 return (
-                    <DatePicker onChange={onSearch} />
+                    <DatePicker onBlur={() => onSearch()} />
                 )
             case "0-1":
                 return (
-                    <DatePicker picker="week" onChange={() => onSearch()} />
+                    <DatePicker picker="week" onBlur={() => onSearch()} />
                 )
             case "0-2":
                 return (
-                    <DatePicker picker="month" onChange={() => onSearch()} />
+                    <DatePicker picker="month" onBlur={() => onSearch()} />
                 )
             case "0-3":
                 return (
-                    <DatePicker picker="quarter" onChange={() => onSearch()} />
+                    <DatePicker picker="quarter" onBlur={() => onSearch()} />
                 )
             case "0-4":
                 return (
-                    <DatePicker picker="year" onChange={() => onSearch()} />
+                    <DatePicker picker="year" onBlur={() => onSearch()} />
                 )
             case "1-0":
                 return (
-                    <RangePicker onChange={() => onSearch()} />
+                    <RangePicker onBlur={() => onSearch()} />
                 )
             case "1-1":
                 return (
-                    <RangePicker picker="week" onChange={() => onSearch()} />
+                    <RangePicker picker="week" onBlur={() => onSearch()} />
                 )
             case "1-2":
                 return (
-                    <RangePicker picker="month" onChange={() => onSearch()} />
+                    <RangePicker picker="month" onBlur={() => onSearch()} />
                 )
             case "1-3":
                 return (
-                    <RangePicker picker="quarter" onChange={() => onSearch()} />
+                    <RangePicker picker="quarter" onBlur={() => onSearch()} />
                 )
             case "1-4":
                 return (
-                    <RangePicker picker="year" onChange={() => onSearch()} presets={periodIntervalPresets} />
+                    <RangePicker picker="year" onBlur={() => onSearch()} presets={periodIntervalPresets} />
                 )
         }
     };
@@ -275,40 +274,69 @@ const Timeline: React.FC = () => {
                 circle = radius;
             let startDate;
             let endDate;
-            switch (dateClass) {
-                case "0-0":
-                case "1-0":
-                    startDate = Array.isArray(date) ? date[0] : date;
-                    endDate = Array.isArray(date) ? date[1] : date[0];
-                    break;
-                case "0-1":
-                case "1-1":
-                    startDate = Array.isArray(date) ? date[0].startOf("week") : date.startOf("week");
-                    endDate = Array.isArray(date) ? date[1].endOf("week") : date[0].endOf("week");
-                    break;
-                case "0-2":
-                case "1-2":
-                    startDate = Array.isArray(date) ? date[0].startOf("month") : date.startOf("month");
-                    endDate = Array.isArray(date) ? date[1].endOf("month") : date[0].endOf("month");
-                    break;
-                case "0-3":
-                case "1-3":
-                    startDate = Array.isArray(date) ? date[0].startOf("quarter") : date.startOf("quarter");
-                    endDate = Array.isArray(date) ? date[1].endOf("quarter") : date[0].endOf("quarter");
-                    break;
-                case "0-4":
-                case "1-4":
-                    startDate = Array.isArray(date) ? date[0].startOf("year") : date.startOf("year");
-                    endDate = Array.isArray(date) ? date[1].endOf("year") : date[0].endOf("year");
-                    break;
+            let isInterval = true;
+            if (date) {
+                switch (dateClass) {
+                    case "0-0":
+                        startDate = Array.isArray(date) ? date[0] : date;
+                        endDate = Array.isArray(date) ? date[1] : null;
+                        isInterval = false;
+                        break;
+                    case "1-0":
+                        startDate = Array.isArray(date) ? date[0] : date;
+                        endDate = Array.isArray(date) ? date[1] : null;
+                        isInterval = true;
+                        break;
+                    case "0-1":
+                        startDate = Array.isArray(date) ? date[0].startOf("week") : date.startOf("week");
+                        endDate = Array.isArray(date) ? date[1].endOf("week") : null;
+                        isInterval = false;
+                        break;
+                    case "1-1":
+                        startDate = Array.isArray(date) ? date[0].startOf("week") : date.startOf("week");
+                        endDate = Array.isArray(date) ? date[1].endOf("week") : null;
+                        isInterval = true;
+                        break;
+                    case "0-2":
+                        startDate = Array.isArray(date) ? date[0].startOf("month") : date.startOf("month");
+                        endDate = Array.isArray(date) ? date[1].endOf("month") : null;
+                        isInterval = false;
+                        break;
+                    case "1-2":
+                        startDate = Array.isArray(date) ? date[0].startOf("month") : date.startOf("month");
+                        endDate = Array.isArray(date) ? date[1].endOf("month") : null;
+                        isInterval = true;
+                        break;
+                    case "0-3":
+                        startDate = Array.isArray(date) ? date[0].startOf("quarter") : date.startOf("quarter");
+                        endDate = Array.isArray(date) ? date[1].endOf("quarter") : null;
+                        isInterval = false;
+                        break;
+                    case "1-3":
+                        startDate = Array.isArray(date) ? date[0].startOf("quarter") : date.startOf("quarter");
+                        endDate = Array.isArray(date) ? date[1].endOf("quarter") : null;
+                        isInterval = true;
+                        break;
+                    case "0-4":
+                        startDate = Array.isArray(date) ? date[0].startOf("year") : date.startOf("year");
+                        endDate = Array.isArray(date) ? date[1].endOf("year") : null;
+                        isInterval = false;
+                        break;
+                    case "1-4":
+                        startDate = Array.isArray(date) ? date[0].startOf("year") : date.startOf("year");
+                        endDate = Array.isArray(date) ? date[1].endOf("year") : null;
+                        isInterval = true;
+                        break;
+                }
             }
             let request = {
-                startDate: startDate,
-                endDate: endDate,
+                startDate: startDate ? startDate.startOf("day").toDate() : null,
+                endDate: endDate ? endDate.startOf("day").toDate() : null,
+                isInterval: isInterval,
                 key: key === "" ? null : key,
                 longitude: directed.lng,
                 latitude: directed.lat,
-                radius: circle
+                radius: circle * 1000
             }
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/stories/advancedsearch`, request, {
                 withCredentials: true,
@@ -541,7 +569,6 @@ const Timeline: React.FC = () => {
                                                 <Form.Item
                                                     name={"key"}
                                                     label={<Text style={{ fontSize: "16px", fontFamily: "system-ui", fontWeight: "500" }}>{"Search"}</Text>}>
-
                                                     <Input
                                                         maxLength={50}
                                                         showCount
@@ -552,7 +579,7 @@ const Timeline: React.FC = () => {
                                                 <Tooltip
                                                     title={() => <Text
                                                         style={{ fontFamily: "sans-serif", color: "white" }}>
-                                                        {"Use a keyword to narrow down stories based on their titles, content, tags or username."}
+                                                        {"Use a keyword to narrow down stories based on their title, content, tags or username."}
                                                     </Text>}>
                                                     <InfoCircleOutlined style={{ paddingTop: "12px" }} />
                                                 </Tooltip>
@@ -636,7 +663,7 @@ const Timeline: React.FC = () => {
                                                             </Space>
                                                         </Text>
                                                         <Text style={{ fontWeight: "500" }}>
-                                                            {item.locations.find(() => true).name}
+                                                            {item.locations.find(() => true)?.name}
                                                         </Text>
                                                     </Space>
                                                 </>}

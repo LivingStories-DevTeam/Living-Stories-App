@@ -66,7 +66,7 @@ public class ActivityService {
         try {
             activityRepository.save(activity);
         } catch (RuntimeException e) {
-            throw new RuntimeException("Follow Activity could not be recorded", e);
+            
         }
     }
 

@@ -2,6 +2,7 @@ package com.swe573.living_stories.Controllers;
 
 import com.swe573.living_stories.Models.Comment;
 import com.swe573.living_stories.Models.Media;
+import com.swe573.living_stories.Models.RecommendUser;
 import com.swe573.living_stories.DTO.MediaDTO;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Models.User;
@@ -11,6 +12,8 @@ import com.swe573.living_stories.Requests.StoryRequest;
 import com.swe573.living_stories.Services.StoryService;
 import com.swe573.living_stories.Services.UserService;
 import com.swe573.living_stories.Services.ActivityService;
+import com.swe573.living_stories.Services.RecommendUserService;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +36,10 @@ public class StoryController {
     private StoryService storyService;
 
     @Autowired
+    private RecommendUserService recommendUserService;
+
+    @Autowired
     ActivityService activityService;
-
-
 
     @PostMapping
     public ResponseEntity<Story> createStory(@RequestBody StoryRequest storyRequest, HttpServletRequest request) {
@@ -76,8 +80,39 @@ public class StoryController {
             storyService.addSeason(savedStory.getId(), storyRequest.getEndSeason(), 1);
         }
 
-        activityService.recordPostStoryActivity(savedStory.getId(),optionalUser.get().getId());
+        activityService.recordPostStoryActivity(savedStory.getId(), optionalUser.get().getId());
 
+        return ResponseEntity.ok(savedStory);
+    }
+
+    @PostMapping("/advanced")
+    public ResponseEntity<Story> createStoryAdvanced(@RequestBody StoryRequest storyRequest,
+            HttpServletRequest request) {
+        Long id = userService.isUserLoggedIn(request);
+        Optional<User> optionalUser = userService.getUserById(id);
+        if (!optionalUser.isPresent())
+            return ResponseEntity.notFound().build();
+        Story story = new Story();
+        if (storyRequest.getDecade() != null)
+            story.setDecade(storyRequest.getDecade());
+        story.setText(storyRequest.getText());
+        story.setUser(optionalUser.get());
+        story.setHeader(storyRequest.getHeader());
+        story.setLabels(storyRequest.getLabels());
+        story.setRichText(storyRequest.getRichText());
+        Story savedStory = storyService.createStory(story);
+        if (storyRequest.getLocationsAdvanced() != null)
+            storyService.addLocationAdvanced(savedStory.getId(), storyRequest.getLocationsAdvanced());
+        if (storyRequest.getMediaString() != null)
+            storyService.addMedia(savedStory.getId(), storyRequest.getMediaString());
+        if (storyRequest.getStartDate() != null)
+            storyService.addStartDate(savedStory.getId(), storyRequest.getStartDate());
+        if (storyRequest.getEndDate() != null)
+            storyService.addEndDate(savedStory.getId(), storyRequest.getEndDate());
+        if (storyRequest.getStartSeason() != null)
+            storyService.addSeason(savedStory.getId(), storyRequest.getStartSeason(), 0);
+        if (storyRequest.getEndSeason() != null)
+            storyService.addSeason(savedStory.getId(), storyRequest.getEndSeason(), 1);
         return ResponseEntity.ok(savedStory);
     }
 
@@ -175,6 +210,7 @@ public class StoryController {
         Long userId = userService.isUserLoggedIn(request);
         Story story = storyService.getStoryById(id);
         if (story != null) {
+            recommendUserService.saveAction(userId, story.getId(), "R");
             return ResponseEntity.ok(story);
         }
         return ResponseEntity.notFound().build();
@@ -193,7 +229,8 @@ public class StoryController {
     }
 
     @PostMapping("/advancedsearch")
-    public List<Story> advancedSearch(HttpServletRequest request, @RequestBody AdvancedSearchRequest searchRequest) throws ParseException {
+    public List<Story> advancedSearch(HttpServletRequest request, @RequestBody AdvancedSearchRequest searchRequest)
+            throws ParseException {
         userService.isUserLoggedIn(request);
         return storyService.advancedSearch(searchRequest);
     }
@@ -210,12 +247,19 @@ public class StoryController {
         return "done";
     }
 
+    @GetMapping("/userActionDetails/{userId}")
+    public RecommendUser userActionDetails(@PathVariable Long userId) {
+        return recommendUserService.getUserById(userId);
+    }
+
     @PostMapping("/like/{storyId}")
     public String likeStory(HttpServletRequest request, @PathVariable Long storyId) {
         Long userId = userService.isUserLoggedIn(request);
         String return_string = storyService.likeStory(storyId, userId);
-        if (return_string.equals("User liked story!")) activityService.recordLikeActivity(storyId,userId);
-
+        if (return_string.equals("User liked story!")) {
+            activityService.recordLikeActivity(storyId, userId);
+        }
+        recommendUserService.saveAction(userId, storyId, "L");
         return return_string;
     }
 
