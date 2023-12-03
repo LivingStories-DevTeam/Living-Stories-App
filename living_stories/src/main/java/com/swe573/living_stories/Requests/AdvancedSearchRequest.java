@@ -10,6 +10,7 @@ import lombok.Setter;
 public class AdvancedSearchRequest {
     private Date startDate;
     private Date endDate;
+    private Boolean isInterval;
     private String key;
     private Double longitude;
     private Double latitude;

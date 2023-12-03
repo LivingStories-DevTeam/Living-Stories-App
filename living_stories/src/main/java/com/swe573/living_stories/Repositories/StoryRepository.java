@@ -14,6 +14,8 @@ import java.util.List;
 @Repository
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
+    List<Story> findAll();
+
     List<Story> findByUserId(Long user_id);
 
     List<Story> findByUserIdIn(List<Long> followingIds);
@@ -48,13 +50,14 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
     @Query("SELECT DISTINCT s FROM Story s" +
             " LEFT JOIN s.locations l" +
             " WHERE" +
-            " (:key is null OR LOWER(s.user.name) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.richText) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.city) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.country) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.header) LIKE CONCAT('%', LOWER(:key), '%'))" +
-            " AND (s.startDate >= :startDate) " +
-            " AND (s.endDate <= :endDate)")
+            " (:key IS NULL OR LOWER(s.user.name) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.richText) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.city) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.country) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.header) LIKE CONCAT('%', LOWER(:key), '%'))" +
+            " AND ((:isInterval = true AND (s.startDate IS NULL OR s.startDate >= :startDate)) OR (:isInterval = false AND (s.startDate IS NULL OR s.startDate = :startDate))) " +
+            " AND (s.endDate IS NULL OR s.endDate <= :endDate)")
     List<Story> searchAdvanced(
             @Param("key") String key,
             @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate
+            @Param("endDate") Date endDate,
+            @Param("isInterval") Boolean isInterval
     );
 
     
