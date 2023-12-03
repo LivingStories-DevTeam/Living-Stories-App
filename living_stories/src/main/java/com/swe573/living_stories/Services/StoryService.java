@@ -276,7 +276,11 @@ public class StoryService {
 
     private boolean locationMatches(Locations location, Point searchCenter, double radiusInDegrees,
             GeometryFactory geometryFactory) {
-        switch (location.getType()) {
+        String type = location.getType();
+        if (type == null) {
+            type = "Point";
+        }
+        switch (type) {
             case "Point":
                 return markerMatches(location, searchCenter, radiusInDegrees, geometryFactory);
             case "Circle":
@@ -284,7 +288,7 @@ public class StoryService {
             case "Polygon":
                 return polygonMatches(location, searchCenter, radiusInDegrees, geometryFactory);
             default:
-                return false;
+                return markerMatches(location, searchCenter, radiusInDegrees, geometryFactory);
         }
     }
 

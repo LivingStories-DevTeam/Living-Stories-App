@@ -30,7 +30,6 @@ public class Locations {
     private String city;
     private String country;
 
-    @NonNull
     private String type; 
 
     @ElementCollection
