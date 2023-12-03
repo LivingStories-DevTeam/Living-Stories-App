@@ -3,41 +3,45 @@ import pandas as pd
 from scipy.spatial.distance import cdist
 import numpy as np
 import psycopg2
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 
 app = Flask(__name__)
 
-#Dummy Data
-'''
-users_df = pd.DataFrame({
-    'id': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    'name': ['Salih', 'Senan', 'Omar', 'Cansel', 'Burak', 'Erhan', 'Suzan', 'Asya', 'Ali Hakan', 'Ayse'],
-    'followed_users': [[2, 3], [3, 4], [1, 4], [5, 7], [6, 8], [1, 9], [10], [7, 6], [5], [2, 3, 4]]  # Users following other users
-})
+def vectorize_stories(stories_df):
+    vectorizer = TfidfVectorizer(stop_words='english')
+    return vectorizer.fit_transform(stories_df['header']), vectorizer
 
-stories_df = pd.DataFrame({
-    'id': [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120],
-    'header': ['Story A', 'Story B', 'Story C', 'Story D', 'Story E', 'Story F', 'Story G', 'Story H', 'Story I', 'Story J', 'Story K', 'Story L', 'Story M', 'Story N', 'Story O', 'Story P', 'Story Q', 'Story R', 'Story S', 'Story T'],
-    'labels': [['Adventure', 'Fantasy'], ['Mystery'], ['Adventure'], ['Fantasy'], ['Sci-Fi'], ['Mystery'], ['Adventure'], ['Fantasy'], ['Sci-Fi'], ['Adventure'], ['History'], ['Biography'], ['Adventure', 'History'], ['Sci-Fi', 'Fantasy'], ['Mystery', 'Crime'], ['Biography'], ['Romance'], ['Romance', 'Adventure'], ['Fantasy'], ['Sci-Fi']]
-})
+def cluster_stories(X):
+    if X.shape[0] < 2:
+        raise ValueError("Insufficient data points for clustering")
+    
+    max_clusters = min(X.shape[0], 10)
+    silhouette_scores = []
+    
+    for k in range(2, max_clusters):
+        try:
+            kmeans = KMeans(n_clusters=k, random_state=42)
+            cluster_labels = kmeans.fit_predict(X)
+            silhouette_scores.append(silhouette_score(X, cluster_labels))
+        except ValueError as e:
+            print(f"Skipping k={k} due to error: {e}")
+    
+    if not silhouette_scores:
+        raise ValueError("No valid clustering found")
 
-likes_df = pd.DataFrame({
-    'user_id': [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    'story_id': [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120]
-})
+    ideal_num_clusters = silhouette_scores.index(max(silhouette_scores)) + 2
+    kmeans = KMeans(n_clusters=ideal_num_clusters, random_state=42)
+    return kmeans.fit_predict(X)
 
-locations_df = pd.DataFrame({
-    'story_id': [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120],
-    'lat': [34.05, 48.85, 51.51, 40.71, 35.68, 34.05, 48.85, 51.51, 40.71, 35.68, 34.05, 48.85, 51.51, 40.71, 35.68, 34.05, 48.85, 51.51, 40.71, 35.68],
-    'lng': [-118.25, 2.35, -0.13, -74.01, 139.69, -118.25, 2.35, -0.13, -74.01, 139.69, -118.25, 2.35, -0.13, -74.01, 139.69, -118.25, 2.35, -0.13, -74.01, 139.69]
-})
-'''
 
 # Database Functions
 db_config = {
-    'host': 'localhost',
+    'host': 'db',
     'dbname': 'living_stories',
-    'user': 'cuzun',
-    'password': '9192',
+    'user': 'postgres',
+    'password': 'senan',
     'port': '5432'
 }
 
@@ -92,7 +96,14 @@ def check_followed_users_likes(user_id, stories_df):
     followed_user_likes_scores = stories_df['id'].isin(followed_user_likes).astype(int)
     return followed_user_likes_scores
 
+def add_like_count(stories_df):
+    stories_df['like_count'] = stories_df['likes'].apply(len)
+    return stories_df
+
 def recommend_stories(user_id, top_n=3):
+    add_like_count(stories_df)
+    X, vectorizer = vectorize_stories(stories_df)
+    stories_df['Cluster'] = cluster_stories(X)
     non_user_stories = stories_df[stories_df['user_id'] != user_id]
 
     non_user_stories['label_similarity'] = calculate_label_similarity(user_id, non_user_stories)
@@ -104,7 +115,30 @@ def recommend_stories(user_id, top_n=3):
     non_user_stories['normalized_score'] = (non_user_stories['combined_score'] / max_score) * 10
 
     top_recommendations = non_user_stories.sort_values(by='normalized_score', ascending=False).head(top_n)
-    return top_recommendations[['id', 'header', 'normalized_score']]
+    
+    columns_to_drop = [col for col in top_recommendations.columns if isinstance(top_recommendations[col].iloc[0], list)]
+    top_recommendations = top_recommendations.drop(columns=columns_to_drop)
+
+    user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]
+    if not user_liked_stories.empty:
+        user_preferred_cluster = user_liked_stories['Cluster'].mode()[0]
+        clustered_stories = stories_df[stories_df['Cluster'] == user_preferred_cluster]
+
+        clustered_stories['cluster_score'] = clustered_stories['like_count'] 
+        top_cluster_stories = clustered_stories.sort_values(by='cluster_score', ascending=False).head(top_n)
+
+        columns_to_drop = [col for col in top_cluster_stories.columns if isinstance(top_cluster_stories[col].iloc[0], list)]
+        top_cluster_stories = top_cluster_stories.drop(columns=columns_to_drop)
+
+        # Combine with existing recommendations
+        combined_recommendations = pd.concat([top_recommendations, top_cluster_stories]).head(top_n)
+    
+        # Get unique top N recommendations
+        unique_recommendations = combined_recommendations.drop_duplicates(subset='id').head(top_n)
+        return unique_recommendations[['id']]
+
+    # If there are no preferred cluster, use it without
+    return top_recommendations[['id']]
 
 @app.route('/recommendations', methods=['GET'])
 def get_recommendations():
@@ -114,15 +148,15 @@ def get_recommendations():
         return jsonify({"error": "User ID is required"}), 400
 
     cold_start_threshold = 3
-    top_m_stories = 2
+    top_m_stories = 3
 
     user_interactions = len(stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)])
     if user_interactions < cold_start_threshold:
         most_liked_stories = fetch_most_liked_stories(top_m_stories)
-        return jsonify(most_liked_stories[['id', 'header', 'labels']].to_dict(orient='records'))
+        return jsonify(most_liked_stories['id'].tolist())
     else:
         recommendations = recommend_stories(user_id, top_n=5)
-        return jsonify(recommendations.to_dict(orient='records'))
+        return jsonify(recommendations['id'].tolist())
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)
+    app.run(host='0.0.0.0', port=5002)
