@@ -25,6 +25,8 @@ services:
       - ./front_end/.env
     depends_on:
       - backend
+    networks:
+      - app-network
 
   db:
     image: postgres
@@ -36,6 +38,8 @@ services:
       - ./front_end/.env
     volumes:
       - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
   
   flask-app:
     build: 
