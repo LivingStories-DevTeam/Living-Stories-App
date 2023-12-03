@@ -6,8 +6,11 @@ import psycopg2
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app)
 
 def vectorize_stories(stories_df):
     vectorizer = TfidfVectorizer(stop_words='english')
