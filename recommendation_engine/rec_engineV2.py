@@ -84,20 +84,19 @@ def calculate_label_similarity(user_id, stories_df):
     return label_similarity_scores
 
 def calculate_location_proximity(user_id, stories_df, locations_df):
+    default_proximity = 0  
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['id']
     if user_liked_stories.empty:
         return pd.Series([0] * len(stories_df), index=stories_df.index)
     user_locations = locations_df[locations_df['story_id'].isin(user_liked_stories)][['lat', 'lng']].mean().to_numpy()
-    story_locations = locations_df.set_index('story_id').loc[stories_df['id']][['lat', 'lng']].to_numpy()
-    if len(story_locations) != len(stories_df):
-        default_proximity = 0 
-        proximity_scores = pd.Series([default_proximity] * len(stories_df), index=stories_df.index)
-        valid_indices = locations_df.set_index('story_id').index.intersection(stories_df['id'])
-        valid_proximity_scores = 1 / (1 + np.linalg.norm(story_locations - user_locations, axis=1))
-        proximity_scores.loc[valid_indices] = valid_proximity_scores
-    else:
-        proximity_scores = 1 / (1 + np.linalg.norm(story_locations - user_locations, axis=1))
+    proximity_scores = pd.Series([default_proximity] * len(stories_df), index=stories_df.index)
     
+    for story_id in stories_df['id']:
+        if story_id in locations_df['story_id'].values:
+            story_location = locations_df[locations_df['story_id'] == story_id][['lat', 'lng']].to_numpy()
+            proximity_score = 1 / (1 + np.linalg.norm(story_location - user_locations))
+            proximity_scores.loc[story_id] = proximity_score
+
     return proximity_scores
 
 def check_followed_users_likes(user_id, stories_df):
