@@ -29,10 +29,10 @@ Objective: To develop a robust Recommendation Engine that caters to individual u
 ## Customer Feedback and Reflections
 
 ### Summary of Customer Feedback:
-
+The customer feedback highlighted several key points for improvement and consideration. Firstly, they appreciated the superior user interface of the mobile app. However, it was made clear that our web app's UI needs to be on par with its mobile counterpart. Customer stated that a consistent quality across platforms is important. Our customer emphasized the need of obtaining consent before demonstrating progress on a local machine. Additionally, the customer advised that even in demos on local machines, the examples used should realistically reflect real-world scenarios. Lastly, they recommended enhancing the timeline feature by replacing the scrolling mechanism with a flipping deck model, for a smoother user experience. Overall, the customer was happy and impressed with the progress so far. Being able to deliver a working recommendation engine was a cherry on top.
 
 ### Reflection on Deliverables:
-
+We have notably surpassed expectations. The current version of our mobile app is equipped with all the functionalities present on the web app. Our recommendation engine prototype is working as intended and shown earlier. Minor issues with UI/UX of web app are noted and will be addressed. Newly added Activity Stream and Timeline features were well received. 
 
 ## Deliverables
 
@@ -92,5 +92,32 @@ Our project's testing strategy is designed to ensure robustness and reliability 
 
 4. **User Acceptance Testing (UAT):** Close to the completion of our testing phase, selected end-users test the application in an environment that simulates real-world usage. Their feedback is crucial in identifying any unexpected issues or improvements needed before the final deployment.
 
-
 ## Individual Contributions
+
+---
+
+### Member: Cansel
+**Responsibilities:**  
+Create an API end point for the recommendation engine <br>
+Add semantic analysis method to recommendation engine <br>
+Test the recommendation engine with real data <br>
+Software documentation, GitHub and management related responsibilities.
+
+**Main Contributions:**  
+I have created a brand new recommendation engine upon discussing options and what we would like to achieve with other group members.
+
+- **Code Related Significant Issues:**  
+
+
+- **Management Related Issues:**  
+
+
+Mostly created or resolved by me. Some of them required group effort but tracked by me.
+
+**Pull Requests:**  
+- Reviewed and approved Pull Request [120#](https://github.com/SWE574-G3/Living-Stories-App/pull/120) that was opened by Ali Hakan. I went over his 6 commits for front end that mainly involved improvements on Web App's UI for Activity Stream and Recommendation Engine.
+
+**Additional Information:**  
+Had meetings with front end, mobile and back end teams to go over data storing naming conventions, API Endpoints and real time testing with dummy data.
+
+---
