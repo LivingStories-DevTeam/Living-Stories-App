@@ -435,7 +435,6 @@ const StoryCreateMobile: React.FC = () => {
                       flexDirection: "row",
                       backgroundColor: "#fff",
                       borderRadius: "8px",
-                      touchAction: "pan-y",
                     }}
                   >
                     {labels.map((value, index) => (
@@ -447,7 +446,6 @@ const StoryCreateMobile: React.FC = () => {
                           backgroundColor: "#fff",
                           paddingTop: 5,
                           paddingBottom: 5,
-                          touchAction: "pan-y",
                         }}
                       >
                         <Chip
