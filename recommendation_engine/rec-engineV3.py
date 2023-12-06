@@ -132,6 +132,12 @@ def add_like_count(stories_df):
     stories_df['like_count'] = stories_df['likes'].apply(len)
     return stories_df
 
+def convert_lists_to_tuples(df):
+    for column in df.columns:
+        if df[column].apply(lambda x: isinstance(x, list)).any():
+            df[column] = df[column].apply(lambda x: tuple(x) if isinstance(x, list) else x)
+    return df
+
 def recommend_stories(user_id, top_r):
     add_like_count(stories_df)
     X, vectorizer = vectorize_stories(stories_df)
@@ -154,7 +160,10 @@ def recommend_stories(user_id, top_r):
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]
     user_read_stories = fetch_read_stories(user_id)
     user_liked_stories = convert_lists_to_tuples(user_liked_stories)
-    user_read_stories = convert_lists_to_tuples(fetch_read_stories(user_id))
+    if not user_read_stories.empty:
+        user_read_stories = convert_lists_to_tuples(user_read_stories)
+    else:
+        user_read_stories = pd.DataFrame(columns=user_liked_stories.columns) 
     user_liked_and_read_stories = pd.concat([user_liked_stories, user_read_stories]).drop_duplicates()
 
     if not user_liked_and_read_stories.empty:
