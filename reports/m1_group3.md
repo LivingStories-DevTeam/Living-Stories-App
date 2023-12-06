@@ -19,7 +19,6 @@ We're excited to announce the fruitful completion of Milestone 1!
     - Profile
     - Story Details
     - Home Feed
-- **Development Transparency**: Reflecting our ethos of openness, our GitHub repository stands as a testament to our dedication towards structured and transparent project management.
 
 ### Future Prospects:
 As we move through our project life cycle, the development team is enthusiastic to roll out a plethora of features, including:
