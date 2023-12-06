@@ -236,11 +236,7 @@ Had meetings with front end, mobile and back end teams to go over data storing n
 
 ---
 
-Sure, I can format the provided text in Markdown language using the format you've given. Here it is:
-
----
-
-### Member: Salih Yavuz
+### Member: Salih
 #### Responsibilities: 
   - Backend Java Developer and Architect
   - Support for Recommendation Engine Development, and Integration
