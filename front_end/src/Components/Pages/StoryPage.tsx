@@ -5,9 +5,9 @@ import axios from "axios";
 import ReactQuill from "react-quill";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-quill/dist/quill.snow.css";
-import {  Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import NavBar from "../Components/NavBar";
-import { GoogleMap, Marker } from "@react-google-maps/api";
+import { Circle, GoogleMap, Marker, Polygon, Rectangle } from "@react-google-maps/api";
 import { Avatar, Input, Tag, Button } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +17,7 @@ import UserOutlined from "@ant-design/icons/lib/icons/UserOutlined";
 import EditFilled from "@ant-design/icons/lib/icons/EditFilled";
 import MessageFilled from "@ant-design/icons/lib/icons/MessageFilled";
 import CommentComponent from "../Components/CommentCard";
+import icon from "../../assets/images/icon-resized.png";
 
 interface StoryPageProps {
   story: StoryInt;
@@ -50,7 +51,7 @@ interface User {
 }
 
 const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
-  
+
   const [mapKey, setMapKey] = useState(0);
   const [isAuthor, setIsAuthor] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
     }
     fetchData();
   }, [story]);
-  
+
   useEffect(() => {
     const cookieValue = document.cookie
       .split("; ")
@@ -81,26 +82,99 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
     }
   }, []);
 
-  const slocations = story.locations;
-  const StoryMarkers: React.FC<LocationProps> = useMemo(
+  const slocations = (story as any).locationsAdvanced;
+  const slocationsold = (story as any).locations;
+  const StoryMarkers: React.FC<any> = useMemo(
     () =>
-      ({ slocations }) => {
-        console.log(slocations);
-        const markers = slocations.map((location, index) => (
-          <Marker
-            key={index}
-            position={{
-              lat: location.lat,
-              lng: location.lng,
-            }}
-          />
-        ));
-
-        return <>{markers}</>;
+      ({ slocations, slocationsold }) => {
+        let overlays = slocations.map((location: any, index: any) => {
+          switch (location.type) {
+            case "Point":
+              return (
+                <Marker
+                  key={`marker-${index}`}
+                  icon={icon}
+                  position={{
+                    lat: location.coordinates[0][1],
+                    lng: location.coordinates[0][0],
+                  }}
+                />
+              );
+            case "Circle":
+              return (
+                <>
+                  <Marker
+                    key={`marker-${index}`}
+                    icon={icon}
+                    position={{
+                      lat: location.coordinates[0][1],
+                      lng: location.coordinates[0][0],
+                    }}
+                  />
+                  <Circle
+                    options={{ fillOpacity: 0.1 }}
+                    key={`circle-${index}`}
+                    center={{
+                      lat: location.coordinates[0][1],
+                      lng: location.coordinates[0][0],
+                    }}
+                    radius={location.radius}
+                  />
+                </>
+              );
+            case "Polygon":
+              const polygonCoordinates = location.coordinates.map((coordinate: any[]) => ({
+                lat: coordinate[1],
+                lng: coordinate[0],
+              }));
+              let centroidLat = 0;
+              let centroidLng = 0;
+              polygonCoordinates.forEach((coordinate: any) => {
+                centroidLat += coordinate.lat;
+                centroidLng += coordinate.lng;
+              });
+              centroidLat /= polygonCoordinates.length;
+              centroidLng /= polygonCoordinates.length;
+              return (
+                <>
+                  <Marker
+                    key={`marker-${index}`}
+                    icon={icon}
+                    position={{
+                      lat: centroidLat,
+                      lng: centroidLng,
+                    }}
+                  />
+                  <Polygon
+                    options={{ fillOpacity: 0.1 }}
+                    key={`polygon-${index}`}
+                    paths={polygonCoordinates}
+                  />
+                </>
+              );
+            default:
+              return null;
+          }
+        });
+        if (overlays.some((item: any) => !item)) {
+          overlays = slocationsold.map((item: any, index: any) => {
+            return (
+              <Marker
+                key={`marker-${index}`}
+                icon={icon}
+                position={{
+                  lat: item.lat,
+                  lng: item.lng,
+                }}
+              />
+            );
+          });
+        }
+        return <>{overlays}</>;
       },
-    [slocations]
+    [slocations, slocationsold]
   );
-  
+
 
   const [comment, setComment] = useState<string>(" ");
 
@@ -108,20 +182,47 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
   console.log(story);
 
   let latSum = 0;
+  let latSumOld = 0
   let lngSum = 0;
+  let lngSumOld = 0;
+  let count = 0;
 
-  // Loop through locations
-  story.locations.forEach((loc) => {
-    latSum += loc.lat;
-    lngSum += loc.lng;
+  (story as any).locationsAdvanced.forEach((loc: any) => {
+    switch (loc.type) {
+      case "Point":
+        latSum += loc.coordinates[0][1];
+        lngSum += loc.coordinates[0][0];
+        count++;
+        break;
+      case "Circle":
+        latSum += loc.coordinates[0][1];
+        lngSum += loc.coordinates[0][0];
+        count++;
+        break;
+      case "Rectangle":
+        const sw = { lat: loc.coordinates[0][1], lng: loc.coordinates[0][0] };
+        const ne = { lat: loc.coordinates[2][1], lng: loc.coordinates[2][0] };
+        latSum += (sw.lat + ne.lat) / 2;
+        lngSum += (sw.lng + ne.lng) / 2;
+        count++;
+        break;
+      case "Polygon":
+        loc.coordinates.forEach((coordinate: any) => {
+          latSum += coordinate[1];
+          lngSum += coordinate[0];
+          count++;
+        });
+        break;
+    }
   });
 
-  // Calculate average coordinates
-  const latAvg = latSum / story.locations.length;
-  const lngAvg = lngSum / story.locations.length;
+  const latAvg = latSum / count
+  const lngAvg = lngSum / count;
 
-  // Set map center
-  const mapCenter = { lat: latAvg, lng: lngAvg };
+  latSumOld = story.locations[0].lat;
+  lngSumOld = story.locations[0].lng;
+
+  const mapCenter = { lat: !latAvg ? latSumOld : latAvg, lng: !lngAvg ? lngSumOld : lngAvg };
 
   const handleCommentChange: React.ChangeEventHandler<HTMLTextAreaElement> = (
     event
@@ -167,7 +268,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
               {story.header}
             </h1>
           </Col>
-          
+
 
           <Col>
             {story.labels && (
@@ -189,57 +290,57 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
             )}
           </Col>
           {story.decade === undefined || story.decade === null &&
-          <Col>
-          <Row>
-            <p>Start Date: {story.startDate}   {story.startSeason&& <p> Season: {story.startSeason}</p>}</p>
-           
-          </Row>
-          {story.endDate !== null && (
-            <Row>
-              <p>End Date:{story.endDate}  {story.endSeason&& <p> Season: {story.endSeason}</p>}</p>
-            </Row>
-          )}
-        </Col>}
-        {story.decade !== null && <Col><p> Decade: {story.decade}</p></Col>}
-          
-          
-        
+            <Col>
+              <Row>
+                <p>Start Date: {story.startDate}   {story.startSeason && <p> Season: {story.startSeason}</p>}</p>
+
+              </Row>
+              {story.endDate !== null && (
+                <Row>
+                  <p>End Date:{story.endDate}  {story.endSeason && <p> Season: {story.endSeason}</p>}</p>
+                </Row>
+              )}
+            </Col>}
+          {story.decade !== null && <Col><p> Decade: {story.decade}</p></Col>}
+
+
+
 
         </Row>
         <Row>
         </Row>
         {story.user?.name && (
-              <Col xs={3}>
-                {story.user?.photo ? (
-                  <Avatar
-                    size={60}
-                    src={<img src={story.user.photo} alt="avatar" />}
-                  />
-                ) : (
-                  <Avatar
-                    style={{ backgroundColor: "#87d068" }}
-                    size={60}
-                    icon={<UserOutlined />}
-                  ></Avatar>
-                )}{" "}
-                <Link to={`/user/${story.user.name}`}>
-            <p>By: {story.user.name}</p>
-          </Link>
-              </Col>
-            )}
+          <Col xs={3}>
+            {story.user?.photo ? (
+              <Avatar
+                size={60}
+                src={<img src={story.user.photo} alt="avatar" />}
+              />
+            ) : (
+              <Avatar
+                style={{ backgroundColor: "#87d068" }}
+                size={60}
+                icon={<UserOutlined />}
+              ></Avatar>
+            )}{" "}
+            <Link to={`/user/${story.user.name}`}>
+              <p>By: {story.user.name}</p>
+            </Link>
+          </Col>
+        )}
         <Row>
-          
-          
+
+
           <Col>
-          {isAuthor && (
-        <Button type="primary" icon ={<EditFilled />}
-          onClick={() => {
-            navigate(`/stories/edit/${story.id}`);
-          }}
-        >
-          Edit Story
-        </Button>
-      )}
+            {isAuthor && (
+              <Button type="primary" icon={<EditFilled />}
+                onClick={() => {
+                  navigate(`/stories/edit/${story.id}`);
+                }}
+              >
+                Edit Story
+              </Button>
+            )}
           </Col>
         </Row>
         <Row>
@@ -251,59 +352,59 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
             />
           </Col>
 
-          {story.locations.length > 0 && (
+          {(story as any).locationsAdvanced.length > 0 && (
             <Col xs={4}>
               <GoogleMap
-                zoom={3}
+                zoom={20}
                 mapContainerStyle={containerStyle}
                 center={mapCenter}
               >
-                <StoryMarkers slocations={story.locations} />
+                <StoryMarkers slocations={(story as any).locationsAdvanced} slocationsold={(story as any).locations} />
               </GoogleMap>
             </Col>
           )}
         </Row>
         <Row>
-          <Col xs= {1}>
-          <LikeButton type="story" id={story.id} />
+          <Col xs={1}>
+            <LikeButton type="story" id={story.id} />
           </Col>
           <Col>
-          <p>Likes: {story.likes.length}</p>
+            <p>Likes: {story.likes.length}</p>
           </Col>
-        
-        
+
+
         </Row>
-        
-        
+
+
       </Container>
 
       <Container>
-        <Row style={{marginTop:"20px", marginBottom:"20px"}}>
+        <Row style={{ marginTop: "20px", marginBottom: "20px" }}>
           <Col xs={10} >
             <TextArea
-            
+
               autoSize={true}
               placeholder="Write a comment!"
               onChange={handleCommentChange}
             ></TextArea>
           </Col>
           <Col xs={2}>
-            <Button type="primary" icon = {<MessageFilled />} onClick={sendComment}> Add Comment</Button>
+            <Button type="primary" icon={<MessageFilled />} onClick={sendComment}> Add Comment</Button>
           </Col>
         </Row>
       </Container>
-      
+
       <Container>
-        <Row style={{marginBottom:"10px"}}>
+        <Row style={{ marginBottom: "10px" }}>
           {story.comments &&
             story.comments.reverse().map((comment, index) => (
               <div key={index}>
-                <CommentComponent comment={comment} storyId={story.id}/>
+                <CommentComponent comment={comment} storyId={story.id} />
               </div>
             ))}
         </Row>
       </Container>
-      
+
     </>
   );
 };
@@ -313,7 +414,6 @@ const StoryPageContainer: React.FC = () => {
   const { id } = useParams<RouteParams>();
 
   useEffect(() => {
-    // Fetch story data from API using the ID parameter
     const fetchStory = async () => {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/stories/${id}`, {
         withCredentials: true,

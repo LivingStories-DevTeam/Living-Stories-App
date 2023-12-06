@@ -3,6 +3,7 @@ package com.swe573.living_stories.Controllers;
 import com.swe573.living_stories.Models.User;
 import com.swe573.living_stories.Requests.EditUser;
 import com.swe573.living_stories.Requests.SearchRequest;
+import com.swe573.living_stories.Services.ActivityService;
 import com.swe573.living_stories.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ActivityService activityService;
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
@@ -45,7 +48,11 @@ public class UserController {
     public ResponseEntity<String> followUser( @PathVariable Long followingId, HttpServletRequest request) {
         Long userId = userService.isUserLoggedIn(request);
         String response  = userService.followUser(userId, followingId);
-        return ResponseEntity.ok( response);
+
+       if (!response.contains("unfollowed")) {
+           activityService.recordFollowActivity(followingId,userId); //Just record follow action can be improved using ActivityRepository
+       }
+       return ResponseEntity.ok( response);
     }
 
 
@@ -124,6 +131,32 @@ public class UserController {
     @PostMapping("/findusers")
     public List<User> findUsersWithUserName(@RequestBody SearchRequest searchRequest){
         return userService.findUsersByUsername(searchRequest);
+    }
+   @GetMapping("/isfollower/{followingId}")
+    public int isFollower(HttpServletRequest request, @PathVariable Long followingId) { 
+        Long userId = userService.isUserLoggedIn(request);
+        Optional<User> user = userService.getUserById(userId);
+        Optional<User> otherUser = userService.getUserById(followingId);
+
+        if (user.isPresent() && otherUser.isPresent() ) {
+            User user1 = user.get();
+            User user2 = otherUser.get();
+            Set<User> following = user2.getFollowers();
+            
+
+            for (User followedUser : following) {
+                if (followedUser.getId().equals(userId)) {
+                    // The user is following the user with the given followingId
+                    return 1;
+                }
+            }
+
+            // The user is not following the user with the given followingId
+            return 0;
+        }
+
+        
+        return -1; 
     }
 }
 
