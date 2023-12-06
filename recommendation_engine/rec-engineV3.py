@@ -133,10 +133,11 @@ def add_like_count(stories_df):
     return stories_df
 
 def convert_lists_to_tuples(df):
-    for column in df.columns:
-        if df[column].apply(lambda x: isinstance(x, list)).any():
-            df[column] = df[column].apply(lambda x: tuple(x) if isinstance(x, list) else x)
-    return df
+    df_copy = df.copy() 
+    for column in df_copy.columns:
+        if df_copy[column].apply(lambda x: isinstance(x, list)).any():
+            df_copy[column] = df_copy[column].apply(lambda x: tuple(x) if isinstance(x, list) else x)
+    return df_copy
 
 def recommend_stories(user_id, top_r):
     add_like_count(stories_df)
@@ -155,7 +156,9 @@ def recommend_stories(user_id, top_r):
     top_recommendations = non_user_stories.sort_values(by='normalized_score', ascending=False).head(top_r)
     
     columns_to_drop = [col for col in top_recommendations.columns if isinstance(top_recommendations[col].iloc[0], list)]
-    top_recommendations = top_recommendations.drop(columns=columns_to_drop)
+    top_recommendations = top_recommendations.drop(columns=columns_to_drop) 
+    
+    user_liked_and_read_stories = pd.concat([user_liked_stories, user_read_stories]).drop_duplicates()
 
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]
     user_read_stories = fetch_read_stories(user_id)
@@ -167,22 +170,25 @@ def recommend_stories(user_id, top_r):
     user_liked_and_read_stories = pd.concat([user_liked_stories, user_read_stories]).drop_duplicates()
 
     if not user_liked_and_read_stories.empty:
-        user_preferred_cluster = stories_df[stories_df['id'].isin(user_liked_and_read_stories)]['Cluster'].mode()[0]
-        clustered_stories = stories_df[stories_df['Cluster'] == user_preferred_cluster]
+        mode_result = stories_df[stories_df['id'].isin(user_liked_and_read_stories)]['Cluster'].mode()
+        if not mode_result.empty:
+            user_preferred_cluster = mode_result[0]
+            clustered_stories = stories_df[stories_df['Cluster'] == user_preferred_cluster]
 
-        clustered_stories['cluster_score'] = clustered_stories['like_count'] 
-        top_cluster_stories = clustered_stories.sort_values(by='cluster_score', ascending=False).head(top_r)
+            clustered_stories['cluster_score'] = clustered_stories['like_count'] 
+            top_cluster_stories = clustered_stories.sort_values(by='cluster_score', ascending=False).head(top_r)
 
-        columns_to_drop = [col for col in top_cluster_stories.columns if isinstance(top_cluster_stories[col].iloc[0], list)]
-        top_cluster_stories = top_cluster_stories.drop(columns=columns_to_drop)
+            columns_to_drop = [col for col in top_cluster_stories.columns if isinstance(top_cluster_stories[col].iloc[0], list)]
+            top_cluster_stories = top_cluster_stories.drop(columns=columns_to_drop)
 
-        # Combine with existing recommendations
-        combined_recommendations = pd.concat([top_recommendations, top_cluster_stories]).head(top_r)
-    
-        # Get unique top N recommendations
-        unique_recommendations = combined_recommendations.drop_duplicates(subset='id').head(top_r)
-        return unique_recommendations['id']
-
+            # Combine with existing recommendations
+            combined_recommendations = pd.concat([top_recommendations, top_cluster_stories]).head(top_r)
+        
+            # Get unique top N recommendations
+            unique_recommendations = combined_recommendations.drop_duplicates(subset='id').head(top_r)
+            return unique_recommendations['id']
+        else:
+            return top_recommendations['id']
     # If there are no preferred cluster, use it without
     return top_recommendations['id']
 
