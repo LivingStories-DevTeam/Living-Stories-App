@@ -119,10 +119,14 @@ def calculate_location_similarity(user_id, stories_df, locations_df):
 
 
 def calculate_followed_users_likes_scores(user_id, stories_df):
-    followed_users = followers_df.loc[followers_df['follower_id'] == user_id, ['following_id']].values[0]
-    followed_user_likes = stories_df[stories_df['likes'].apply(lambda likes: any(user in followed_users for user in likes))]['id']
-    followed_user_likes_scores = stories_df['id'].isin(followed_user_likes).astype(int)
-    return followed_user_likes_scores
+    followed_users_filter = followers_df['follower_id'] == user_id
+    if not followers_df.loc[followed_users_filter, ['following_id']].empty:
+        followed_users = followers_df.loc[followed_users_filter, ['following_id']].values[0]
+        followed_user_likes = stories_df[stories_df['likes'].apply(lambda likes: any(user in followed_users for user in likes))]['id']
+        followed_user_likes_scores = stories_df['id'].isin(followed_user_likes).astype(int)
+        return followed_user_likes_scores
+    else:
+        return pd.Series([0] * len(stories_df), index=stories_df.index)
 
 def followed_users(user_id, stories_df):
     followed_users = followers_df[followers_df['follower_id'] == user_id]['following_id'].tolist()
