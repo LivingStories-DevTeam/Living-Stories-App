@@ -7,10 +7,57 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from flask_cors import CORS
-
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
+
+# Database Functions
+db_config = {
+    'host': 'db',
+    'dbname': 'living_stories',
+    'user': 'postgres',
+    'password': 'senan',
+    'port': '5432'
+}
+
+def connect_to_database():
+    return psycopg2.connect(**db_config)
+
+def fetch_data(query):
+    with connect_to_database() as conn:
+        return pd.read_sql_query(query, conn)
+
+def fetch_users():
+    return fetch_data("SELECT * FROM users")
+
+def fetch_locations():
+    return fetch_data("SELECT * FROM locations")
+
+def fetch_followers():
+    return fetch_data("SELECT * FROM followers")
+
+def fetch_comments():
+    return fetch_data("SELECT * FROM comments")
+
+def fetch_read_stories(user_id):
+    return fetch_data(f"SELECT read_story_id FROM recommend_user WHERE user_id = {user_id}")
+
+def extract_text_from_html(html_content):
+    soup = BeautifulSoup(html_content, 'lxml')
+    paragraphs = soup.find_all('p')
+    return ' '.join(paragraph.get_text() for paragraph in paragraphs)
+
+def fetch_stories():
+    stories_df = fetch_data("SELECT * FROM stories")
+    stories_df['rich_text'] = stories_df['rich_text'].apply(extract_text_from_html)
+    return stories_df
+
+users_df = fetch_users()
+stories_df = fetch_stories()
+locations_df = fetch_locations()
+followers_df = fetch_followers()
+comments_df = fetch_comments()
 
 def vectorize_stories(stories_df):
     vectorizer = TfidfVectorizer(stop_words='english')
@@ -37,47 +84,6 @@ def cluster_stories(X):
     ideal_num_clusters = silhouette_scores.index(max(silhouette_scores)) + 2
     kmeans = KMeans(n_clusters=ideal_num_clusters, random_state=42)
     return kmeans.fit_predict(X)
-
-
-# Database Functions
-db_config = {
-    'host': 'db',
-    'dbname': 'living_stories',
-    'user': 'postgres',
-    'password': 'senan',
-    'port': '5432'
-}
-
-def connect_to_database():
-    return psycopg2.connect(**db_config)
-
-def fetch_data(query):
-    with connect_to_database() as conn:
-        return pd.read_sql_query(query, conn)
-
-def fetch_users():
-    return fetch_data("SELECT * FROM users")
-
-def fetch_stories():
-    return fetch_data("SELECT * FROM stories")
-
-def fetch_locations():
-    return fetch_data("SELECT * FROM locations")
-
-def fetch_followers():
-    return fetch_data("SELECT * FROM followers")
-
-def fetch_comments():
-    return fetch_data("SELECT * FROM comments")
-
-def fetch_read_stories(user_id):
-    return fetch_data(f"SELECT read_story_id FROM recommend_user WHERE user_id = {user_id}")
-
-users_df = fetch_users()
-stories_df = fetch_stories()
-locations_df = fetch_locations()
-followers_df = fetch_followers()
-comments_df = fetch_comments()
 
 def fetch_most_liked_stories(top_l):
     stories_df['like_count'] = stories_df['likes'].apply(len)
