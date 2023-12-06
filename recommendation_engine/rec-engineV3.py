@@ -184,11 +184,11 @@ def recommend_stories(user_id, top_r):
         
             # Get unique top N recommendations
             unique_recommendations = combined_recommendations.drop_duplicates(subset='id').head(top_r)
-            return unique_recommendations['id']
+            return pd.DataFrame({'id': unique_recommendations})
         else:
-            return top_recommendations['id']
+            return pd.DataFrame({'id': top_recommendations})
     # If there are no preferred cluster, use it without
-    return top_recommendations['id']
+    return pd.DataFrame({'id': top_recommendations})
 
 @app.route('/recommendations', methods=['GET'])
 def get_recommendations():
