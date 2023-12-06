@@ -132,19 +132,25 @@ def add_like_count(stories_df):
     stories_df['like_count'] = stories_df['likes'].apply(len)
     return stories_df
 
+def convert_lists_to_tuples(df):
+    for column in df.columns:
+        if df[column].apply(lambda x: isinstance(x, list)).any():
+            df[column] = df[column].apply(lambda x: tuple(x) if isinstance(x, list) else x)
+    return df
+
 def recommend_stories(user_id, top_r):
     add_like_count(stories_df)
     X, vectorizer = vectorize_stories(stories_df)
     stories_df['Cluster'] = cluster_stories(X)
     non_user_stories = stories_df[stories_df['user_id'] != user_id]
 
-    non_user_stories['label_similarity'] = calculate_label_similarity(user_id, non_user_stories)
-    non_user_stories['location_similarity'] = calculate_location_similarity(user_id, non_user_stories, locations_df)
-    non_user_stories['followed_user_likes'] = calculate_followed_users_likes_scores(user_id, non_user_stories)
+    non_user_stories[:, 'label_similarity'] = calculate_label_similarity(user_id, non_user_stories)
+    non_user_stories[:, 'location_similarity'] = calculate_location_similarity(user_id, non_user_stories, locations_df)
+    non_user_stories[:, 'followed_user_likes'] = calculate_followed_users_likes_scores(user_id, non_user_stories)
 
-    non_user_stories['combined_score'] = non_user_stories['label_similarity'] + non_user_stories['location_similarity'] + non_user_stories['followed_user_likes']
+    non_user_stories[:, 'combined_score'] = non_user_stories['label_similarity'] + non_user_stories['location_similarity'] + non_user_stories['followed_user_likes']
     max_score = non_user_stories['combined_score'].max()
-    non_user_stories['normalized_score'] = (non_user_stories['combined_score'] / max_score) * 10
+    non_user_stories[:, 'normalized_score'] = (non_user_stories['combined_score'] / max_score) * 10
 
     top_recommendations = non_user_stories.sort_values(by='normalized_score', ascending=False).head(top_r)
     
@@ -153,6 +159,8 @@ def recommend_stories(user_id, top_r):
 
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]
     user_read_stories = fetch_read_stories(user_id)
+    user_liked_stories = convert_lists_to_tuples(user_liked_stories)
+    user_read_stories = convert_lists_to_tuples(fetch_read_stories(user_id))
     user_liked_and_read_stories = pd.concat([user_liked_stories, user_read_stories]).drop_duplicates()
 
     if not user_liked_and_read_stories.empty:
