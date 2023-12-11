@@ -10,6 +10,9 @@ module.exports = {
         customGreen: "#1f6c5c",
         customGreenD: "#145245",
       },
+      width: {
+        '98': '98%',
+      },
     },
   },
   plugins: [],
