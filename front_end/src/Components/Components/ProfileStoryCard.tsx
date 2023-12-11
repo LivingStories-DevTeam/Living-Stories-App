@@ -45,7 +45,7 @@ interface StoryProps {
   story: Story;
 }
 
-const StoryComponent: React.FC<StoryProps> = ({ story }) => {
+const ProfileStoryComponent: React.FC<StoryProps> = ({ story }) => {
   const [showMore, setShowMore] = useState(false);
   const handleShowMore = () => {
     setShowMore(!showMore);
@@ -80,24 +80,14 @@ const StoryComponent: React.FC<StoryProps> = ({ story }) => {
                 ))}
               {story.decade !== null && <>{story.decade}</>}
             </p>{" "}
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+            <h2 className="text-xl font-bold text-gray-900 mb-10">
               {story.header}
             </h2>
           
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center">
-              <Avatar
-               sx={{ width: 50, height: 50 }}
-                alt={story.user?.name}
-                src={story.user?.photo}
-                className="mr-2"
-              />
-              <span className="text-gray-700 text-base font-semibold">{story.user?.name}</span>
-            </div>
-          </div>
+       
           <div className="flex justify-between">
             <p className="text-gray-700 flex text-sm mb-2">
-          <LocationOnIcon fontSize="small" className="mr-1" />{(story as any).locationsAdvanced?.map((location: any) => (
+          <LocationOnIcon fontSize="small" className="mr-1" /> {(story as any).locationsAdvanced?.map((location: any) => (
                 <p
                   key={location.id}
                 >{`${location.city} / ${location.country}`}</p>
@@ -154,4 +144,4 @@ const StoryComponent: React.FC<StoryProps> = ({ story }) => {
   );
 };
 
-export default StoryComponent;
+export default ProfileStoryComponent;
