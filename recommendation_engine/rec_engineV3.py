@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 import pandas as pd
-from scipy.spatial.distance import cdist
 import numpy as np
 import psycopg2
 from sklearn.feature_extraction.text import TfidfVectorizer
