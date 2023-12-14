@@ -49,6 +49,7 @@ interface User {
 const Profile = ({ route, navigation }: any) => {
   const { name } = route.params;
   const [user, setUser] = useState<User | null>(null);
+  const [authorID, setAuthor] = useState<number>(0);
   const [followed, setFollowed] = useState<boolean>(false);
   const [trigger, setTrigger] = useState(false);
 
@@ -56,15 +57,22 @@ const Profile = ({ route, navigation }: any) => {
     const fetchUser = async () => {
       try {
         const response = await axios.get<User>(`${API_URL}/users/${name}`);
-
         setUser(response.data);
+        console.log(response.data.id)
+        const responseUser = await axios.get(`${API_URL}/users/getname`);
+        if(response.data.id === responseUser.data.id){
+          navigation.navigate("My Profile")
+        }
+
       } catch (error) {
         console.error(error);
       }
     };
 
+    
     fetchUser();
-  }, [trigger,name]);
+    
+  }, [trigger, name]);
 
   const handleCardPress = (storyId: number) => {
     navigation.push("Story", { storyId });
@@ -80,7 +88,6 @@ const Profile = ({ route, navigation }: any) => {
       justifyContent: "center",
     },
     content: {
-      flex: 1,
       backgroundColor: "white",
       borderRadius: 15,
       height: "100%",
@@ -163,13 +170,13 @@ const Profile = ({ route, navigation }: any) => {
                       }
                       style={styles.avatar}
                     />
-                   
-                      <FollowButton 
+                    {authorID === 0 && (
+                      <FollowButton
                         followers={user.followers}
                         id={user.id}
                         onFollowedChange={handleFollowedChange}
-                        
                       />
+                    )}
                   </View>
                 </View>
 

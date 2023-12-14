@@ -31,7 +31,7 @@ const EditStory = ({ route }: any) => {
       <SafeAreaView style={{ flex: 1 }}>
         <WebView
           source={{
-            uri: `http://35.246.216.172:3000/stories/editMobile/${storyId}`,
+            uri: `http://34.107.94.81:3000/stories/editMobile/${storyId}`,
           }}
           injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
         />

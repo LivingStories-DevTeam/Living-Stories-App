@@ -131,6 +131,8 @@ const MyProfile = ({ navigation }: any) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      
+
     },
     back: {
       flex: 0.3,
@@ -138,7 +140,7 @@ const MyProfile = ({ navigation }: any) => {
       justifyContent: "center",
     },
     content: {
-      flex: 1,
+     
       backgroundColor: "white",
       borderRadius: 15,
       height: "100%",

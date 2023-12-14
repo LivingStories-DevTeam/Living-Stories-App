@@ -8,6 +8,7 @@ import MyProfile from "./MyProfile";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ActivityButton from "../components/ActivityButton";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import Timeline from "./Timeline";
 
 const Tab = createBottomTabNavigator();
 
@@ -76,6 +77,12 @@ const Home = ({ navigation }: any) => {
             <Button onPress={() => onLogout!()} title="Logout" />
           ),
         }}
+      />
+      <Tab.Screen
+        name="Timeline"
+        component={Timeline}
+        options={{headerShown:false}}
+        
       />
     </Tab.Navigator>
   );

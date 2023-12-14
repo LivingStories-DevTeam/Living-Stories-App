@@ -32,7 +32,7 @@ const PostStory = ({ navigation }: any) => {
     <>
       <SafeAreaView style={{ flex: 1 }}>
         <WebView
-          source={{ uri: "http://35.246.216.172:3000/storymobile" }}
+          source={{ uri: `http://34.107.94.81:3000/storymobile` }}
           injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
         />
       </SafeAreaView>
