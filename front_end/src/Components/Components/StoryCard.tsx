@@ -63,7 +63,7 @@ const StoryComponent: React.FC<StoryProps> = ({ story }) => {
       className="m-4"
     >
       <Card
-        sx={{ maxWidth: 550, minWidth: 480,width: "100%", height:"100%" }}
+        sx={{ maxWidth: 750, minWidth: 700,width: "100%", height:"100%" }}
         className="shadow-md h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
       >
         <Tooltip title="Copy">

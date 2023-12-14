@@ -92,7 +92,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="bg-customGreen h-screen">
+    <div className="bg-customGreen h-full">
       <NavBar />
       <h1
         className="text-6xl text-white"
@@ -105,30 +105,32 @@ const HomePage: React.FC = () => {
       >
         Recent Stories
       </h1>
-      <Row style={{ justifyContent: "center" }}>
-        <Radio.Group
-          style={{ margin: "5px" }}
-          options={options}
-          onChange={onRadioChange}
-          value={selectedOption}
-          optionType="button"
-          buttonStyle="solid"
-        />
-      </Row>
-      <div className="bg-gray-100 border-solid rounded-2xl mx-3 my-5 flex flex-wrap justify-center">
-  {stories
-    .slice()
-    .reverse()
-    .map((story: Story) => (
-      <div key={story.id} className="p-2">
-        <Story story={story} />
+      <div className="bg-yellow-50 rounded-3xl mx-5 mt-5 h-full">
+        <Row style={{ justifyContent: "center" }}>
+          <Radio.Group
+            style={{ margin: "5px" }}
+            options={options}
+            onChange={onRadioChange}
+            value={selectedOption}
+            optionType="button"
+            buttonStyle="solid"
+          />
+        </Row>
+        <div className="flex flex-col mx-auto items-center">
+          {stories
+            .slice()
+            .reverse()
+            .map((story: Story) => (
+              <div key={story.id} className="p-2">
+                <Story story={story} />
+              </div>
+            ))}
+        </div>
       </div>
-    ))}
-</div>
-
-
       {stories.length === 0 && (
-        <h2 className="text-white text-5xl" style={{ textAlignLast: "center" }}>Nothing to show!</h2>
+        <h2 className="text-white text-5xl" style={{ textAlignLast: "center" }}>
+          Nothing to show!
+        </h2>
       )}
     </div>
   );
