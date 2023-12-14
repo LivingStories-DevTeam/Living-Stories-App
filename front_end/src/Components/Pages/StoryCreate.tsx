@@ -7,17 +7,32 @@ import { useNavigate } from "react-router-dom";
 import ReactQuill, { Quill } from "react-quill";
 import NavBar from "../Components/NavBar";
 import dayjs from "dayjs";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import DatePicker from "antd/es/date-picker";
-import { Layout, Radio, RadioChangeEvent, Select, TimePicker, Col, Row, Form, Typography, Space } from "antd";
+import {
+  Layout,
+  Radio,
+  RadioChangeEvent,
+  Select,
+  TimePicker,
+  Form,
+  Typography,
+  Space,
+} from "antd";
+import { Col, Row, Container } from "react-bootstrap";
 import type { Dayjs } from "dayjs";
 import ImageCompress from "quill-image-compress";
+
 import { DeleteTwoTone } from "@ant-design/icons";
 import icon from "../../assets/images/icon-resized.png";
+
+import CancelIcon from "@mui/icons-material/Cancel";
+import { Chip } from "@mui/material";
 
 const { Text } = Typography;
 const { Content } = Layout;
 
-Quill.register('modules/imageCompress', ImageCompress);
+Quill.register("modules/imageCompress", ImageCompress);
 
 const api_key = import.meta.env.VITE_GOOGLE_API_KEY;
 const containerStyle = {
@@ -49,7 +64,6 @@ const options: Option[] = [
 const decadeOption: Option[] = [
   { label: "Date", value: "date" },
   { label: "Decade", value: "decade" },
-
 ];
 const exactDateFormat = "DD/MM/YYYY";
 const yearFormat = "YYYY";
@@ -76,7 +90,8 @@ const Story: React.FC = () => {
   const [selectedSeason, setSelectedSeason] = useState<string>();
   const [selectedSeasonEnd, setSelectedSeasonEnd] = useState<string>();
   const [requestStartDate, setRequestStartDate] = useState<string>();
-  const [selectedOptionEnd, setSelectedOptionEnd] = useState<string>("exact-year");
+  const [selectedOptionEnd, setSelectedOptionEnd] =
+    useState<string>("exact-year");
   const [selectedDateInput, setSelectedDateInput] = useState<string>("date");
   const [selectedDecadeValue, setSelectedDecadeValue] = useState<number>();
   const [decade, setDecade] = useState<string>();
@@ -101,7 +116,7 @@ const Story: React.FC = () => {
     { value: 1991, label: "1990s" },
     { value: 2001, label: "2000s" },
     { value: 2011, label: "2010s" },
-    { value: 2021, label: "2020s" }
+    { value: 2021, label: "2020s" },
   ];
 
   const dateFormats: { [key: string]: string } = {
@@ -110,19 +125,21 @@ const Story: React.FC = () => {
     year: "YYYY",
   };
 
-  const combinedStartDateTimeString = `${startDate && startTime && selectedOption === 'exact-year'
-    ? dayjs(
-      `${startDate.format("YYYY-MM-DD")}T${startTime.format("HH:mm:ss")}`
-    ).format("DD/MM/YYYY HH:mm:ss")
-    : startDate?.format(dateFormats[selectedOption])
-    }`;
+  const combinedStartDateTimeString = `${
+    startDate && startTime && selectedOption === "exact-year"
+      ? dayjs(
+          `${startDate.format("YYYY-MM-DD")}T${startTime.format("HH:mm:ss")}`
+        ).format("DD/MM/YYYY HH:mm:ss")
+      : startDate?.format(dateFormats[selectedOption])
+  }`;
 
-  const combinedEndDateTimeString = `${endtDate && endTime && selectedOptionEnd === "exact-year"
-    ? dayjs(
-      `${endtDate.format("YYYY-MM-DD")}T${endTime.format("HH:mm:ss")}`
-    ).format("DD/MM/YYYY HH:mm:ss")
-    : endtDate?.format(dateFormats[selectedOptionEnd])
-    }`;
+  const combinedEndDateTimeString = `${
+    endtDate && endTime && selectedOptionEnd === "exact-year"
+      ? dayjs(
+          `${endtDate.format("YYYY-MM-DD")}T${endTime.format("HH:mm:ss")}`
+        ).format("DD/MM/YYYY HH:mm:ss")
+      : endtDate?.format(dateFormats[selectedOptionEnd])
+  }`;
 
   const onRadioChange = (e: RadioChangeEvent) => {
     setSelectedOption(e.target.value);
@@ -155,31 +172,47 @@ const Story: React.FC = () => {
         type: "Point",
         coordinates: [
           Number(place.geometry.location.lng().toFixed(6)),
-          Number(place.geometry.location.lat().toFixed(6))
-        ]
+          Number(place.geometry.location.lat().toFixed(6)),
+        ],
       },
       latitude: Number(place.geometry.location.lat().toFixed(6)),
-      longitude: Number(place.geometry.location.lng().toFixed(6))
+      longitude: Number(place.geometry.location.lng().toFixed(6)),
     };
     const backendLocationData = {
       lat: Number(place.geometry.location.lat().toFixed(6)),
       lng: Number(place.geometry.location.lng().toFixed(6)),
       name: place.name,
-      city: await getLocationName(Number(place.geometry.location.lat().toFixed(6)), Number(place.geometry.location.lat().toFixed(6)), 1),
-      country: await getLocationName(Number(place.geometry.location.lat().toFixed(6)), Number(place.geometry.location.lat().toFixed(6)), 2),
+      city: await getLocationName(
+        Number(place.geometry.location.lat().toFixed(6)),
+        Number(place.geometry.location.lat().toFixed(6)),
+        1
+      ),
+      country: await getLocationName(
+        Number(place.geometry.location.lat().toFixed(6)),
+        Number(place.geometry.location.lat().toFixed(6)),
+        2
+      ),
       type: "Point",
-      coordinates: [[Number(place.geometry.location.lng().toFixed(6)), Number(place.geometry.location.lat().toFixed(6))]],
-      radius: null
+      coordinates: [
+        [
+          Number(place.geometry.location.lng().toFixed(6)),
+          Number(place.geometry.location.lat().toFixed(6)),
+        ],
+      ],
+      radius: null,
     };
-    setLocations(prevLocations => {
+    setLocations((prevLocations) => {
       const updatedLocations = [...prevLocations, newLocation];
       console.log("New locations array:", updatedLocations);
       return updatedLocations;
     });
-    setLocationsBackend(prevLocations => [...prevLocations, backendLocationData]);
+    setLocationsBackend((prevLocations) => [
+      ...prevLocations,
+      backendLocationData,
+    ]);
     setMapCenter({
       lat: newLocation.latitude,
-      lng: newLocation.longitude
+      lng: newLocation.longitude,
     });
   };
 
@@ -219,14 +252,21 @@ const Story: React.FC = () => {
       ...(endtDate && { endDate: combinedEndDateTimeString }),
       ...(selectedSeason && { startSeason: selectedSeason }),
       ...(selectedSeasonEnd && { endSeason: selectedSeasonEnd }),
-      ...(decade && { decade: decade })
+      ...(decade && { decade: decade }),
     };
     async function postData() {
-      const requiredFieldsEmpty = [storyRequest.richText, storyRequest.header, storyRequest.locationsAdvanced, storyRequest.startDate].some(
+      const requiredFieldsEmpty = [
+        storyRequest.richText,
+        storyRequest.header,
+        storyRequest.locationsAdvanced,
+        storyRequest.startDate,
+      ].some(
         (value) => value === undefined || value === "" || value.length === 0
       );
       if (requiredFieldsEmpty) {
-        alert("The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location.");
+        alert(
+          "The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location."
+        );
         return;
       } else {
         try {
@@ -237,8 +277,7 @@ const Story: React.FC = () => {
               withCredentials: true,
             }
           );
-        } catch (error) {
-        }
+        } catch (error) {}
       }
     }
     postData();
@@ -266,7 +305,7 @@ const Story: React.FC = () => {
       maxHeight: 1024,
       imageType: "image/jpeg",
       debug: false,
-    }
+    },
   };
 
   const formats = [
@@ -300,7 +339,9 @@ const Story: React.FC = () => {
     }
     const updatedDrawnItems = drawnItems.filter((_, i) => i !== index);
     const updatedLocations = locations.filter((_, i) => i !== index);
-    const updatedLocationsBackend = locationsBackend.filter((_, i) => i !== index);
+    const updatedLocationsBackend = locationsBackend.filter(
+      (_, i) => i !== index
+    );
     setDrawnItems(updatedDrawnItems);
     setLocations(updatedLocations);
     setLocationsBackend(updatedLocationsBackend);
@@ -340,9 +381,12 @@ const Story: React.FC = () => {
         break;
       case "polygon":
         const bounds = new window.google.maps.LatLngBounds();
-        event.overlay.getPath().getArray().forEach((path: any) => {
-          bounds.extend(path);
-        });
+        event.overlay
+          .getPath()
+          .getArray()
+          .forEach((path: any) => {
+            bounds.extend(path);
+          });
         const center = bounds.getCenter();
         locationData = {
           name: name,
@@ -357,15 +401,19 @@ const Story: React.FC = () => {
           longitude: event.overlay.getCenter().lng(),
           radius: event.overlay.getRadius(),
         };
-        console.log(event.overlay.getRadius())
+        console.log(event.overlay.getRadius());
         break;
       default:
         console.error("Unsupported shape type:", event.type);
         return;
     }
-    setDrawnItems(prevDrawnItems => [...prevDrawnItems, event.overlay]);
+    setDrawnItems((prevDrawnItems) => [...prevDrawnItems, event.overlay]);
     try {
-      const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${(locationData as any).latitude},${(locationData as any).longitude}&key=${api_key}`);
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
+          (locationData as any).latitude
+        },${(locationData as any).longitude}&key=${api_key}`
+      );
       const { results } = response.data;
       if (results.length > 0) {
         (locationData as any).name = results[0].formatted_address;
@@ -377,19 +425,36 @@ const Story: React.FC = () => {
       (locationData as any).name = "Unnamed location";
     }
     console.log("Location Data for Backend 1:", locationData);
-    setLocations(prevLocations => [...prevLocations, locationData]);
+    setLocations((prevLocations) => [...prevLocations, locationData]);
     let backendLocationData = {};
     switch (event.type) {
       case "marker":
         backendLocationData = {
           lat: event.overlay.getPosition().lat(),
           lng: event.overlay.getPosition().lng(),
-          name: await getLocationName(event.overlay.getPosition().lat(), event.overlay.getPosition().lng(), 0),
-          city: await getLocationName(event.overlay.getPosition().lat(), event.overlay.getPosition().lng(), 1),
-          country: await getLocationName(event.overlay.getPosition().lat(), event.overlay.getPosition().lng(), 2),
+          name: await getLocationName(
+            event.overlay.getPosition().lat(),
+            event.overlay.getPosition().lng(),
+            0
+          ),
+          city: await getLocationName(
+            event.overlay.getPosition().lat(),
+            event.overlay.getPosition().lng(),
+            1
+          ),
+          country: await getLocationName(
+            event.overlay.getPosition().lat(),
+            event.overlay.getPosition().lng(),
+            2
+          ),
           type: "Point",
-          coordinates: [[event.overlay.getPosition().lng(), event.overlay.getPosition().lat()]],
-          radius: null
+          coordinates: [
+            [
+              event.overlay.getPosition().lng(),
+              event.overlay.getPosition().lat(),
+            ],
+          ],
+          radius: null,
         };
         break;
       case "rectangle":
@@ -401,17 +466,29 @@ const Story: React.FC = () => {
           [ne.lng(), sw.lat()],
           [ne.lng(), ne.lat()],
           [sw.lng(), ne.lat()],
-          [sw.lng(), sw.lat()]
+          [sw.lng(), sw.lat()],
         ];
         backendLocationData = {
-          lat: (ne.lat() + sw.lat()),
-          lng: (ne.lng() + sw.lng()),
-          name: await getLocationName((ne.lat() + sw.lat()) / 2, (ne.lng() + sw.lng()) / 2, 0),
-          city: await getLocationName((ne.lat() + sw.lat()) / 2, (ne.lng() + sw.lng()) / 2, 1),
-          country: await getLocationName((ne.lat() + sw.lat()) / 2, (ne.lng() + sw.lng()) / 2, 2),
+          lat: ne.lat() + sw.lat(),
+          lng: ne.lng() + sw.lng(),
+          name: await getLocationName(
+            (ne.lat() + sw.lat()) / 2,
+            (ne.lng() + sw.lng()) / 2,
+            0
+          ),
+          city: await getLocationName(
+            (ne.lat() + sw.lat()) / 2,
+            (ne.lng() + sw.lng()) / 2,
+            1
+          ),
+          country: await getLocationName(
+            (ne.lat() + sw.lat()) / 2,
+            (ne.lng() + sw.lng()) / 2,
+            2
+          ),
           type: "Polygon",
           coordinates: rectangleCoordinates,
-          radius: null
+          radius: null,
         };
         break;
       case "polygon":
@@ -426,19 +503,33 @@ const Story: React.FC = () => {
           country: await getLocationName(path[0].lat(), path[0].lng(), 2),
           type: "Polygon",
           coordinates: coordinates,
-          radius: null
+          radius: null,
         };
         break;
       case "circle":
         backendLocationData = {
           lat: event.overlay.getCenter().lat(),
           lng: event.overlay.getCenter().lng(),
-          name: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 0),
-          city: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 1),
-          country: await getLocationName(event.overlay.getCenter().lat(), event.overlay.getCenter().lng(), 2),
+          name: await getLocationName(
+            event.overlay.getCenter().lat(),
+            event.overlay.getCenter().lng(),
+            0
+          ),
+          city: await getLocationName(
+            event.overlay.getCenter().lat(),
+            event.overlay.getCenter().lng(),
+            1
+          ),
+          country: await getLocationName(
+            event.overlay.getCenter().lat(),
+            event.overlay.getCenter().lng(),
+            2
+          ),
           type: "Circle",
-          coordinates: [[event.overlay.getCenter().lng(), event.overlay.getCenter().lat()]],
-          radius: event.overlay.getRadius()
+          coordinates: [
+            [event.overlay.getCenter().lng(), event.overlay.getCenter().lat()],
+          ],
+          radius: event.overlay.getRadius(),
         };
         break;
       default:
@@ -446,32 +537,35 @@ const Story: React.FC = () => {
         return;
     }
     console.log("Location Data for Backend:", backendLocationData);
-    setLocationsBackend(prevLocations => [...prevLocations, backendLocationData]);
-    //onAddLocation(backendLocationData); 
+    setLocationsBackend((prevLocations) => [
+      ...prevLocations,
+      backendLocationData,
+    ]);
+    //onAddLocation(backendLocationData);
   };
   async function getLocationName(lat: any, lng: any, type: any) {
     try {
-      const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${api_key}`);
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${api_key}`
+      );
       const { results } = response.data;
       let city = "";
       let country = "";
       results.forEach((item: any) => {
         item.address_components.forEach((subItem: any) => {
-          if (subItem.types.includes("administrative_area_level_1") || subItem.types.includes("locality"))
+          if (
+            subItem.types.includes("administrative_area_level_1") ||
+            subItem.types.includes("locality")
+          )
             city = subItem.long_name;
-          if (subItem.types.includes("country"))
-            country = subItem.long_name;
-        })
+          if (subItem.types.includes("country")) country = subItem.long_name;
+        });
       });
       if (results.length > 0 && type === 0) {
         return results[0].formatted_address;
-      }
-      else if (type === 1)
-        return city;
-      else if (type === 2)
-        return country;
-      else 
-        return "Unnamed location";
+      } else if (type === 1) return city;
+      else if (type === 2) return country;
+      else return "Unnamed location";
     } catch (error) {
       console.error("Error fetching location name:", error);
       return "Unnamed location";
@@ -496,298 +590,540 @@ const Story: React.FC = () => {
       },
     });
     manager.setMap(map);
-    window.google.maps.event.addListener(manager, "overlaycomplete", onOverlayComplete);
+    window.google.maps.event.addListener(
+      manager,
+      "overlaycomplete",
+      onOverlayComplete
+    );
   };
 
   return (
-    <Layout
-      style={{ backgroundColor: "white" }}>
+    <div className="bg-green-50">
       <NavBar />
-      <Col
-        offset={1}
-        span={22}>
-        <Content>
-          <Form
-            layout="vertical">
-            <Form.Item
-              style={{ paddingTop: "1vh" }}
-              label={<Text style={{ fontSize: "16px", fontFamily: "system-ui", fontWeight: "500" }}>{"Header"}</Text>}>
-              <input
-                type="text"
-                className="form-control"
-                value={header}
-                onChange={handleHeaderChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label={<Text style={{ fontSize: "16px", fontFamily: "system-ui", fontWeight: "500" }}>{"Comma Seperated Labels"}</Text>}>
-              <input
-                type="text"
-                className="form-control"
-                value={labels.join(", ")}
-                onChange={handleLabelsChange}
-              />
-            </Form.Item>
-            <Form.Item
-              style={{ paddingTop: "0px" }}>
-              {labels.map((value, index) => (
-                <div key={index}>
-                  <li
-                    style={{
-                      display: "inline-block",
-                      marginRight: "0.5em",
-                      marginLeft: "0.5em",
-                    }}
-                  >
-                    {value}
-                  </li>
-                  <DeleteTwoTone
-                    onClick={() => {
-                      setLabels(labels.filter((_, i) => i !== index));
-                    }}
+
+      <h1 className="text-5xl font-extrabold dark:text-black text-center my-2">
+        Create Story
+      </h1>
+
+      <div style={{ marginLeft: 2, marginRight: 2 }}>
+        <Container>
+          <Row>
+            <Col>
+              <form
+                className="border-customGreen border-solid border-3"
+                style={{
+                  backgroundColor: "#fff",
+                  borderRadius: "8px",
+                  padding: 1,
+                  paddingRight: 15,
+                  paddingLeft: 15,
+                  marginBottom: 10,
+                  marginTop: 10,
+                  boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+                  touchAction: "pan-y",
+                }}
+              >
+                <div className="form-group" style={{ marginTop: 10 }}>
+                  <label>Title:</label>
+
+                  <input
+                    className="w-full px-4 py-2 mt-2 text-customGreenD bg-white border rounded-md focus:border-customGreenD focus:ring-customGreenD focus:outline-none focus:ring focus:ring-opacity-40"
+                    onChange={handleHeaderChange}
+                    value={header}
+                    type="text"
                   />
                 </div>
-              ))}
-            </Form.Item>
+
+                <div
+                  className="form-group"
+                  style={{ marginTop: 10, marginBottom: 10 }}
+                >
+                  <label>Labels (comma-separated):</label>
+
+                  <input
+                    className="w-full px-4 py-2 mt-2 text-customGreenD bg-white border rounded-md focus:border-customGreenD focus:ring-customGreenD focus:outline-none focus:ring focus:ring-opacity-40"
+                    onChange={handleLabelsChange}
+                    value={labels.join(", ")}
+                    type="text"
+                  />
+                </div>
+                <div style={{ width: "100%", overflowX: "auto" }}>
+                  <ul
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      backgroundColor: "#fff",
+                      borderRadius: "8px",
+                      touchAction: "pan-y",
+                    }}
+                  >
+                    {labels.map((value, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          backgroundColor: "#fff",
+                          paddingTop: 5,
+                          paddingBottom: 5,
+                          touchAction: "pan-y",
+                        }}
+                      >
+                        <Chip
+                          style={{ backgroundColor: "#1f6c5c", color: "#fff" }}
+                          label={value}
+                        />
+                        <CancelIcon
+                          type="button"
+                          style={{ color: "#ad0202" }}
+                          onClick={() =>
+                            setLabels(labels.filter((_, i) => i !== index))
+                          }
+                        />
+                      </div>
+                    ))}
+                  </ul>
+                </div>
+              </form>
+            </Col>
+          </Row>
+        </Container>
+        <div
+          className="border-customGreen border-solid border-3 w-4/5 text-center mx-auto h-96"
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            padding: 10,
+            marginBottom: 10,
+            marginTop: "10px",
+            boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+            touchAction: "pan-y",
+          }}
+        >
+          <ReactQuill
+            theme="snow"
+            value={editorContent}
+            onChange={handleEditorChange}
+            formats={formats}
+            modules={modules}
+            style={{
+              height: "80%",
+              backgroundColor: "#fff",
+              touchAction: "pan-y",
+            }}
+          />
+        </div>
+        <div className="flex flex-row w-4/5 mx-auto">
+          <div
+            className="w-1/2 mr-4 border-customGreen border-solid border-3"
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              padding: 10,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 10,
+              boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+              touchAction: "pan-y",
+            }}
+          >
             <Row>
-              <Col>
-                <Form.Item>
+              <Radio.Group
+                options={decadeOption}
+                onChange={onRadioChangeInput}
+                value={selectedDateInput}
+                optionType="button"
+                buttonStyle="solid"
+                style={{
+                  marginBottom: "10px",
+                  width: "100%",
+                  minWidth: "100px",
+                  maxWidth: "200px",
+                  touchAction: "pan-y",
+                }}
+              />
+            </Row>
+            {selectedDateInput !== "date" && (
+              <Row>
+                <Select
+                  value={selectedDecadeValue}
+                  onChange={(value: number) => {
+                    const decString = value - 1;
+                    const decEndString = value + 7;
+                    setDecade(decString.toString() + "s");
+                    setStartDate(dayjs(value.toString(), yearFormat));
+                    setEndDate(dayjs(decEndString.toString(), yearFormat));
+                  }}
+                  options={decadeSelectOptions}
+                  placeholder="Select a decade"
+                  style={{
+                    marginBottom: "5px",
+                    marginTop: "5px",
+                    width: "100%",
+                    minWidth: "100px",
+                    maxWidth: "200px",
+                    touchAction: "pan-y",
+                  }}
+                />
+              </Row>
+            )}
+            {selectedDateInput === "date" && (
+              <>
+                <div>
+                  <Col style={{ marginRight: "30px" }}>
+                    <Row gutter={[16, 16]} justify="center" align="middle">
+                      <Col span={24}>
+                        <label>Start Season:</label>
+                        <Select
+                          value={selectedSeason}
+                          onChange={(value) => setSelectedSeason(value)}
+                          options={seasonOptions}
+                          placeholder="Start Season"
+                          style={{
+                            marginBottom: "10px",
+                            width: "100%",
+                            minWidth: "100px",
+                            maxWidth: "200px",
+                            touchAction: "pan-y",
+                          }}
+                        />
+                      </Col>
+                      <Col span={24}>
+                        <label>End Season:</label>
+                        <Select
+                          value={selectedSeasonEnd}
+                          onChange={(value) => setSelectedSeasonEnd(value)}
+                          options={seasonOptions}
+                          placeholder="End Season"
+                          style={{
+                            marginBottom: "10px",
+                            width: "100%",
+                            minWidth: "100px",
+                            touchAction: "pan-y",
+                            maxWidth: "200px",
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                  </Col>
+                </div>
+                <div
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    touchAction: "pan-y",
+                  }}
+                >
                   <Radio.Group
-                    options={decadeOption}
-                    onChange={onRadioChangeInput}
-                    value={selectedDateInput}
+                    options={options}
+                    onChange={onRadioChange}
+                    value={selectedOption}
                     optionType="button"
                     buttonStyle="solid"
-                    style={{ marginBottom: "10px" }}
-                  />
-                </Form.Item>
-                {selectedDateInput !== "date" &&
-                  <Form.Item>
-                    <Select
-                      value={selectedDecadeValue}
-                      onChange={(value: number) => {
-                        const decString = value - 1
-                        const decEndString = value + 7
-                        setDecade(decString.toString() + "s")
-                        setStartDate(dayjs(value.toString(), yearFormat))
-                        setEndDate(dayjs(decEndString.toString(), yearFormat))
-                      }}
-                      options={decadeSelectOptions}
-                      placeholder="Select a decade."
-                      style={{ marginBottom: "30px" }}
-                    />
-                  </Form.Item>
-                }
-                {selectedDateInput === "date" &&
-                  <Form.Item>
-                    <Space>
-                      <Select
-                        value={selectedSeason}
-                        onChange={(value) => setSelectedSeason(value)}
-                        options={seasonOptions}
-                        placeholder="Select a start season."
-                        style={{ marginBottom: "30px" }}
-                      />
-                      <Select
-                        value={selectedSeasonEnd}
-                        onChange={(value) => setSelectedSeasonEnd(value)}
-                        options={seasonOptions}
-                        placeholder="Select an end season."
-                        style={{ marginBottom: "30px" }}
-                      />
-                    </Space>
-                  </Form.Item>
-                }
-              </Col>
-              {selectedDateInput === "date" &&
-                <>
-                  <Col
-                    offset={1}>
-                    <Form.Item>
-                      <Radio.Group
-                        options={options}
-                        onChange={onRadioChange}
-                        value={selectedOption}
-                        optionType="button"
-                        buttonStyle="solid"
-                        style={{ marginBottom: "10px" }}
-                      />
-                    </Form.Item>
-                    {selectedOption === "exact-year" && (
-                      <Space
-                        align="start">
-                        <TimePicker
-                          onChange={handleStartTimeChange}
-                          defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
-                          style={{ marginBottom: "10px" }}
-                        />
-                        <DatePicker
-                          placeholder="Select start date!"
-                          status="error"
-                          picker="date"
-                          disabledDate={disableStartdDate}
-                          format={exactDateFormat}
-                          onChange={(date) => {
-                            const start = dayjs(date, exactDateFormat);
-                            setStartDate(start);
-                            console.log(start.format(exactDateFormat));
-                          }}
-                        />
-                      </Space>
-                    )}
-                    {selectedOption === "month" && (
-                      <Form.Item>
-                        <DatePicker
-                          status="error"
-                          format={monthFormat}
-                          disabledDate={disableStartdDate}
-                          picker="month"
-                          placeholder="Select start date!"
-                          onChange={(date) => {
-                            const start = dayjs(date, monthFormat);
-                            setStartDate(start);
-                          }}
-                        />
-                      </Form.Item>
-                    )}
-                    {selectedOption === "year" && (
-                      <DatePicker
-                        placeholder="Select start date!"
-                        status="error"
-                        format={yearFormat}
-                        disabledDate={disableStartdDate}
-                        picker="year"
-                        onChange={(date) => {
-                          const start = dayjs(date, yearFormat);
-                          setStartDate(start);
-                        }}
-                      />
-                    )}
-                  </Col>
-                  <Col
-                    offset={1}>
-                    <Form.Item>
-                      <Radio.Group
-                        options={options}
-                        onChange={onRadioChangeEnd}
-                        value={selectedOptionEnd}
-                        optionType="button"
-                        buttonStyle="solid"
-                        style={{ marginBottom: "10px" }}
-                      />
-                    </Form.Item>
-                    {selectedOptionEnd === "exact-year" && (
-                      <Space
-                        align="start">
-                        <TimePicker
-                          onChange={handleEndTimeChange}
-                          defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
-                          style={{ marginBottom: "10px" }}
-                        />
-                        <DatePicker
-                          placeholder="Select end date!"
-                          picker="date"
-                          disabledDate={disabledDate}
-                          format={exactDateFormat}
-                          onChange={(date) => {
-                            const start = dayjs(date, exactDateFormat);
-                            setEndDate(start);
-                          }}
-                        />
-                      </Space>
-                    )}
-                    {selectedOptionEnd === "month" && (
-                      <DatePicker
-                        placeholder="Select end date!"
-                        format={monthFormat}
-                        disabledDate={disabledDate}
-                        picker="month"
-                        onChange={(date) => {
-                          const start = dayjs(date, monthFormat);
-                          setEndDate(start);
-                        }}
-                      />
-                    )}
-                    {selectedOptionEnd === "year" && (
-                      <DatePicker
-                        placeholder="Select end date!"
-                        format={yearFormat}
-                        picker="year"
-                        disabledDate={disabledDate}
-                        onChange={(date) => {
-                          const start = dayjs(date, yearFormat);
-                          setEndDate(start);
-                        }}
-                      />
-                    )}
-                  </Col>
-                </>
-              }
-            </Row>
-            <Form.Item>
-              <ReactQuill
-                theme="snow"
-                value={editorContent}
-                onChange={handleEditorChange}
-                formats={formats}
-                modules={modules}
-                style={{ marginTop: "50px" }}
-              />
-            </Form.Item>
-            <Form.Item
-              label={<Text style={{ fontSize: "16px", fontFamily: "system-ui", fontWeight: "500" }}>{"Locations"}</Text>}>
-              <Autocomplete
-                onLoad={(autocomplete) => {
-                  autocompleteRef.current = autocomplete;
-                }}
-                onPlaceChanged={handleLocationSelect}
-              >
-                <input type="text" className="form-control" />
-              </Autocomplete>
-            </Form.Item>
-            <Form.Item>
-              {locations.map((loc, index) => (
-                <div key={index}>
-                  <li
                     style={{
-                      display: "inline-block",
-                      marginRight: "0.5em",
-                      marginLeft: "0.5em",
-                    }}
-                  >
-                    {loc.name || `${loc.latitude}, ${loc.longitude}`}
-                  </li>
-                  <DeleteTwoTone
-                    onClick={() => {
-                      handleLocationRemove(index);
+                      margin: "auto",
+                      width: "100%",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   />
                 </div>
-              ))}
-            </Form.Item>
+                {selectedOption === "exact-year" && (
+                  <>
+                    <TimePicker
+                      onChange={handleStartTimeChange}
+                      inputReadOnly={true}
+                      defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
+                      style={{
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                        width: "100%",
+                        minWidth: "100px",
+                        touchAction: "pan-y",
+                        maxWidth: "200px",
+                      }}
+                    />
+                    <DatePicker
+                      placeholder="Select start date"
+                      status="error"
+                      picker="date"
+                      disabledDate={disableStartdDate}
+                      inputReadOnly={true}
+                      format={exactDateFormat}
+                      onChange={(date) => {
+                        const start = dayjs(date, exactDateFormat);
+                        setStartDate(start);
+                        console.log(start.format(exactDateFormat));
+                      }}
+                      style={{
+                        marginBottom: "20px",
+                        width: "100%",
+                        minWidth: "100px",
+                        touchAction: "pan-y",
+                        maxWidth: "200px",
+                      }}
+                    />
+                  </>
+                )}
+                {selectedOption === "month" && (
+                  <DatePicker
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                      width: "100%",
+                      minWidth: "100px",
+                      maxWidth: "200px",
+                      touchAction: "pan-y",
+                    }}
+                    inputReadOnly={true}
+                    status="error"
+                    format={monthFormat}
+                    disabledDate={disableStartdDate}
+                    picker="month"
+                    placeholder="Select start date"
+                    onChange={(date) => {
+                      const start = dayjs(date, monthFormat);
+                      setStartDate(start);
+
+                      console.log(startDate?.toString);
+                      // Do something with the selected date value here
+                    }}
+                  />
+                )}
+                {selectedOption === "year" && (
+                  <DatePicker
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                      width: "100%",
+                      minWidth: "100px",
+                      touchAction: "pan-y",
+                      maxWidth: "200px",
+                    }}
+                    inputReadOnly={true}
+                    placeholder="Select start Year"
+                    status="error"
+                    format={yearFormat}
+                    disabledDate={disableStartdDate}
+                    picker="year"
+                    onChange={(date) => {
+                      const start = dayjs(date, yearFormat);
+                      setStartDate(start);
+                      console.log(startDate?.toString);
+                      // Do something with the selected date value here
+                    }}
+                  />
+                )}
+                <div style={{ justifyContent: "center", alignItems: "center" }}>
+                  <Radio.Group
+                    options={options}
+                    onChange={onRadioChangeEnd}
+                    value={selectedOptionEnd}
+                    optionType="button"
+                    buttonStyle="solid"
+                    style={{
+                      margin: "auto",
+                      marginBottom: "10px",
+                      width: "100%",
+                      touchAction: "pan-y",
+                    }}
+                  />
+                </div>
+                {selectedOptionEnd === "exact-year" && (
+                  <>
+                    <TimePicker
+                      onChange={handleEndTimeChange}
+                      defaultOpenValue={dayjs("00:00:00", "HH:mm:ss")}
+                      inputReadOnly={true}
+                      style={{
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                        width: "100%",
+                        minWidth: "100px",
+                        maxWidth: "200px",
+                        touchAction: "pan-y",
+                      }}
+                    />
+                    <DatePicker
+                      style={{
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                        width: "100%",
+                        minWidth: "100px",
+                        maxWidth: "200px",
+                        touchAction: "pan-y",
+                      }}
+                      placeholder="Select end date"
+                      picker="date"
+                      inputReadOnly={true}
+                      disabledDate={disabledDate}
+                      format={exactDateFormat}
+                      onChange={(date) => {
+                        const start = dayjs(date, exactDateFormat);
+                        setEndDate(start);
+                      }}
+                    />
+                  </>
+                )}
+                {selectedOptionEnd === "month" && (
+                  <DatePicker
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                      width: "100%",
+                      minWidth: "100px",
+                      maxWidth: "200px",
+                      touchAction: "pan-y",
+                    }}
+                    inputReadOnly={true}
+                    placeholder="Select end date"
+                    format={monthFormat}
+                    disabledDate={disabledDate}
+                    picker="month"
+                    onChange={(date) => {
+                      const start = dayjs(date, monthFormat);
+                      setEndDate(start);
+                    }}
+                  />
+                )}
+                {selectedOptionEnd === "year" && (
+                  <DatePicker
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "10px",
+                      width: "100%",
+                      minWidth: "100px",
+                      maxWidth: "200px",
+                    }}
+                    inputReadOnly={true}
+                    placeholder="Select end Year"
+                    format={yearFormat}
+                    picker="year"
+                    disabledDate={disabledDate}
+                    onChange={(date) => {
+                      const start = dayjs(date, yearFormat);
+                      setEndDate(start);
+                    }}
+                  />
+                )}
+              </>
+            )}
+          </div>
+
+          <div
+            className="w-1/2 border-customGreen border-solid border-3"
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: "5px",
+              padding: 5,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginBottom: 10,
+              boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+              touchAction: "pan-y",
+            }}
+          >
+            <div className="w-4/5">
+              <div>
+                <label>Locations:</label>
+                <Autocomplete
+                  onLoad={(autocomplete) => {
+                    autocompleteRef.current = autocomplete;
+                  }}
+                  onPlaceChanged={handleLocationSelect}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    style={{
+                      marginBottom: "5px",
+                      marginTop: "5px",
+                      width: "100%",
+                      minWidth: "100px",
+                      maxWidth: "200px",
+                      touchAction: "pan-y",
+                    }}
+                  />
+                </Autocomplete>
+                <div
+                  className="align-items-center"
+                  style={{
+                    maxHeight: 250,
+                    overflowY: "scroll",
+                    borderTop: "1px solid #ccc",
+                    borderBottom: "1px solid #ccc",
+                    marginBottom: 2,
+                    touchAction: "pan-y",
+                  }}
+                >
+                  {locations.map((loc, index) => (
+                    <div className="flex align-items-center">
+                      <div
+                        key={index}
+                        className="align-items-center flex w-36 m-1 p-1 bg-customGreen text-white rounded-full"
+                      >
+                        <p className="flex-1">
+                          <LocationOnIcon />{" "}
+                          {loc.name
+                            ? loc.name.length > 12
+                              ? loc.name.slice(0, 12) + "..."
+                              : loc.name
+                            : `${loc.lat}, ${loc.lng}`}
+                        </p>
+                      </div>
+                      <CancelIcon
+                        type="button"
+                        fontSize="medium"
+                        className="text-red-800"
+                        style={{
+                          cursor: "pointer",
+                        }}
+                        onClick={() =>
+                          setLocations(locations.filter((_, i) => i !== index))
+                        }
+                      />
+                    </div>
+                  ))}
+          
+                </div>
+              </div>
+            </div>
+
             <GoogleMap
               mapContainerStyle={containerStyle}
               center={mapCenter}
               zoom={20}
-              onLoad={handleMapLoad}
+              onClick={handleMapLoad}
             >
               {locations.map((loc, index) => (
-                <Marker
-                  icon={icon}
-                  key={index}
-                  position={{ lat: loc.latitude, lng: loc.longitude }}
-                />
+                <Marker key={index} position={{ lat: loc.lat, lng: loc.lng }} />
               ))}
             </GoogleMap>
-            <Form.Item>
-              <button style={{ marginTop: "40px" }} type="submit" className="btn btn-primary" onClick={handleSubmit}>
-                Create Story!
-              </button>
-            </Form.Item>
-          </Form>
-        </Content>
-      </Col >
-    </Layout >
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            touchAction: "pan-y",
+          }}
+        >
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-10 mt-2"
+          >
+            Create Story!
+          </button>
+      
+        </div>
+      </div>
+    </div>
   );
 };
 
