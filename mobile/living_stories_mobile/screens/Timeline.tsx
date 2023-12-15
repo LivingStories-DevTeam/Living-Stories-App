@@ -9,14 +9,75 @@ import {
   ImageBackground,
   Dimensions,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
+import { API_URL, RecApiUrl, useAuth } from "../contexts/AuthContext";
+import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
+
+
+type StoryType = {
+  header: string;
+  id: number;
+  startSeason: string; // Change the type according to your actual data structure
+  // Other properties...
+};
+type Story = {
+  header: string;
+  id: number;
+  startSeason: string;
+  // Add other properties as needed
+};
+
 
 const Timeline = () => {
   const fallAnimation = new Animated.Value(0);
+  const scrollViewRef = useRef(null);
   const [change , setChange]  = useState<number>(0)
   const [backgroundImage, setBackgroundImage] = useState(require('../assets/Autumn_Loop_Large.gif'));
   const [leaf, setLeaf] = useState(require('../assets/autumn_final_GIF.gif'));
+  const [initialMiddlePage, setInitialMiddlePage] = useState<number>(0);
+
+  const [responseFollowersData, setResponseFollowersData] = useState<Story[] | null>(null);
+
+
+  const fetchFollowerData = async () => {
+    try {
+      
+      const response = await axios.get(`${API_URL}/stories/following`);
+      setResponseFollowersData(response.data);
+
+      console.log(response.data);
+      
+    } catch (error) {
+      console.error("Request failed:", error);
+      
+    }
+  };
+
+ 
+  useFocusEffect(
+    useCallback(() => {
+      fetchFollowerData();
+    }, [])
+  );
+
+
+  const leaves = [
+    { season: "fall", src: require('../assets/autumn_final_GIF.gif') },
+    { season: "winter", src: require('../assets/winter_final_GIF.gif') },
+    { season: "summer", src: require('../assets/summer_final_GIF.gif') },
+    { season: "spring", src: require('../assets/spring_final_GIF.gif') },
+  ];
+  
+
+  const items = [
+    { id: 1, season: 'Autumn' },
+    { id: 2, season: 'Winter' },
+    { id: 3, season: 'Summer' },
+    { id: 4, season: 'Spring' },
+    // Add more items with corresponding seasons
+  ];
 
   const changeBackgroundImage = () => {
     setChange(change+1)
@@ -85,6 +146,55 @@ const Timeline = () => {
     ],
   };
 
+
+  const handleScroll = (event: any) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const screenWidth = Dimensions.get('window').width;
+    
+
+    if (initialMiddlePage === 0) {
+      const initialPage = Math.round(offsetX / screenWidth);
+      setInitialMiddlePage(initialPage);
+    }
+
+    // Adjust the range to be broader
+    const middlePage = Math.round((offsetX + screenWidth / 2) / screenWidth);
+  
+    // Check if responseFollowersData is not null and middlePage is within the array bounds
+    if (responseFollowersData && middlePage >= 0 && middlePage < responseFollowersData.length) {
+      // Change background based on the current middle page's season
+      const currentSeason = responseFollowersData[middlePage]?.startSeason;
+  
+      console.log('Current Season:', currentSeason);
+  
+      switch (currentSeason) {
+        case 'fall':
+          setBackgroundImage(require('../assets/Autumn_Loop_Large.gif'));
+          setLeaf(require('../assets/autumn_final_GIF.gif'));
+          break;
+        case 'winter':
+          setBackgroundImage(require('../assets/Winter_Loop_Large.gif'));
+          setLeaf(require('../assets/winter_final_GIF.gif'));
+          break;
+        case 'summer':
+          setBackgroundImage(require('../assets/Summer_Loop_Large.gif'));
+          setLeaf(require('../assets/summer_final_GIF.gif'));
+          break;
+        case 'spring':
+          setBackgroundImage(require('../assets/Spring_Loop_Large.gif'));
+          setLeaf(require('../assets/spring_final_GIF.gif'));
+          break;
+        // Add more cases for other seasons
+        default:
+          setBackgroundImage(require('../assets/Autumn_Loop_Large.gif'));
+          setLeaf(require('../assets/autumn_final_GIF.gif'));
+          break;
+      }
+    }
+  };
+  
+  
+
   return (
     <>
     
@@ -92,16 +202,43 @@ const Timeline = () => {
       source={backgroundImage}
       style={styles.container}
     >
-      <ScrollView horizontal style={styles.horCont}
-                  
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  
-                  scrollEventThrottle={10}
-                  snapToInterval={Dimensions.get('window').width}
-                  snapToAlignment="center"
-                  decelerationRate="fast">
-        
+  <ScrollView
+  ref={scrollViewRef}
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  scrollEventThrottle={16}
+  onScroll={(event) => {
+    handleScroll(event);
+  }}
+>
+{responseFollowersData &&
+  responseFollowersData.map((story: any) => {
+    // Find the corresponding leaf based on the startSeason
+    const selectedLeaf = leaves.find((leaf) => leaf.season === story.startSeason);
+
+    // Use the selected leaf source or provide a default source if not found
+    const source = selectedLeaf ? selectedLeaf.src : require('../assets/autumn_final_GIF.gif');
+
+    return (
+      <TouchableOpacity key={story.id} onPress={startFallingAnimation}>
+        <Animated.View style={[styles.kutu, fallingLeavesStyle]}>
+          <ImageBackground
+            source={source} // Use the selected leaf source
+            style={styles.background}
+          >
+            <Text style={styles.text}>{story.header}</Text>
+            <Text style={styles.text}>{story.startSeason}</Text>
+          </ImageBackground>
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  })}
+
+
+
+
+
+        {/** 
         <TouchableOpacity onPress={startFallingAnimation}>
           <Animated.View style={[styles.kutu, fallingLeavesStyle]}>
             <ImageBackground
@@ -151,12 +288,12 @@ const Timeline = () => {
               <Text style={styles.text}>AAAAAAAAAAA</Text>
             </ImageBackground>
           </Animated.View>
-        </TouchableOpacity>
+        </TouchableOpacity>*/}
       </ScrollView>
-
+{/* 
       <TouchableOpacity onPress={changeBackgroundImage}>
         <Text>Change Background</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>*/}
     </ImageBackground>
     
     </>
