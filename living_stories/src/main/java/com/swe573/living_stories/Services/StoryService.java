@@ -251,8 +251,15 @@ public class StoryService {
                 }
             }
         }
-        filteredStories.sort(Comparator.comparing(Story::getStartDate));
-        return filteredStories;
+        Set<Long> storyIds = new HashSet<>();
+        List<Story> uniqueFilteredStories = new ArrayList<>();
+        for (Story story : filteredStories) {
+            if (storyIds.add(story.getId())) {
+                uniqueFilteredStories.add(story);
+            }
+        }
+        uniqueFilteredStories.sort(Comparator.comparing(Story::getStartDate));
+        return uniqueFilteredStories;
     }
 
     private boolean searchCriteria(Story story, AdvancedSearchRequest request) {
