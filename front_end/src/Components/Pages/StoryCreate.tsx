@@ -1063,13 +1063,13 @@ const Story: React.FC = () => {
                     <div className="flex align-items-center">
                       <div
                         key={index}
-                        className="align-items-center flex w-36 m-1 p-1 bg-customGreen text-white rounded-full"
+                        className="align-items-center flex w-52 m-1 p-1 bg-customGreen text-white rounded-full"
                       >
                         <p className="flex-1">
                           <LocationOnIcon />{" "}
                           {loc.name
-                            ? loc.name.length > 12
-                              ? loc.name.slice(0, 12) + "..."
+                            ? loc.name.length > 20
+                              ? loc.name.slice(0, 20) + "..."
                               : loc.name
                             : `${loc.lat}, ${loc.lng}`}
                         </p>
@@ -1096,10 +1096,14 @@ const Story: React.FC = () => {
               mapContainerStyle={containerStyle}
               center={mapCenter}
               zoom={20}
-              onClick={handleMapLoad}
+              onLoad={handleMapLoad}
             >
               {locations.map((loc, index) => (
-                <Marker key={index} position={{ lat: loc.lat, lng: loc.lng }} />
+                <Marker
+                  icon={icon}
+                  key={index}
+                  position={{ lat: loc.latitude, lng: loc.longitude }}
+                />
               ))}
             </GoogleMap>
           </div>
