@@ -1,6 +1,6 @@
 package com.swe573.living_stories.Services;
 
-import com.swe573.living_stories.Confrugation.DateParser;
+import com.swe573.living_stories.Configuration.DateParser;
 import com.swe573.living_stories.DTO.MediaDTO;
 import com.swe573.living_stories.Models.*;
 import com.swe573.living_stories.Repositories.StoryRepository;
