@@ -303,11 +303,11 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
 
   return (
     <>
-      <div className="bg-customGreen">
+      <div className="bg-green-50">
         <NavBar />
 
         <Container>
-          <div className="bg-white rounded-2xl p-3 text-center border-customGreenD border-solid border-2">
+          <div className="bg-white rounded-2xl mt-2 p-3 text-center border-customGreenD border-solid border-2">
             <h1
               style={{
                 fontFamily: "HandWriting",
@@ -464,7 +464,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
           <div className="flex items-center">
             <LikeButton type="story" id={story.id} />
 
-            <p className="text-white font-semibold ml-2 text-lg">
+            <p className="text-black font-semibold ml-2 text-lg">
               Likes: {story.likes.length}
             </p>
           </div>
