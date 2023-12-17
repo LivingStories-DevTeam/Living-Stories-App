@@ -1,6 +1,6 @@
 package com.swe573.living_stories.Services;
 
-import com.swe573.living_stories.Confrugation.DateParser;
+import com.swe573.living_stories.Configuration.DateParser;
 import com.swe573.living_stories.DTO.MediaDTO;
 import com.swe573.living_stories.Models.*;
 import com.swe573.living_stories.Repositories.StoryRepository;
@@ -251,8 +251,15 @@ public class StoryService {
                 }
             }
         }
-        filteredStories.sort(Comparator.comparing(Story::getStartDate));
-        return filteredStories;
+        Set<Long> storyIds = new HashSet<>();
+        List<Story> uniqueFilteredStories = new ArrayList<>();
+        for (Story story : filteredStories) {
+            if (storyIds.add(story.getId())) {
+                uniqueFilteredStories.add(story);
+            }
+        }
+        uniqueFilteredStories.sort(Comparator.comparing(Story::getStartDate));
+        return uniqueFilteredStories;
     }
 
     private boolean searchCriteria(Story story, AdvancedSearchRequest request) {
