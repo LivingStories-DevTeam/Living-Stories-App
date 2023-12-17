@@ -384,8 +384,8 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
           <div className="bg-white rounded-2xl p-1 border-customGreenD border-solid border-2">
             {(story as any).locationsAdvanced.length > 0 && (
               <GoogleMap
-                zoom={20}
-                mapContainerStyle={{ width: "100%", height: "180px" }}
+                zoom={11}
+                mapContainerStyle={{ width: "100%", height: "235px" }}
                 //center={{ lat: 41.0856396, lng: 29.0424937 }}
                 center={mapCenter}
               >

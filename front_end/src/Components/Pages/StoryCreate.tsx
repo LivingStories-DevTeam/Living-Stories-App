@@ -1095,7 +1095,7 @@ const Story: React.FC = () => {
             <GoogleMap
               mapContainerStyle={containerStyle}
               center={mapCenter}
-              zoom={20}
+              zoom={11}
               onLoad={handleMapLoad}
             >
               {locations.map((loc, index) => (
