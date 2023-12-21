@@ -16,6 +16,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Modal,
 } from "react-native";
 import { LayoutChangeEvent } from "react-native";
 
@@ -27,7 +28,7 @@ import { Picker } from "@react-native-picker/picker";
 import SegmentedControlTab from "react-native-segmented-control-tab";
 import { Feather } from "@expo/vector-icons";
 import dayjs from "dayjs";
-
+import PostStoryMap from "./PostStoryMap";
 
 interface Story {
   text: string;
@@ -48,8 +49,9 @@ const PostStory = ({ navigation }: any) => {
   const _editor = useRef<QuillEditor>(null);
   const [webtoken, setWebToken] = useState<string>();
 
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const [editorContent, setEditorContent] = useState('');
+  const [editorContent, setEditorContent] = useState("");
 
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
@@ -260,7 +262,6 @@ const PostStory = ({ navigation }: any) => {
     setSelectedDecade(value);
   };
 
-
   const showDatepicker = () => {
     setShowDatePicker(true);
   };
@@ -425,11 +426,7 @@ const PostStory = ({ navigation }: any) => {
   };
   ////////////////////// SUBMIT
 
-  const submitStory = async () => {
-
- 
-  
-  };
+  const submitStory = async () => {};
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -998,7 +995,7 @@ const PostStory = ({ navigation }: any) => {
                   minHeight: 250,
                 }}
               >
-                <ScrollView style={{  }}>
+                <ScrollView style={{}}>
                   <QuillEditor
                     autoSize
                     container={true} // Make sure to enable the wrapping container (also custom container)
@@ -1008,7 +1005,6 @@ const PostStory = ({ navigation }: any) => {
                       minHeight: 500,
                     }}
                     onHtmlChange={({ html }) => {
-                      
                       setEditorContent(html);
                     }}
                   />
@@ -1098,6 +1094,9 @@ const PostStory = ({ navigation }: any) => {
                   </TouchableOpacity>
                 </View>
               </View>
+              <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+                <Text>Select Location</Text>
+              </TouchableOpacity>
               <Text>
                 {lat && lng ? (
                   <>
@@ -1130,12 +1129,31 @@ const PostStory = ({ navigation }: any) => {
                 )}
               </Text>
             </View>
-
-            <View style={{ flex: 1, height: 250 }}>
-              <MapView provider={PROVIDER_GOOGLE}></MapView>
-            </View>
           </View>
         </View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}
+        >
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <View
+              style={{ width: "80%", height: "80%", backgroundColor: "white" }}
+            >
+              <PostStoryMap />
+            </View>
+            <View style={styles.button}>
+              <TouchableOpacity onPress={() => {setModalVisible(!modalVisible);}}>
+                <Text style={styles.buttonText}>Select Location</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
         <View
           style={{
@@ -1170,6 +1188,19 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
+  },
+  button: {
+    position: "absolute",
+    bottom: 0,
+    backgroundColor: "#1f6c5c",
+    padding: 10,
+    borderRadius: 10,
+    alignContent: "center",
+    marginBottom: 50,
+    flex: 1,
+    marginLeft: 150,
+  }, buttonText: {
+    color: "white",
   },
 });
 export default PostStory;

@@ -13,6 +13,7 @@ import EditStory from "./screens/EditStory";
 import SearchMap from "./screens/SearchMap";
 import Search from "./screens/Search";
 import Activity from "./screens/Activity";
+import PostStoryMap from "./screens/PostStoryMap";
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -49,6 +50,8 @@ export const Layout = () => {
               <Stack.Screen name="Story" component={StoryPage} />
               <Stack.Screen name="Activity" component={Activity} />
               <Stack.Screen name="EditStory" component={EditStory} />
+              <Stack.Screen name="PostMap" component={PostStoryMap} />
+
               <Stack.Screen
                 name="Profile"
                 component={Profile}
