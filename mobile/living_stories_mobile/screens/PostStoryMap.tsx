@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import MapView, { LatLng, Marker } from "react-native-maps";
 import { Google_Api_Key } from "../contexts/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { Feather } from "@expo/vector-icons";
 
 const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
   const [region, setRegion] = useState<LatLng>({
@@ -66,7 +73,6 @@ const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-
       <View style={styles.autoCompleteContainer}>
         <GooglePlacesAutocomplete
           styles={styles.autoComplete}
@@ -87,14 +93,13 @@ const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
             console.log(lat);
           }}
           onFail={(error) => console.error(error)}
-          enablePoweredByContainer = {false}
+          enablePoweredByContainer={false}
           query={{
             key: Google_Api_Key,
             language: "en",
           }}
         />
       </View>
-
 
       <MapView
         style={styles.map}
@@ -115,25 +120,40 @@ const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
           />
         ))}
       </MapView>
-
-      {selectedPlacesNames.map((address, index) => (
-        <View style={styles.locTextContainer}>
-          <View style={styles.textContainer}>
-            <Text style={styles.locText} key={index}>
-              {selectedPlacesNames[index]}
-            </Text>
-          </View>
-
-          <View style={styles.iconContainer}>
-            <TouchableOpacity onPress={() => handleDeletePress(index)}>
-              <AntDesign name="delete" size={20} color="red" />
-            </TouchableOpacity>
-          </View>
+      <ScrollView
+        style={{
+          position: "absolute",
+          top: 73,
+          height: 130,
+          width: "100%",
+          zIndex: 1,
+        }}
+      >
+        <View
+          style={{
+            justifyContent: "flex-start",
+            alignItems: "center",
+          }}
+        >
+          {selectedPlacesNames.map((address, index) => (
+            <View style={styles.locTextContainer} key={index}>
+              <View style={styles.textContainer}>
+                <Text style={styles.locText}>
+                  {selectedPlacesNames[index].substring(0, 25)}...
+                </Text>
+              </View>
+              <View style={styles.iconContainer}>
+                <TouchableOpacity onPress={() => handleDeletePress(index)}>
+                  <Feather name="trash" size={28} color="#b32319" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
         </View>
-      ))}
+      </ScrollView>
       <View style={styles.button}>
         <TouchableOpacity onPress={handleSendData}>
-          <Text style={styles.buttonText}>Select Location</Text>
+          <Text style={styles.buttonText}>Save Selection</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -144,9 +164,14 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     flex: 1,
     alignContent: "center",
+    justifyContent: "center",
+    borderColor: "#1f6c5c", // Set border color to green
+    borderWidth: 2, // Set border thickness
+    borderRadius: 10,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    borderRadius: 10,
   },
   autoCompleteContainer: {
     position: "absolute",
@@ -175,22 +200,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignContent: "center",
     justifyContent: "center",
-    marginBottom: 50,
+
+    margin: 6,
     flex: 1,
   },
   locText: {
     color: "white",
-    marginEnd: 20,
   },
   locTextContainer: {
     backgroundColor: "#1f6c5c",
     zIndex: 1,
-    width: "100%",
-    height: 60, // Adjust the height as needed
+    width: "70%",
+    paddingVertical: 5, // Adjust the height as needed
     borderRadius: 20,
     flexDirection: "row", // Change to 'row' to align items horizontally
-    alignItems: "center", // Optional: adjust based on your layout
-    bottom: 0,
+    alignItems: "center",
     marginBottom: 10,
   },
   iconContainer: {

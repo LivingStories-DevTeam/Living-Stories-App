@@ -1,9 +1,9 @@
 import axios from "axios";
-import React, { useRef } from "react";
-import { useEffect, useState } from "react";
+import React, { useRef,useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import MapView, { PROVIDER_GOOGLE, Marker, LatLng } from "react-native-maps";
 import * as Location from "expo-location";
+import { API_URL } from "../contexts/AuthContext";
 import {
   SafeAreaView,
   View,
@@ -63,7 +63,8 @@ const PostStory = ({ navigation }: any) => {
   const [datePickerStart, setDatePickerStart] = useState(new Date());
   const [datePickerEnd, setDatePickerEnd] = useState(new Date());
   ///// Select Season
-  const [selectedSeason, setSelectedSeason] = useState(null);
+  const [startSeason, setStartSeason] = useState("");
+  const [endSeason, setEndSeason] = useState("");
   ///// Select Month
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
   const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
@@ -433,14 +434,57 @@ const PostStory = ({ navigation }: any) => {
   };
   ////////////////////// SUBMIT
 
-  const submitStory = async () => {};
+  const submitStory = async () => {
+    /*
+    const storyRequest = {
+      editorContent,
+      header,
+      labels,
+      //locationsAdvanced: selectedPlaces,
+      //mediaString: media,
+      richText: editorContent,
+      ...(startDate && { startDate: startDate }),
+      ...(endDate && { endDate: endDate }),
+      ...(startSeason && { startSeason: startSeason }),
+      ...(endSeason && { endSeason: endSeason }),
+      ...(selectedDecade && { decade: selectedDecade })
+    };
+    async function postData() {
+      const requiredFieldsEmpty = [storyRequest.richText, storyRequest.header, storyRequest.locationsAdvanced, storyRequest.startDate].some(
+        (value) => value === undefined || value === "" || value.length === 0
+      );
+      if (requiredFieldsEmpty) {
+        alert("The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location.");
+        return;
+      } else {
+        try {
+          const response = await axios.post(
+            `${API_URL}/stories/advanced`,
+            storyRequest,
+            {
+              withCredentials: true,
+            }
+          );
+        } catch (error) {
+        }
+      }
+    }
+    postData();
+*/
+  };
+
+
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Adjust the offset as needed
     >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="always">
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="always"
+      >
         <View style={{ backgroundColor: "#ebfff0" }}>
           <Text
             style={{
@@ -635,9 +679,9 @@ const PostStory = ({ navigation }: any) => {
                       >
                         <Text>Season: </Text>
                         <Picker
-                          selectedValue={selectedSeason}
+                          selectedValue={startSeason}
                           onValueChange={(itemValue, itemIndex) =>
-                            setSelectedSeason(itemValue)
+                            setStartSeason(itemValue)
                           }
                           style={{ width: 150 }} // Adjust the width as needed
                         >
@@ -767,6 +811,62 @@ const PostStory = ({ navigation }: any) => {
                   )}
                   {selectedSecondIndex === 1 && (
                     <>
+                    <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "30%",
+                          marginLeft: "35%", // Adjust this value based on your design
+                          marginRight: "35%",
+                          marginVertical: 20, // Adjust this value based on your design
+                        }}
+                      >
+                        <Text>Start Season: </Text>
+                        <Picker
+                          selectedValue={startSeason}
+                          onValueChange={(itemValue, itemIndex) =>
+                            setStartSeason(itemValue)
+                          }
+                          style={{ width: 150 }} // Adjust the width as needed
+                        >
+                          {seasons.map((season, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={season.label}
+                              value={season.value}
+                            />
+                          ))}
+                        </Picker>
+                      </View>
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: "30%",
+                          marginLeft: "35%", // Adjust this value based on your design
+                          marginRight: "35%",
+                          marginVertical: 20, // Adjust this value based on your design
+                        }}
+                      >
+                        <Text>End Season: </Text>
+                        <Picker
+                          selectedValue={endSeason}
+                          onValueChange={(itemValue, itemIndex) =>
+                            setEndSeason(itemValue)
+                          }
+                          style={{ width: 150 }} // Adjust the width as needed
+                        >
+                          {seasons.map((season, index) => (
+                            <Picker.Item
+                              key={index}
+                              label={season.label}
+                              value={season.value}
+                            />
+                          ))}
+                        </Picker>
+                      </View>
                       <View style={{ margin: 5 }}>
                         <SegmentedControlTab
                           values={["Start Date", "Start Month", "Start Year"]}
@@ -991,8 +1091,138 @@ const PostStory = ({ navigation }: any) => {
               )}
             </View>
 
-            <SafeAreaView>
-              <View
+             
+
+            <View
+              style={{
+                borderWidth: 3,
+                borderColor: "green", // Use your custom color
+                backgroundColor: "#fff",
+                borderRadius: 8,
+                padding: 1,
+                paddingRight: 15,
+                paddingLeft: 15,
+                marginBottom: 10,
+                marginTop: 10,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.1,
+                shadowRadius: 10,
+                elevation: 2,
+              }}
+            >
+              <View style={{ marginTop: 10, marginBottom: 10 }}>
+                <Text>Select Locations:</Text>
+                <TextInput
+                  style={{
+                    width: "100%",
+                    padding: 10,
+                    marginTop: 2,
+                    marginBottom: 2,
+                    borderColor: "green", // Use your custom color
+                    borderWidth: 1,
+                    borderRadius: 8,
+                  }}
+                />
+                <View
+                  style={{
+                    alignItems: "center", // Center horizontally
+                    justifyContent: "center", // Center vertically
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: "#c5e8ce",
+                        padding: 13,
+                        borderRadius: 50,
+                        width: 120,
+                        margin: 10,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => setModalVisible(!modalVisible)}
+                      >
+                        <Image
+                          source={{
+                            uri: "https://cdn-icons-png.flaticon.com/512/854/854929.png",
+                          }}
+                          style={{ width: 80, height: 80 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+
+                    <View
+                      style={{
+                        backgroundColor: "#c5e8ce",
+                        padding: 15,
+                        borderRadius: 50,
+                        width: 60,
+                        height: 60,
+                        margin: 10,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <TouchableOpacity onPress={getUserLocation}>
+                        <Image
+                          source={{
+                            uri: "https://cdn-icons-png.flaticon.com/512/1540/1540908.png",
+                          }}
+                          style={{ width: 40, height: 40 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <Text></Text>
+                </View>
+              </View>
+
+              {selectedPlaces.map((place, index) => (
+                <Text>{place.longitude}</Text>
+              ))}
+              <Text>
+                {lat && lng ? (
+                  <>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setLat(0);
+                        setLng(0);
+                        setRadius(0);
+                      }}
+                      style={{
+                        backgroundColor: "#731300",
+                        margin: 10,
+                        borderRadius: 7,
+                        padding: 4,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        Clear My Location
+                      </Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <Text></Text>
+                )}
+              </Text>
+            </View>
+             <View
                 style={{
                   flex: 1,
                   borderWidth: 3,
@@ -1002,14 +1232,21 @@ const PostStory = ({ navigation }: any) => {
                   minHeight: 250,
                 }}
               >
-                <ScrollView style={{}}>
+                <ScrollView>
                   <QuillEditor
-                    autoSize
-                    container={true} // Make sure to enable the wrapping container (also custom container)
                     ref={_editor}
                     initialHtml="<h1>Enter Your Story Here</h1>"
                     style={{
-                      minHeight: 500,
+                      ...Platform.select({
+                        ios: {
+                          minHeight: 500,
+                          maxHeight: "auto",
+                        },
+                        android: {
+                          minHeight: 500,
+                          maxHeight: "auto",
+                        },
+                      }),
                     }}
                     onHtmlChange={({ html }) => {
                       setEditorContent(html);
@@ -1045,100 +1282,6 @@ const PostStory = ({ navigation }: any) => {
                   <QuillToolbar editor={_editor} options="full" theme="light" />
                 </View>
               </View>
-            </SafeAreaView>
-
-            <View
-              style={{
-                borderWidth: 3,
-                borderColor: "green", // Use your custom color
-                backgroundColor: "#fff",
-                borderRadius: 8,
-                padding: 1,
-                paddingRight: 15,
-                paddingLeft: 15,
-                marginBottom: 10,
-                marginTop: 10,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity: 0.1,
-                shadowRadius: 10,
-                elevation: 2,
-              }}
-            >
-              <View style={{ marginTop: 10, marginBottom: 10 }}>
-                <Text>Select Locations:</Text>
-                <TextInput
-                  style={{
-                    width: "100%",
-                    padding: 10,
-                    marginTop: 2,
-                    marginBottom: 2,
-                    borderColor: "green", // Use your custom color
-                    borderWidth: 1,
-                    borderRadius: 8,
-                  }}
-                />
-
-                <View
-                  style={{
-                    backgroundColor: "white",
-                    padding: 13,
-                    borderRadius: 50,
-                    width: 60,
-                    height: 60,
-                    margin: 10,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <TouchableOpacity onPress={getUserLocation}>
-                    <Image
-                      source={{
-                        uri: "https://cdn-icons-png.flaticon.com/512/1540/1540908.png",
-                      }}
-                      style={{ width: 40, height: 40 }}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
-                <Text>Select Location</Text>
-              </TouchableOpacity>
-              {selectedPlaces.map((place, index) => (
-                <Text>{place.longitude}</Text>
-              ))}
-              <Text>
-                {lat && lng ? (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setLat(0);
-                        setLng(0);
-                        setRadius(0);
-                      }}
-                      style={{
-                        backgroundColor: "#731300",
-                        margin: 10,
-                        borderRadius: 7,
-                        padding: 4,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: "white",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        Clear Location
-                      </Text>
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  <Text></Text>
-                )}
-              </Text>
-            </View>
           </View>
         </View>
         <Modal
@@ -1153,7 +1296,7 @@ const PostStory = ({ navigation }: any) => {
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
             <View
-              style={{ width: "80%", height: "80%", backgroundColor: "white" }}
+              style={{ width: "90%", height: "90%", backgroundColor: "white" }}
             >
               <PostStoryMap onLocationChange={handleDataFromChild} />
             </View>
