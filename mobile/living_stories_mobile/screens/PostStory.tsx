@@ -29,14 +29,15 @@ import SegmentedControlTab from "react-native-segmented-control-tab";
 import { Feather } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import PostStoryMap from "./PostStoryMap";
+import { TChildrenRenderer } from "react-native-render-html";
 
 interface Story {
   text: string;
   decade?: string;
   header: string;
   labels: string[];
-  locations: Location[];
-  mediaString: string[];
+  locations: LatLng[];
+  mediaString?: string[];
   richText: string;
   startDate?: string;
   endDate?: string;
@@ -51,7 +52,7 @@ const PostStory = ({ navigation }: any) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [editorContent, setEditorContent] = useState("");
+  const [editorContent, setEditorContent] = useState("<p>Hello my name is Sanan. Test from mobile.</p>");
 
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
@@ -161,6 +162,8 @@ const PostStory = ({ navigation }: any) => {
 
     setSelectedDate(formattedDate);
   };
+
+
   ////////////////////////////
   //////////////// Month Start Selector ///////////
 
@@ -175,7 +178,7 @@ const PostStory = ({ navigation }: any) => {
   };
 
   const updateStartSelectedDate = (month: number, year: number) => {
-    const formattedDate = `${year}-${month}-01`;
+    const formattedDate = `01/${year}/${month}`;
 
     const start = dayjs(formattedDate, monthFormat);
     setStartDate(start.subtract(1, "month"));
@@ -205,6 +208,27 @@ const PostStory = ({ navigation }: any) => {
     setSelectedEndDate(formattedDate);
   };
   ////////////////////////////
+  
+
+  const dateFormats: { [key: number]: string } = {
+    0: "DD/MM/YYYY",
+    1: "MM/YYYY",
+    2: "YYYY",
+  };
+
+
+  const combinedStartDateTimeString = `${startDate && selectedThirdIndex === 0
+  ? dayjs(
+    `${startDate.format("YYYY-MM-DD")}`
+  ).format("DD/MM/YYYY HH:mm:ss")
+  : startDate?.format(dateFormats[selectedThirdIndex])
+  }`;
+  const combinedEndDateTimeString = `${endDate && selectedThirdIndex === 0
+    ? dayjs(
+      `${endDate.format("YYYY-MM-DD")}}`
+    ).format("DD/MM/YYYY HH:mm:ss")
+    : endDate?.format(dateFormats[selectedThirdIndex])
+    }`;
 
   const seasons = [
     { label: "Spring", value: "Spring" },
@@ -434,13 +458,13 @@ const PostStory = ({ navigation }: any) => {
   };
   ////////////////////// SUBMIT
 
-  const submitStory = async () => {
-    /*
+  const submitStoryold = async () => {
+
     const storyRequest = {
       editorContent,
       header,
       labels,
-      //locationsAdvanced: selectedPlaces,
+      locationsAdvanced: selectedPlaces,
       //mediaString: media,
       richText: editorContent,
       ...(startDate && { startDate: startDate }),
@@ -451,7 +475,7 @@ const PostStory = ({ navigation }: any) => {
     };
     async function postData() {
       const requiredFieldsEmpty = [storyRequest.richText, storyRequest.header, storyRequest.locationsAdvanced, storyRequest.startDate].some(
-        (value) => value === undefined || value === "" || value.length === 0
+        (value) => value === undefined || value === "" 
       );
       if (requiredFieldsEmpty) {
         alert("The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location.");
@@ -470,7 +494,57 @@ const PostStory = ({ navigation }: any) => {
       }
     }
     postData();
-*/
+
+  };
+
+  const submitStory = async () => {
+    const storyRequest = {
+      text:editorContent,
+      header,
+      labels,
+      locations:selectedPlaces,
+      //mediaString: media,
+      richText: editorContent,
+      ...(startDate && { startDate: combinedStartDateTimeString }),
+      ...(endDate && { endDate: combinedEndDateTimeString }),
+      ...(startSeason && { startSeason: startSeason }),
+      ...(endSeason && { endSeason: endSeason }),
+      ...(selectedDecade && { decade: selectedDecade })
+    };
+    async function postData() {
+      const requiredFieldsEmpty = [
+        storyRequest.richText,
+        storyRequest.header,
+        storyRequest.locations,
+        storyRequest.startDate,
+      ].some(
+        (value) => value === undefined || value === "" 
+      );
+
+      if (requiredFieldsEmpty) {
+        alert(
+          "The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location."
+        );
+        return;
+      } else {
+        try {
+        
+          console.log(storyRequest);
+          const response = await axios.post(
+            `${API_URL}/stories`,
+            storyRequest,
+            {
+              withCredentials: true,
+            }
+          );
+
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    }
+
+    postData();
   };
 
 
@@ -1328,7 +1402,7 @@ const PostStory = ({ navigation }: any) => {
               alignItems: "center",
               justifyContent: "center",
             }}
-            onPress={takePhoto}
+            onPress={submitStory}
           >
             <Feather name="send" size={28} color="black" />
             <Text>Post Story</Text>
