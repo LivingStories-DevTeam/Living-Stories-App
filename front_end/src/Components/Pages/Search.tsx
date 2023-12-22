@@ -160,7 +160,7 @@ const UserSearch: React.FC = () => {
                 className="shadow-md h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
               >
                 <div className="p-4">
-                  <Link to={`/user/${user.id}`}>
+                  <Link to={`/user/${user.name}`}>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center">
                         <Avatar
