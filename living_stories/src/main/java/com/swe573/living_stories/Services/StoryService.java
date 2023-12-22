@@ -126,11 +126,13 @@ public class StoryService {
             Story story = optionalStory.get();
             for (Locations location : locationsList) {
                 location.setStory(story);
+                location.setType(location.getType());
+                location.setCoordinates(location.getCoordinates());
+                location.setRadius(location.getRadius());
             }
             story.setLocations(locationsList);
             storyRepository.save(story);
             return true;
-
         }
         return false;
     }
