@@ -149,14 +149,15 @@ public class UserController {
 
                 followerResponse.setPhoto(userRepository.getReferenceById(followingId).getPhoto());
                 followerResponse.setUserName(userRepository.getReferenceById(followingId).getName());
+                followerResponse.setId(followingId);
                 followerList.add(followerResponse);
             }
             if (followerList.isEmpty()) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.internalServerError().build();
             }
             return ResponseEntity.ok(followerList);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.internalServerError().build();
     }
 
     @DeleteMapping("/{id}")
