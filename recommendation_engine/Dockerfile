@@ -4,5 +4,5 @@ COPY requirements.txt /app/
 RUN pip install -r requirements.txt
 COPY . /app
 ENTRYPOINT ["python"]
-CMD ["rec-engineV3.py"] 
+CMD ["rec_engineV4.py"] 
 
