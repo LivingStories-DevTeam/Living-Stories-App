@@ -10,4 +10,5 @@ public class FollowerResponse {
     private String userName;
     private String followerCount;
     private String storyCount;
+    private Long id;
 }
