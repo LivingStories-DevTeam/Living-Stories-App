@@ -440,7 +440,7 @@ const PostStory = ({ navigation }: any) => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0} // Adjust the offset as needed
     >
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="always">
         <View style={{ backgroundColor: "#ebfff0" }}>
           <Text
             style={{

@@ -7,7 +7,7 @@ import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
-const PostStoryMap = ({ route, navigation  , onLocationChange }: any , ) => {
+const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
   const [region, setRegion] = useState<LatLng>({
     latitude: 41.0864,
     longitude: 29.0455,
@@ -17,7 +17,6 @@ const PostStoryMap = ({ route, navigation  , onLocationChange }: any , ) => {
   const [selectedPlacesNames, setSelectedPlacesNames] = useState<Array<string>>(
     []
   );
-
 
   const handleSendData = () => {
     // Call the callback function to send data to the parent
@@ -37,8 +36,6 @@ const PostStoryMap = ({ route, navigation  , onLocationChange }: any , ) => {
     // Add the selected place to the array
     setSelectedPlaces([...selectedPlaces, coordinate]);
     reverseGeocode(coordinate.latitude, coordinate.longitude);
-
-   
   };
 
   const reverseGeocode = async (latitude: number, longitude: number) => {
@@ -69,8 +66,9 @@ const PostStoryMap = ({ route, navigation  , onLocationChange }: any , ) => {
   };
   return (
     <SafeAreaView style={styles.container}>
+
       <View style={styles.autoCompleteContainer}>
-      <GooglePlacesAutocomplete
+        <GooglePlacesAutocomplete
           styles={styles.autoComplete}
           placeholder="Search for location"
           onPress={async (data, details = null) => {
@@ -88,12 +86,15 @@ const PostStoryMap = ({ route, navigation  , onLocationChange }: any , ) => {
             setRegion({ latitude: lat, longitude: lng });
             console.log(lat);
           }}
+          onFail={(error) => console.error(error)}
+          enablePoweredByContainer = {false}
           query={{
             key: Google_Api_Key,
             language: "en",
           }}
         />
       </View>
+
 
       <MapView
         style={styles.map}
@@ -117,27 +118,24 @@ const PostStoryMap = ({ route, navigation  , onLocationChange }: any , ) => {
 
       {selectedPlacesNames.map((address, index) => (
         <View style={styles.locTextContainer}>
-            <View style = {styles.textContainer}>
-            <Text style = {styles.locText} key={index}>{selectedPlacesNames[index]}</Text>
-            </View>
-          
-          <View style = {styles.iconContainer}>
-            
+          <View style={styles.textContainer}>
+            <Text style={styles.locText} key={index}>
+              {selectedPlacesNames[index]}
+            </Text>
+          </View>
+
+          <View style={styles.iconContainer}>
             <TouchableOpacity onPress={() => handleDeletePress(index)}>
               <AntDesign name="delete" size={20} color="red" />
             </TouchableOpacity>
           </View>
         </View>
       ))}
-            <View style={styles.button}>
-        <TouchableOpacity
-          onPress={handleSendData}
-        >
+      <View style={styles.button}>
+        <TouchableOpacity onPress={handleSendData}>
           <Text style={styles.buttonText}>Select Location</Text>
         </TouchableOpacity>
       </View>
-
-
     </SafeAreaView>
   );
 };
@@ -162,8 +160,6 @@ const styles = StyleSheet.create({
   autoComplete: {
     flex: 1,
     zIndex: 999,
-
- 
   },
   radiusText: {
     position: "absolute",
@@ -178,35 +174,33 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     alignContent: "center",
-    justifyContent:"center",
+    justifyContent: "center",
     marginBottom: 50,
     flex: 1,
-
   },
-  locText:{
-    color:"white",
-    marginEnd:20
+  locText: {
+    color: "white",
+    marginEnd: 20,
   },
   locTextContainer: {
-    
     backgroundColor: "#1f6c5c",
     zIndex: 1,
     width: "100%",
     height: 60, // Adjust the height as needed
     borderRadius: 20,
-    flexDirection: 'row', // Change to 'row' to align items horizontally
+    flexDirection: "row", // Change to 'row' to align items horizontally
     alignItems: "center", // Optional: adjust based on your layout
-    bottom:0,
-    marginBottom:10
+    bottom: 0,
+    marginBottom: 10,
   },
   iconContainer: {
     flex: 2, // Adjust as needed
   },
   textContainer: {
     flex: 8, // Adjust as needed
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft:10
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 10,
   },
 
   buttonText: {

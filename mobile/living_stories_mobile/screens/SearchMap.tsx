@@ -141,8 +141,6 @@ const styles = StyleSheet.create({
     marginBottom: 100,
     marginLeft: 20,
     marginRight: 20,
-
-    // Other styles for the slider
   },
   button: {
     position: "absolute",
