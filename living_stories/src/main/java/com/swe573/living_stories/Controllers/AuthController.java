@@ -1,7 +1,7 @@
 package com.swe573.living_stories.Controllers;
 
 
-import com.swe573.living_stories.Confrugation.JwtUtils;
+import com.swe573.living_stories.Configuration.JwtUtils;
 
 import com.swe573.living_stories.Models.User;
 import com.swe573.living_stories.Requests.LoginRequest;

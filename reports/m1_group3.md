@@ -20,6 +20,7 @@ We're excited to announce the fruitful completion of Milestone 1!
     - Story Details
     - Home Feed
 
+
 ### Future Prospects:
 As we move through our project life cycle, the development team is enthusiastic to roll out a plethora of features, including:
 - A state-of-the-art Recommendation Engine

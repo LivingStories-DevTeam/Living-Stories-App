@@ -92,6 +92,7 @@ Our project's testing strategy is designed to ensure robustness and reliability 
 
 4. **User Acceptance Testing (UAT):** Close to the completion of our testing phase, selected end-users test the application in an environment that simulates real-world usage. Their feedback is crucial in identifying any unexpected issues or improvements needed before the final deployment.
 
+
 ## Individual Contributions
 
 ---
@@ -121,3 +122,199 @@ Mostly created or resolved by me. Some of them required group effort but tracked
 Had meetings with front end, mobile and back end teams to go over data storing naming conventions, API Endpoints and real time testing with dummy data.
 
 ---
+=======
+### Planning for Completing the Project
+
+#### Project Completion Strategy:
+As we approach the final stages of the "Living Stories" project, our approach includes:
+
+Finalizing Development Tasks: Prioritizing remaining features and bug fixes based on their impact and complexity.
+
+Enhanced Testing and Debugging: Intensifying our testing efforts, including both automated and manual testing, to ensure all features perform reliably and as intended.
+
+Feedback Integration: Continuously integrating feedback from our customer and end-users into the development cycle, ensuring that the final product meets their needs and expectations.
+
+Documentation and Reporting: Finalizing all project documentation, including software documents and final project reports.
+
+Project Review Meetings: Holding regular meetings to review progress, address any challenges, and ensure that all team members are aligned with the project goals.
+
+## Individual Contributions
+
+### Member: Cansel
+#### Responsibilities:  
+- Creating a brand new recommendation engine upon discussing options and what we would like to achieve with other group members
+- Software documentation (report, meeting notes, customer presentation), GitHub (milestones, wiki) and management related responsibilities.
+#### Main Contributions:  
+- Create an API end point for the recommendation engine 
+- Add semantic analysis method to recommendation engine 
+- Test the recommendation engine with real data 
+- Software documentation, GitHub and management related responsibilities.
+##### Code Related Significant Issues:
+- Integration Testing for Python Recommendation Engine and Java/Spring Backend API [#87](https://github.com/SWE574-G3/Living-Stories-App/issues/87)
+- Update Backend Service for Correct Flask App URL in Docker Environment [#90](https://github.com/SWE574-G3/Living-Stories-App/issues/90)
+- Unable to Fetch User Story Likes [#99](https://github.com/SWE574-G3/Living-Stories-App/issues/99)
+- Name Similarities of Stored Data for Different Models in Database [#104](https://github.com/SWE574-G3/Living-Stories-App/issues/104)
+- TypeError on DataFrame Concatenation Due to Type 'List' [#108](https://github.com/SWE574-G3/Living-Stories-App/issues/108)
+- Duplicate Story Recommendations [#110](https://github.com/SWE574-G3/Living-Stories-App/issues/110)
+##### Management Related Issues:  
+- Milestone 2 Review Report [#132](https://github.com/SWE574-G3/Living-Stories-App/issues/132)
+- Review and Provide Feedback on Alternative Recommendation Engine [#93](https://github.com/SWE574-G3/Living-Stories-App/issues/93)
+- Determine Database Choice Based on Recommendation Engine Logic [#91](https://github.com/SWE574-G3/Living-Stories-App/issues/91)
+
+Mostly created or resolved by me. Some of them required group effort but tracked by me.
+##### Pull Requests:  
+- Reviewed and approved Pull Request [120#](https://github.com/SWE574-G3/Living-Stories-App/pull/120) that was opened by Ali Hakan. I went over his 6 commits for front end that mainly involved improvements on Web App's UI for Activity Stream and Recommendation Engine.
+#### Additional Information:  
+Had meetings with front end, mobile and back end teams to go over data storing naming conventions, API Endpoints and real time testing with dummy data.
+
+---
+
+### Member: Omar 
+#### Responsibilities:
+- Get the mobile app fully functioning and add all pages with Sanan in React Native with a focus on the design. 
+#### Main Contributions:
+- Created the Edit Story and Post Story Pages. [#78](https://github.com/SWE574-G3/Living-Stories-App/issues/78), [#89](https://github.com/SWE574-G3/Living-Stories-App/issues/89)
+- Developed the Edit Profile Page [#88](https://github.com/SWE574-G3/Living-Stories-App/issues/88)
+- Implemented Date and Time settings for Search Page [#96](https://github.com/SWE574-G3/Living-Stories-App/issues/96)
+- Built the User Search feature [#107](https://github.com/SWE574-G3/Living-Stories-App/issues/107)
+- Designed the General Layout for the Search page and others
+##### Code Related Significant Issues:
+- Resolved Issues #78, #88, #89, #96, #107
+##### Management Related Issues:
+- Initiated and Resolved Issues #88, #89, #107
+##### Pull Requests:
+- Authored and submitted Pull Request #78, reviewed and merged by Sanan
+#### Additional Information:
+- Collaborated with Senan to achieve a fully functioning state for the mobile app
+
+---
+
+### Member: Ali Hakan
+#### Responsibilities: 
+  - Enhancing the web application by optimizing the recommendation tab
+  - Refining the activity feed
+  - Improving the design and functionality of the timeline page
+#### Main Contributions: 
+  - Implemented Activity Stream Feature in Navigation Bar [#119](https://github.com/SWE574-G3/Living-Stories-App/issues/119)
+  - Enhancements and Fixes Implemented for Advanced Timeline Search Functionality [#114](https://github.com/SWE574-G3/Living-Stories-App/issues/114)
+  - Revamp TimelinePage UI for Enhanced User Interface [#112](https://github.com/SWE574-G3/Living-Stories-App/issues/112)
+  - Enhance User Experience by Developing a Recommendation Data Service and Controller [#101](https://github.com/SWE574-G3/Living-Stories-App/issues/101)
+  - Develop a Personalized Recommendation Tab for the Home Screen [#113](https://github.com/SWE574-G3/Living-Stories-App/issues/113)
+##### Pull Requests: 
+  - Comprehensive Evaluation of Project Progress: Milestone 2 [#120](https://github.com/SWE574-G3/Living-Stories-App/pull/120)
+
+---
+
+### Member: Burak
+#### Responsibilities: 
+  - Back end management
+  - Development of all back end features
+  - Communication architecture with Recommendation engine
+  - Helping in the development of the recommendation engine
+#### Main Contributions: 
+  - Responsible for managing/developing all back-end features and assisting with the recommendation engine
+  - In charge of decisions related to back end
+  - GitHub issue management
+  - Preparation and presentation of Milestone 2
+##### Code Related Significant Issues:
+- [Fix newflag bug #128](https://github.com/link-to-issue-128)
+- [Add new flag for activities #127](https://github.com/link-to-issue-127)
+- [Unable to Fetch User Story Likes #99](https://github.com/link-to-issue-99)
+- [Finalize activity endpoint and provide example request and response. #84](https://github.com/link-to-issue-84)
+- [Record Follow Activity to the Activity table. #71](https://github.com/link-to-issue-71)
+- [Record Comment Activity to the Activity table. #70](https://github.com/link-to-issue-70)
+- [Record Post Activity to the Activity table. #69](https://github.com/link-to-issue-69)
+- [Record Like activity to the Activity table. #68](https://github.com/link-to-issue-68)
+- [Record activities to the Activity table. #66](https://github.com/link-to-issue-66)
+- [Identify places in code where actions we count as "Activity" is performed. #65](https://github.com/link-to-issue-65)
+##### Management Related Issues:
+- [Review and Provide Feedback on Alternative Recommendation Engine #93](https://github.com/link-to-issue-93)
+- [Determine Database Choice Based on Recommendation Engine Logic #91](https://github.com/link-to-issue-91)
+- [Integration Testing for Python Recommendation Engine and Java/Spring Backend API #87](https://github.com/link-to-issue-87)
+- [Decide on how to handle activity steam. #18](https://github.com/link-to-issue-18)
+##### Pull Requests: 
+  - Commit contributions to feature branch; pull requests made by Yavuz Salih (back end developer)
+#### Additional Information:
+  - One of the presenters for Milestone 2
+
+---
+
+### Member: Sanan
+#### Responsibilities: Mobile
+#### Main Contributions: 
+- Expanded the capabilities of the mobile app between milestone one and two
+- Created 'Follow User,' 'Like Story,' and 'Comment' buttons
+- Added commenting functionality to stories
+- Designed a map location selection screen for search and other functions
+- Developed the activity stream screen and a dynamic notification button
+- Worked on bug fixing and actively supported other teams
+- Assisted back end team in writing model, repository, and controller for retrieving user's read and liked stories
+##### Code Related Significant Issues:
+- [Added location selection with tapping on the screen and searching for location in issue #95](https://github.com/link-to-issue-95)
+- [Functionality for users to interact with story and other users in issues #82, #80, #81](https://github.com/link-to-issues-82-80-81)
+- [Creating search page and input field](https://github.com/link-to-search-page-issue)
+##### Management Related Significant Issues:
+- [Created issue #96 for timepicker for search to ensure the use of a reliable library](https://github.com/link-to-issue-96)
+- [Developed a model for a table in issue #101 to store which stories a user reads and likes, aiding the recommendation engine](https://github.com/link-to-issue-101)
+##### Pull Requests: 
+  - Reviewed and merged mobile to the main branch in pull requests [#116](https://github.com/link-to-pull-request-116), [#78](https://github.com/link-to-pull-request-78)
+  - Ensured no conflicts during merges
+#### Additional Information: 
+  - Provided architectural suggestions for the recommendation engine, including the incorporation of NLP clustering for all stories based on content
+
+---
+
+### Member: Erhan
+#### Responsibilities: 
+  - Creating meeting drafts/notes
+  - Creating mockup users and stories and adding data to the main application to test the recommendation engine
+#### Main Contributions: 
+  - Generated synthetic data to test the performance of the recommendation engine
+  - Created a set of 10 users and 20 stories on the web app prototype
+  - Interacted with other users’ stories to test the alpha version of the recommendation engine
+##### Code-Related Significant Issues:
+- [Create Data for Testing Recommendation Engine Performance (#92)](https://github.com/link-to-issue-92)
+##### Management-Related Significant Issues: N/A
+##### Pull Requests: N/A
+#### Additional Information: 
+  - Plans to enhance the quality of stories entered based on feedback from the professor
+  - Aims to modify the web UI to align more closely with the mobile application's appearance
+
+---
+
+### Member: Salih
+#### Responsibilities: 
+  - Backend Java Developer and Architect
+  - Support for Recommendation Engine Development, and Integration
+  - Git management
+
+#### Main Contributions: 
+  - In milestone 2, responsible for developing backend logic and tables for activity stream feature
+  - Improved existing features of the app by adding new fields to tables and new logic to backend flow
+  - Fixed several bugs affecting user experience
+  - Contributed to architectural decisions for recommendation engine and helped integrate it with the app
+
+##### Code Related Significant Issues:
+- [Finalize activity endpoint and provide example request and response. #84](https://github.com/link-to-issue-84)
+- [Modify "/activity" endpoint to read from Activity table. #67](https://github.com/link-to-issue-67)
+- [Add Story Post Timestamp. #74](https://github.com/link-to-issue-74)
+- [ActivityService should have individual methods for each type of activity. #75](https://github.com/link-to-issue-75)
+- [Add activity count endpoint on back-end. #126](https://github.com/link-to-issue-126)
+- [Add new flag for activities. #127](https://github.com/link-to-issue-127)
+- [Fix newflag bug. #128](https://github.com/link-to-issue-128)
+- [Commits that are not present in "test" branch's history should not be able to merge into "main". #56](https://github.com/link-to-issue-56)
+- [Record Follow Activity to the Activity table. #71](https://github.com/link-to-issue-71)
+- [Record Comment Activity to the Activity table. #70](https://github.com/link-to-issue-70)
+- [Record Post Activity to the Activity table. #69](https://github.com/link-to-issue-69)
+- [Record Like activity to the Activity table. #68](https://github.com/link-to-issue-68)
+- [Identify places in code where actions we count as "Activity" is performed. #65](https://github.com/link-to-issue-65)
+
+##### Management Related Issues:
+- [Review and Provide Feedback on Alternative Recommendation Engine #93](https://github.com/link-to-issue-93)
+- [Determine Database Choice Based on Recommendation Engine Logic #91](https://github.com/link-to-issue-91)
+- [Integration Testing for Python Recommendation Engine and Java/Spring Backend API #87](https://github.com/link-to-issue-87)
+
+#### Pull Requests: 
+  - [Merge Mobile to main. #116](https://github.com/link-to-issue-116)
+  - [Merge feature/activity-stream branch to main. #85](https://github.com/link-to-issue-85)
+

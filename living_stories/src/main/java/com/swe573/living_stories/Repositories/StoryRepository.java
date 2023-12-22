@@ -1,6 +1,6 @@
 package com.swe573.living_stories.Repositories;
 
-import com.swe573.living_stories.Confrugation.DateParser;
+import com.swe573.living_stories.Configuration.DateParser;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Requests.SearchRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +13,8 @@ import java.util.List;
 
 @Repository
 public interface StoryRepository extends JpaRepository<Story, Long> {
+
+    List<Story> findAll();
 
     List<Story> findByUserId(Long user_id);
 
@@ -48,19 +50,14 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
     @Query("SELECT DISTINCT s FROM Story s" +
             " LEFT JOIN s.locations l" +
             " WHERE" +
-            " (:key is null OR LOWER(s.user.name) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.richText) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.city) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.country) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.header) LIKE CONCAT('%', LOWER(:key), '%'))" +
-            " AND ((:latRangeMin IS NULL AND :latRangeMax IS NULL) OR EXISTS (SELECT l FROM s.locations l WHERE (l.lat BETWEEN :latRangeMin AND :latRangeMax) OR (l.lat IS NULL)))" +
-            " AND ((:lngRangeMin IS NULL AND :lngRangeMax IS NULL) OR EXISTS (SELECT l FROM s.locations l WHERE (l.lng BETWEEN :lngRangeMin AND :lngRangeMax) OR (l.lng IS NULL)))" +
-            " AND (s.startDate >= :startDate) " +
-            " AND (s.endDate <= :endDate)")
+            " (:key IS NULL OR LOWER(s.user.name) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.richText) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.city) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(l.country) LIKE CONCAT('%', LOWER(:key), '%') OR LOWER(s.header) LIKE CONCAT('%', LOWER(:key), '%'))" +
+            " AND ((:isInterval = true AND (s.startDate IS NULL OR s.startDate >= :startDate)) OR (:isInterval = false AND (s.startDate IS NULL OR s.startDate = :startDate))) " +
+            " AND (s.endDate IS NULL OR s.endDate <= :endDate)")
     List<Story> searchAdvanced(
             @Param("key") String key,
-            @Param("latRangeMin") Double latRangeMin,
-            @Param("latRangeMax") Double latRangeMax,
-            @Param("lngRangeMin") Double lngRangeMin,
-            @Param("lngRangeMax") Double lngRangeMax,
             @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate
+            @Param("endDate") Date endDate,
+            @Param("isInterval") Boolean isInterval
     );
 
     
