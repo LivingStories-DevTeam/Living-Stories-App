@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE, Marker, LatLng } from "react-native-maps";
 import * as Location from "expo-location";
 import {
   SafeAreaView,
@@ -314,6 +314,7 @@ const PostStory = ({ navigation }: any) => {
     loadToken();
     console.log(webtoken);
   }, []);
+
   const setJwtToken = `
     document.cookie = 'jwt_Token=${webtoken}; path=/;';
   `;
@@ -423,6 +424,12 @@ const PostStory = ({ navigation }: any) => {
     } catch (error) {
       console.error("Error getting location:", error);
     }
+  };
+  const [selectedPlaces, setSelectedPlaces] = useState<Array<LatLng>>([]);
+
+  const handleDataFromChild = (data: Array<LatLng>) => {
+    // Callback function to receive data from the child component
+    setSelectedPlaces(data);
   };
   ////////////////////// SUBMIT
 
@@ -1097,6 +1104,9 @@ const PostStory = ({ navigation }: any) => {
               <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
                 <Text>Select Location</Text>
               </TouchableOpacity>
+              {selectedPlaces.map((place, index) => (
+                <Text>{place.longitude}</Text>
+              ))}
               <Text>
                 {lat && lng ? (
                   <>
@@ -1145,11 +1155,16 @@ const PostStory = ({ navigation }: any) => {
             <View
               style={{ width: "80%", height: "80%", backgroundColor: "white" }}
             >
-              <PostStoryMap />
+              <PostStoryMap onLocationChange={handleDataFromChild} />
             </View>
             <View style={styles.button}>
-              <TouchableOpacity onPress={() => {setModalVisible(!modalVisible);}}>
-                <Text style={styles.buttonText}>Select Location</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                  console.log(selectedPlaces);
+                }}
+              >
+                <Text style={styles.buttonText}>Close</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1199,7 +1214,8 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     flex: 1,
     marginLeft: 150,
-  }, buttonText: {
+  },
+  buttonText: {
     color: "white",
   },
 });

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MapView, { LatLng, Marker } from "react-native-maps";
 import { Google_Api_Key } from "../contexts/AuthContext";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
-const PostStoryMap = ({ route, navigation }: any) => {
+const PostStoryMap = ({ route, navigation  , onLocationChange }: any , ) => {
   const [region, setRegion] = useState<LatLng>({
     latitude: 41.0864,
     longitude: 29.0455,
@@ -17,6 +17,14 @@ const PostStoryMap = ({ route, navigation }: any) => {
   const [selectedPlacesNames, setSelectedPlacesNames] = useState<Array<string>>(
     []
   );
+
+
+  const handleSendData = () => {
+    // Call the callback function to send data to the parent
+    onLocationChange(selectedPlaces);
+    console.log(selectedPlaces);
+    console.log(selectedPlacesNames);
+  };
   const handleMapPress = async (event: {
     nativeEvent: { coordinate: LatLng };
   }) => {
@@ -30,8 +38,7 @@ const PostStoryMap = ({ route, navigation }: any) => {
     setSelectedPlaces([...selectedPlaces, coordinate]);
     reverseGeocode(coordinate.latitude, coordinate.longitude);
 
-    console.log(selectedPlaces);
-    console.log(selectedPlacesNames);
+   
   };
 
   const reverseGeocode = async (latitude: number, longitude: number) => {
@@ -63,7 +70,7 @@ const PostStoryMap = ({ route, navigation }: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.autoCompleteContainer}>
-        <GooglePlacesAutocomplete
+      <GooglePlacesAutocomplete
           styles={styles.autoComplete}
           placeholder="Search for location"
           onPress={async (data, details = null) => {
@@ -122,6 +129,13 @@ const PostStoryMap = ({ route, navigation }: any) => {
           </View>
         </View>
       ))}
+            <View style={styles.button}>
+        <TouchableOpacity
+          onPress={handleSendData}
+        >
+          <Text style={styles.buttonText}>Select Location</Text>
+        </TouchableOpacity>
+      </View>
 
 
     </SafeAreaView>
@@ -143,10 +157,13 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginTop: 20,
     top: 0,
-    zIndex: 1,
+    zIndex: 999,
   },
   autoComplete: {
     flex: 1,
+    zIndex: 999,
+
+ 
   },
   radiusText: {
     position: "absolute",
@@ -161,9 +178,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     alignContent: "center",
+    justifyContent:"center",
     marginBottom: 50,
     flex: 1,
-    marginLeft: 150,
+
   },
   locText:{
     color:"white",
