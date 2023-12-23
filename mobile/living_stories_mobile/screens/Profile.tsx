@@ -56,6 +56,7 @@ interface User {
 const Profile = ({ route, navigation }: any) => {
   const { name } = route.params;
   const [user, setUser] = useState<User | null>(null);
+
   const [followed, setFollowed] = useState<boolean | null>(null);
   const [trigger, setTrigger] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -63,8 +64,12 @@ const Profile = ({ route, navigation }: any) => {
   const fetchUser = async () => {
     try {
       const response = await axios.get<User>(`${API_URL}/users/${name}`);
-
+      const response_user = await axios.get<User>(`${API_URL}/users/profile`)
       setUser(response.data);
+      if (response_user.data.name === name) {
+        navigation.navigate("My Profile")
+      }
+      
       await checkfollowed();
     } catch (error) {
       console.error(error);
