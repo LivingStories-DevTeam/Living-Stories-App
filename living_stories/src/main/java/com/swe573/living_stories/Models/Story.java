@@ -84,7 +84,7 @@ public class Story {
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Media> media = new ArrayList<>();
 
-    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Locations> locations = new ArrayList<>();
 
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
