@@ -407,10 +407,14 @@ const MyProfile = ({ navigation }: any) => {
                       <Feather name="book" size={25} color="#212121" />{" "}
                       {user?.stories?.length}
                     </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Followers", { userId:user.id })}
+                    > 
                     <Text>
                       <Feather name="users" size={25} color="#212121" />{" "}
                       {user?.followers?.length}
                     </Text>
+                    </TouchableOpacity>
                   </View>
                   <View style={{ marginTop: 10, backgroundColor: "white" }}>
                     <View>
