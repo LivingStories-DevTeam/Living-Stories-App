@@ -7,14 +7,19 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 
-const SearchMap = ({ route, navigation }: any) => {
+const SearchMap = ({ route, navigation, onLocationChange }: any) => {
   const [region, setRegion] = useState<LatLng>({
     latitude: 41.0864,
     longitude: 29.0455,
   });
 
   const [radius, setRadius] = useState(1); // Initial radius in meters
-
+  const handleSendData = () => {
+    // Call the callback function to send data to the parent
+    onLocationChange(region.latitude, region.longitude, radius/1000);
+    console.log(region.latitude, region.longitude, radius/1000)
+ 
+  };
   const handleMapPress = (event: { nativeEvent: { coordinate: LatLng } }) => {
     const { coordinate } = event.nativeEvent;
     setRegion({
@@ -95,11 +100,7 @@ const SearchMap = ({ route, navigation }: any) => {
       <View style={styles.button}>
         <TouchableOpacity
           onPress={() => {
-            navigation.replace("Search", {
-              lat: region.latitude,
-              lng: region.longitude,
-              radius: radius/1000,
-            });
+            handleSendData()
           }}
         >
           <Text style={styles.buttonText}>Select Location</Text>

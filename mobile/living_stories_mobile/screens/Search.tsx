@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_URL } from "../contexts/AuthContext";
@@ -19,6 +20,7 @@ import { Feather } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Location from "expo-location";
+import SearchMap from "./SearchMap";
 
 interface StoryInt {
   id: number;
@@ -136,7 +138,7 @@ const Search = ({ route, navigation }: any) => {
   const apiUserSearchUrl = `${API_URL}/users/findusers`;
   console.log("Radius " + radius + " lat,lng " + lat, lng);
   ////////////////// GET USER LOCATION //////////////////////
-
+  const [modalVisible, setModalVisible] = useState(false);
   const getUserLocation = async () => {
     try {
       // Request permission to access location
@@ -361,6 +363,15 @@ const Search = ({ route, navigation }: any) => {
     setSelectedDecade(value);
   };
 
+  
+  const handleDataFromChild = (latit:number , long:number , rad: number ) => {
+    // Callback function to receive data from the child component
+    setLat(latit)
+    setLng(long)
+    setRadius(rad)
+    console.log(latit, long , rad )
+  };
+
   console.log(startDate);
 
   const showDatepicker = () => {
@@ -417,7 +428,7 @@ const Search = ({ route, navigation }: any) => {
       </View>
       {selectedSearchIndex === 0 && (
         <>
-          <ScrollView>
+          <ScrollView keyboardShouldPersistTaps="always">
             <View
               style={{
                 backgroundColor: "white",
@@ -892,8 +903,14 @@ const Search = ({ route, navigation }: any) => {
                 justifyContent: "center", // Center vertically
               }}
             >
-              <View style={{ flex: 1, flexDirection: "row", alignItems: "center",
-                    justifyContent: "center", }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <View
                   style={{
                     backgroundColor: "white",
@@ -907,7 +924,7 @@ const Search = ({ route, navigation }: any) => {
                 >
                   <TouchableOpacity
                     onPress={() => {
-                      navigation.replace("SearchMap");
+                      setModalVisible(!modalVisible);
                     }}
                   >
                     <Image
@@ -918,6 +935,42 @@ const Search = ({ route, navigation }: any) => {
                     />
                   </TouchableOpacity>
                 </View>
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={modalVisible}
+                  onRequestClose={() => {
+                    setModalVisible(false);
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: "90%",
+                        height: "90%",
+                        backgroundColor: "white",
+                      }}
+                    >
+                      <SearchMap onLocationChange={handleDataFromChild} />
+                    </View>
+                    <View style={styles.button}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setModalVisible(!modalVisible);
+
+                        }}
+                      >
+                        <Text style={styles.buttonText}>Close</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Modal>
 
                 <View
                   style={{
@@ -925,7 +978,7 @@ const Search = ({ route, navigation }: any) => {
                     padding: 13,
                     borderRadius: 50,
                     width: 60,
-                    height:60,
+                    height: 60,
                     margin: 10,
                     alignItems: "center",
                     justifyContent: "center",
@@ -1036,7 +1089,7 @@ const Search = ({ route, navigation }: any) => {
       )}
       {selectedSearchIndex === 1 && (
         <>
-          <ScrollView>
+          <ScrollView >
             <View
               style={{
                 backgroundColor: "white",
@@ -1169,6 +1222,20 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center", // Center the content horizontally
   },
+  button: {
+    position: "absolute",
+    bottom: 0,
+    backgroundColor: "#1f6c5c",
+    padding: 10,
+    borderRadius: 10,
+    alignContent: "center",
+    marginBottom: 50,
+    flex: 1,
+    marginLeft: 150,
+  },
+    buttonText: {
+    color: "white",
+  }
 });
 const secondStyles = StyleSheet.create({
   container: {
@@ -1206,6 +1273,7 @@ const secondStyles = StyleSheet.create({
     marginRight: 8,
     flexDirection: "row",
   },
+  
 });
 
 export default Search;
