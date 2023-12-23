@@ -82,7 +82,7 @@ const MyProfile = ({ navigation }: any) => {
       const manipulatedImage = await ImageManipulator.manipulateAsync(
         result.assets[0].uri,
         [{ resize: { width: 300 } }],
-        { format: ImageManipulator.SaveFormat.JPEG, base64: true }
+        { format: ImageManipulator.SaveFormat.JPEG, compress:0.2  , base64: true }
       );
 
       // Set the base64 string in the state
