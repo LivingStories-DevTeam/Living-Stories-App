@@ -17,6 +17,7 @@ import {
   Platform,
   Image,
   Modal,
+  Alert,
 } from "react-native";
 import { LayoutChangeEvent } from "react-native";
 
@@ -257,11 +258,12 @@ const PostStory = ({ navigation }: any) => {
     return years;
   };
   const years = generateYears(1880, 2023);
-
+  const [stDecade , setStDecade ]= useState<string|undefined>()
   const handleDecadeChange = (value: number) => {
     setStartDate("01/01/" + value.toString());
     setEndDate("01/01/" + (value + 9).toString());
     setSelectedDecade(value);
+    setStDecade((value -1).toString()+"s")
   };
 
   const showDatepicker = () => {
@@ -407,6 +409,14 @@ const PostStory = ({ navigation }: any) => {
     }
   };
   //////////////////// USER LOCATION
+  interface Location {
+    name: string;
+    lat: number;
+    lng: number;
+    city?:string;
+    country?:string;
+  }
+  
   const getUserLocation = async () => {
     try {
       // Request permission to access location
@@ -428,9 +438,9 @@ const PostStory = ({ navigation }: any) => {
       console.error("Error getting location:", error);
     }
   };
-  const [selectedPlaces, setSelectedPlaces] = useState<Array<LatLng>>([]);
+  const [selectedPlaces, setSelectedPlaces] = useState<Array<Location>>([]);
 
-  const handleDataFromChild = (data: Array<LatLng>) => {
+  const handleDataFromChild = (data: Array<Location>) => {
     // Callback function to receive data from the child component
     setSelectedPlaces(data);
   };
@@ -480,7 +490,7 @@ const PostStory = ({ navigation }: any) => {
   const submitStory = async () => {
     console.log("startDate: " + startDate);
     console.log("endDate: " + endDate);
-    /*
+    
     const storyRequest = {
       text:editorContent,
       header,
@@ -488,11 +498,11 @@ const PostStory = ({ navigation }: any) => {
       locations:selectedPlaces,
       //mediaString: media,
       richText: editorContent,
-      ...(startDate && { startDate: combinedStartDateTimeString }),
-      ...(endDate && { endDate: combinedEndDateTimeString }),
+      ...(startDate && { startDate: startDate }),
+      ...(endDate && { endDate: endDate }),
       ...(startSeason && { startSeason: startSeason }),
       ...(endSeason && { endSeason: endSeason }),
-      ...(selectedDecade && { decade: selectedDecade })
+      ...(stDecade && { decade: stDecade })
     };
     async function postData() {
       const requiredFieldsEmpty = [
@@ -515,11 +525,18 @@ const PostStory = ({ navigation }: any) => {
           console.log(storyRequest);
           const response = await axios.post(
             `${API_URL}/stories`,
-            storyRequest,
-            {
-              withCredentials: true,
-            }
+            storyRequest
           );
+          if (response.status === 200) {
+            Alert.alert("You have published the story successfully.");
+  
+            // Set the values to null after a successful response
+            setStartDate("")
+            setEndDate("")
+            setStartSeason("")
+            setEndSeason("")
+            setStDecade(undefined)
+          }
 
         } catch (error) {
           console.error("Error:", error);
@@ -527,7 +544,7 @@ const PostStory = ({ navigation }: any) => {
       }
     }
 
-    postData();*/
+    postData();
   };
 
   return (
@@ -1238,7 +1255,7 @@ const PostStory = ({ navigation }: any) => {
               </View>
 
               {selectedPlaces.map((place, index) => (
-                <Text>{place.longitude}</Text>
+                <Text>{place.name}</Text>
               ))}
               <Text>
                 {lat && lng ? (
@@ -1325,7 +1342,7 @@ const PostStory = ({ navigation }: any) => {
                     alignItems: "center",
                     justifyContent: "center",
                   }}
-                  onPress={submitStory}
+                  onPress={takePhoto}
                 >
                   <Feather name="camera" size={28} color="black" />
                 </TouchableOpacity>

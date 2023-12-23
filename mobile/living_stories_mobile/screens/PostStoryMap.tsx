@@ -13,6 +13,16 @@ import axios from "axios";
 import { AntDesign } from "@expo/vector-icons";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { Feather } from "@expo/vector-icons";
+import { googleMapIsInstalled } from "react-native-maps/lib/decorateMapComponent";
+
+interface Location {
+  name: string;
+  lat: number;
+  lng: number;
+  city?:string;
+  country?:string;
+}
+
 
 const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
   const [region, setRegion] = useState<LatLng>({
@@ -24,12 +34,15 @@ const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
   const [selectedPlacesNames, setSelectedPlacesNames] = useState<Array<string>>(
     []
   );
+  const [finalPlaces, setFinalPlaces] = useState<Array<Location>>(
+    []
+  );
 
   const handleSendData = () => {
     // Call the callback function to send data to the parent
-    onLocationChange(selectedPlaces);
-    console.log(selectedPlaces);
-    console.log(selectedPlacesNames);
+    onLocationChange(finalPlaces);
+    console.log(finalPlaces);
+ 
   };
   const handleMapPress = async (event: {
     nativeEvent: { coordinate: LatLng };
@@ -41,34 +54,64 @@ const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
     });
 
     // Add the selected place to the array
+
+    
+    const locationDetails = await getLocationDetails(coordinate.latitude, coordinate.longitude);
+    console.log(locationDetails);
     setSelectedPlaces([...selectedPlaces, coordinate]);
-    reverseGeocode(coordinate.latitude, coordinate.longitude);
+    setFinalPlaces([...finalPlaces, locationDetails]);
   };
 
-  const reverseGeocode = async (latitude: number, longitude: number) => {
-    const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${Google_Api_Key}`;
 
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
+const getLocationDetails = async (latitude: number, longitude: number): Promise<Location> => {
 
-      // Extract the place name from the response
-      const placeName = data.results[0]?.formatted_address || "Unknown Place";
+  try {
+    
+    const locationNameResponse = await axios.get(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${Google_Api_Key}`
+    );
+    const { results } = locationNameResponse.data;
+    const placeName = results[0]?.formatted_address || "Unknown Place";
 
-      setSelectedPlacesNames([...selectedPlacesNames, placeName]);
-    } catch (error) {
-      console.error("Error fetching reverse geocoding data:", error);
-      return "Unknown Place";
-    }
-  };
+    let city = "";
+    let country = "";
+    results.forEach((item: any) => {
+      item.address_components.forEach((subItem: any) => {
+        if (subItem.types.includes("administrative_area_level_1") || subItem.types.includes("locality"))
+          city = subItem.long_name;
+        if (subItem.types.includes("country"))
+          country = subItem.long_name;
+      });
+    });
 
+    return {
+      name: placeName,
+      lat: latitude,
+      lng: longitude,
+      city: city,
+      country: country,
+    };
+  } catch (error) {
+    console.error("Error fetching location details:", error);
+    return {
+      name: "Unknown Place",
+      lat: latitude,
+      lng: longitude,
+      city: "Unnamed location",
+      country: "Unnamed location",
+    };
+  }
+};
+  
+  
   const handleDeletePress = (index: number) => {
     // Remove the element at the specified index from the array
-    selectedPlacesNames.splice(index, 1);
+    finalPlaces.splice(index, 1);
     selectedPlaces.splice(index, 1);
 
+
     // Update the state with the modified array
-    setSelectedPlacesNames([...selectedPlacesNames]);
+    setFinalPlaces([...finalPlaces]);
     setSelectedPlaces([...selectedPlaces]);
   };
   return (
@@ -115,8 +158,7 @@ const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
           <Marker
             key={index}
             coordinate={place}
-            title={selectedPlacesNames[index]}
-            description={`Lat: ${place.latitude}, Long: ${place.longitude}`}
+
           />
         ))}
       </MapView>
@@ -135,11 +177,11 @@ const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
             alignItems: "center",
           }}
         >
-          {selectedPlacesNames.map((address, index) => (
+          {finalPlaces.map((address, index) => (
             <View style={styles.locTextContainer} key={index}>
               <View style={styles.textContainer}>
                 <Text style={styles.locText}>
-                  {selectedPlacesNames[index].substring(0, 25)}...
+                  {finalPlaces[index].name.substring(0, 25)}...
                 </Text>
               </View>
               <View style={styles.iconContainer}>
