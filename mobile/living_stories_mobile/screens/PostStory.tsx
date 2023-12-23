@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useRef,useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import MapView, { PROVIDER_GOOGLE, Marker, LatLng } from "react-native-maps";
 import * as Location from "expo-location";
@@ -52,7 +52,9 @@ const PostStory = ({ navigation }: any) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [editorContent, setEditorContent] = useState("<p>Hello my name is Sanan. Test from mobile.</p>");
+  const [editorContent, setEditorContent] = useState(
+    "<p>Hello my name is Sanan. Test from mobile.</p>"
+  );
 
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
@@ -67,8 +69,8 @@ const PostStory = ({ navigation }: any) => {
   const [startSeason, setStartSeason] = useState("");
   const [endSeason, setEndSeason] = useState("");
   ///// Select Month
-  const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
+  const [startDate, setStartDate] = useState<String>("");
+  const [endDate, setEndDate] = useState<String>("");
   const [selectedMonth, setSelectedMonth] = useState(1);
   const [selectedMonthYear, setSelectedMonthYear] = useState(2023);
   const [selectedStartMonth, setSelectedStartMonth] = useState(1);
@@ -116,28 +118,17 @@ const PostStory = ({ navigation }: any) => {
   };
   ///////////////////////// TABS END //////////////////////
   const handleYearChange = (value: number) => {
-    const selectedDate = dayjs(`${value}-01-01`, yearFormat); // Assuming the date is January 1st of the selected year
-    const start = selectedDate.subtract(1, "year");
-    const endDate = selectedDate.add(1, "year");
-
-    setStartDate(start);
     setSelectedYear(value);
-    setEndDate(endDate);
+    setStartDate(value.toString());
+    setEndDate("");
   };
 
   const handleStartYearChange = (value: number) => {
-    const selectedDate = dayjs(`${value}-01-01`, yearFormat); // Assuming the date is January 1st of the selected year
-    const start = selectedDate.subtract(1, "year");
-
-    setStartDate(start);
     setSelectedYear(value);
+    setStartDate(value.toString());
   };
   const handleEndYearChange = (value: number) => {
-    const selectedDate = dayjs(`${value}-01-01`, yearFormat); // Assuming the date is January 1st of the selected year
-
-    const endDate = selectedDate.add(1, "year");
-
-    setEndDate(endDate);
+    setEndDate(value.toString());
     setSelectedEndYear(value);
   };
 
@@ -152,23 +143,20 @@ const PostStory = ({ navigation }: any) => {
   };
 
   const updateSelectedDate = (month: number, year: number) => {
-    const formattedDate = `${year}-${month}-01`;
+    const formattedDate = `${month}/${year}`;
 
-    const start = dayjs(formattedDate, monthFormat);
-    const endDate = dayjs(formattedDate, monthFormat);
-    setStartDate(start.subtract(1, "month"));
+    setStartDate(month.toString() + "/" + year.toString());
 
-    setEndDate(endDate.add(1, "month"));
+    setEndDate("");
 
     setSelectedDate(formattedDate);
   };
-
 
   ////////////////////////////
   //////////////// Month Start Selector ///////////
 
   const handleStartMonthChange = (itemValue: number) => {
-    setSelectedMonth(itemValue);
+    setSelectedStartMonth(itemValue);
     updateStartSelectedDate(itemValue, selectedStartMonthYear);
   };
 
@@ -178,10 +166,9 @@ const PostStory = ({ navigation }: any) => {
   };
 
   const updateStartSelectedDate = (month: number, year: number) => {
-    const formattedDate = `01/${year}/${month}`;
+    const formattedDate = `${month}/${year}`;
 
-    const start = dayjs(formattedDate, monthFormat);
-    setStartDate(start.subtract(1, "month"));
+    setStartDate(month.toString() + "/" + year.toString());
 
     setSelectedStartDate(formattedDate);
   };
@@ -199,37 +186,30 @@ const PostStory = ({ navigation }: any) => {
   };
 
   const updateEndSelectedDate = (month: number, year: number) => {
-    const formattedDate = `${year}-${month}-01`;
+    const formattedDate = `${month}/${year}`;
 
-    const endDate = dayjs(formattedDate, monthFormat);
-
-    setEndDate(endDate.add(1, "month"));
-
+    setEndDate(month.toString() + "/" + year.toString());
     setSelectedEndDate(formattedDate);
   };
   ////////////////////////////
-  
 
   const dateFormats: { [key: number]: string } = {
     0: "DD/MM/YYYY",
     1: "MM/YYYY",
     2: "YYYY",
   };
-
-
-  const combinedStartDateTimeString = `${startDate && selectedThirdIndex === 0
-  ? dayjs(
-    `${startDate.format("YYYY-MM-DD")}`
-  ).format("DD/MM/YYYY HH:mm:ss")
-  : startDate?.format(dateFormats[selectedThirdIndex])
+  /*
+  const combinedStartDateTimeString = `${
+    startDate && selectedThirdIndex === 0
+      ? dayjs(`${startDate.format("YYYY-MM-DD")}`).format("DD/MM/YYYY HH:mm:ss")
+      : startDate?.format(dateFormats[selectedThirdIndex])
   }`;
-  const combinedEndDateTimeString = `${endDate && selectedThirdIndex === 0
-    ? dayjs(
-      `${endDate.format("YYYY-MM-DD")}}`
-    ).format("DD/MM/YYYY HH:mm:ss")
-    : endDate?.format(dateFormats[selectedThirdIndex])
-    }`;
-
+  const combinedEndDateTimeString = `${
+    endDate && selectedThirdIndex === 0
+      ? dayjs(`${endDate.format("YYYY-MM-DD")}}`).format("DD/MM/YYYY HH:mm:ss")
+      : endDate?.format(dateFormats[selectedThirdIndex])
+  }`;
+*/
   const seasons = [
     { label: "Spring", value: "Spring" },
     { label: "Summer", value: "Summer" },
@@ -279,11 +259,8 @@ const PostStory = ({ navigation }: any) => {
   const years = generateYears(1880, 2023);
 
   const handleDecadeChange = (value: number) => {
-    const decStartString = (value - 2).toString();
-    const decEndString = (value + 8).toString();
-    setStartDate(dayjs(decStartString, yearFormat));
-    setEndDate(dayjs(decEndString, yearFormat));
-    console.log(endDate);
+    setStartDate("01/01/" + value.toString());
+    setEndDate("01/01/" + (value + 9).toString());
     setSelectedDecade(value);
   };
 
@@ -298,31 +275,32 @@ const PostStory = ({ navigation }: any) => {
   };
   const handleDateChange = (_: any, selectedDate?: Date) => {
     if (selectedDate) {
-      const start = dayjs(selectedDate, exactDateFormat);
-      const end = dayjs(selectedDate, exactDateFormat);
+      const formattedDate = dayjs(selectedDate).format('DD/MM/YYYY');
+   
       setDate(selectedDate);
-      setStartDate(start.subtract(1, "day"));
-      setEndDate(end.add(1, "day"));
+      setStartDate(formattedDate);
+      setEndDate("");
     }
 
     setShowDatePicker(false);
   };
   const handleStartDateChange = (_: any, selectedDate?: Date) => {
     if (selectedDate) {
-      const start = dayjs(selectedDate, exactDateFormat);
-
+      const formattedDate = dayjs(selectedDate).format('DD/MM/YYYY');
+   
       setDatePickerStart(selectedDate);
-      setStartDate(start.subtract(1, "day"));
+      setStartDate(formattedDate);
     }
 
     setShowStartDatePicker(false);
   };
   const handleEndDateChange = (_: any, selectedDate?: Date) => {
     if (selectedDate) {
-      const end = dayjs(selectedDate, exactDateFormat);
+      const formattedDate = dayjs(selectedDate).format('DD/MM/YYYY');
+   
       setDatePickerEnd(selectedDate);
 
-      setEndDate(end.add(1, "day"));
+      setEndDate(formattedDate);
     }
 
     setShowEndDatePicker(false);
@@ -459,7 +437,6 @@ const PostStory = ({ navigation }: any) => {
   ////////////////////// SUBMIT
 
   const submitStoryold = async () => {
-
     const storyRequest = {
       editorContent,
       header,
@@ -471,14 +448,19 @@ const PostStory = ({ navigation }: any) => {
       ...(endDate && { endDate: endDate }),
       ...(startSeason && { startSeason: startSeason }),
       ...(endSeason && { endSeason: endSeason }),
-      ...(selectedDecade && { decade: selectedDecade })
+      ...(selectedDecade && { decade: selectedDecade }),
     };
     async function postData() {
-      const requiredFieldsEmpty = [storyRequest.richText, storyRequest.header, storyRequest.locationsAdvanced, storyRequest.startDate].some(
-        (value) => value === undefined || value === "" 
-      );
+      const requiredFieldsEmpty = [
+        storyRequest.richText,
+        storyRequest.header,
+        storyRequest.locationsAdvanced,
+        storyRequest.startDate,
+      ].some((value) => value === undefined || value === "");
       if (requiredFieldsEmpty) {
-        alert("The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location.");
+        alert(
+          "The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location."
+        );
         return;
       } else {
         try {
@@ -489,15 +471,16 @@ const PostStory = ({ navigation }: any) => {
               withCredentials: true,
             }
           );
-        } catch (error) {
-        }
+        } catch (error) {}
       }
     }
     postData();
-
   };
 
   const submitStory = async () => {
+    console.log("startDate: " + startDate);
+    console.log("endDate: " + endDate);
+    /*
     const storyRequest = {
       text:editorContent,
       header,
@@ -544,10 +527,8 @@ const PostStory = ({ navigation }: any) => {
       }
     }
 
-    postData();
+    postData();*/
   };
-
-
 
   return (
     <KeyboardAvoidingView
@@ -800,10 +781,7 @@ const PostStory = ({ navigation }: any) => {
                                 marginVertical: 5,
                               }}
                             >
-                              <Text>
-                                {startDate?.format(exactDateFormat)}-
-                                {endDate?.format(exactDateFormat)}
-                              </Text>
+                              <Text>{date.toString()}</Text>
                               {showDatePicker && (
                                 <DateTimePicker
                                   value={date}
@@ -885,7 +863,7 @@ const PostStory = ({ navigation }: any) => {
                   )}
                   {selectedSecondIndex === 1 && (
                     <>
-                    <View
+                      <View
                         style={{
                           flex: 1,
                           justifyContent: "center",
@@ -972,7 +950,7 @@ const PostStory = ({ navigation }: any) => {
                                 marginVertical: 5,
                               }}
                             >
-                              <Text>{startDate?.format(exactDateFormat)}</Text>
+                              <Text>{datePickerStart.toString()}</Text>
                               {showStartDatePicker && (
                                 <DateTimePicker
                                   value={datePickerStart}
@@ -1081,7 +1059,7 @@ const PostStory = ({ navigation }: any) => {
                                 marginVertical: 5,
                               }}
                             >
-                              <Text>{endDate?.format(exactDateFormat)}</Text>
+                              <Text>{datePickerEnd.toString()}</Text>
                               {showEndDatePicker && (
                                 <DateTimePicker
                                   value={datePickerEnd}
@@ -1164,8 +1142,6 @@ const PostStory = ({ navigation }: any) => {
                 </>
               )}
             </View>
-
-             
 
             <View
               style={{
@@ -1296,66 +1272,66 @@ const PostStory = ({ navigation }: any) => {
                 )}
               </Text>
             </View>
-             <View
+            <View
+              style={{
+                flex: 1,
+                borderWidth: 3,
+                borderColor: "green", // Use your custom color
+                backgroundColor: "#fff",
+                borderRadius: 8,
+                minHeight: 250,
+              }}
+            >
+              <ScrollView>
+                <QuillEditor
+                  ref={_editor}
+                  initialHtml="<h1>Enter Your Story Here</h1>"
+                  style={{
+                    ...Platform.select({
+                      ios: {
+                        minHeight: 500,
+                        maxHeight: "auto",
+                      },
+                      android: {
+                        minHeight: 500,
+                        maxHeight: "auto",
+                      },
+                    }),
+                  }}
+                  onHtmlChange={({ html }) => {
+                    setEditorContent(html);
+                  }}
+                />
+              </ScrollView>
+              <View
                 style={{
-                  flex: 1,
-                  borderWidth: 3,
-                  borderColor: "green", // Use your custom color
-                  backgroundColor: "#fff",
-                  borderRadius: 8,
-                  minHeight: 250,
+                  flexDirection: "row",
+                  backgroundColor: "#ededed",
                 }}
               >
-                <ScrollView>
-                  <QuillEditor
-                    ref={_editor}
-                    initialHtml="<h1>Enter Your Story Here</h1>"
-                    style={{
-                      ...Platform.select({
-                        ios: {
-                          minHeight: 500,
-                          maxHeight: "auto",
-                        },
-                        android: {
-                          minHeight: 500,
-                          maxHeight: "auto",
-                        },
-                      }),
-                    }}
-                    onHtmlChange={({ html }) => {
-                      setEditorContent(html);
-                    }}
-                  />
-                </ScrollView>
-                <View
+                <TouchableOpacity
                   style={{
-                    flexDirection: "row",
-                    backgroundColor: "#ededed",
+                    marginHorizontal: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
+                  onPress={pickImage}
                 >
-                  <TouchableOpacity
-                    style={{
-                      marginHorizontal: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                    onPress={pickImage}
-                  >
-                    <Feather name="image" size={28} color="black" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={{
-                      marginHorizontal: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                    onPress={submitStory}
-                  >
-                    <Feather name="camera" size={28} color="black" />
-                  </TouchableOpacity>
-                  <QuillToolbar editor={_editor} options="full" theme="light" />
-                </View>
+                  <Feather name="image" size={28} color="black" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    marginHorizontal: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onPress={submitStory}
+                >
+                  <Feather name="camera" size={28} color="black" />
+                </TouchableOpacity>
+                <QuillToolbar editor={_editor} options="full" theme="light" />
               </View>
+            </View>
           </View>
         </View>
         <Modal
