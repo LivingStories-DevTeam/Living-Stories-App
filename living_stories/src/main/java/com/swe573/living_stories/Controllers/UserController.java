@@ -136,7 +136,7 @@ public class UserController {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            List<Long> followingIds = user.getFollowing().stream().map(User::getId).collect(Collectors.toList());
+            List<Long> followingIds = userRepository.getFollowerList(user.getId());
             List<FollowerResponse> followerList = new ArrayList<>();
 
             for (Long followingId : followingIds) {

@@ -23,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT count(user_id) FROM stories WHERE user_id = :user_id", nativeQuery = true)
     Integer getStoryCount(@Param("user_id") Long user_id);
 
+    @Query(value = "SELECT follower_id FROM followers WHERE following_id = :user_id", nativeQuery = true)
+    List<Long> getFollowerList(@Param("user_id") Long user_id);
+
 }
