@@ -1,4 +1,4 @@
-package com.swe573.living_stories.Confrugation;
+package com.swe573.living_stories.Configuration;
 
 
 

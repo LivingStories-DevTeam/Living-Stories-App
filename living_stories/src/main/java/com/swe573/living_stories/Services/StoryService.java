@@ -1,6 +1,6 @@
 package com.swe573.living_stories.Services;
 
-import com.swe573.living_stories.Confrugation.DateParser;
+import com.swe573.living_stories.Configuration.DateParser;
 import com.swe573.living_stories.DTO.MediaDTO;
 import com.swe573.living_stories.Models.*;
 import com.swe573.living_stories.Repositories.StoryRepository;
@@ -126,11 +126,13 @@ public class StoryService {
             Story story = optionalStory.get();
             for (Locations location : locationsList) {
                 location.setStory(story);
+                location.setType(location.getType());
+                location.setCoordinates(location.getCoordinates());
+                location.setRadius(location.getRadius());
             }
             story.setLocations(locationsList);
             storyRepository.save(story);
             return true;
-
         }
         return false;
     }

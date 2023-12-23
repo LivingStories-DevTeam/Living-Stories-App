@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 import pandas as pd
-from scipy.spatial.distance import cdist
 import numpy as np
 import psycopg2
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -118,7 +117,7 @@ def calculate_location_similarity(user_id, stories_df, locations_df):
     return location_similarity_scores
 
 
-def calculate_followed_users_likes_scores(user_id, stories_df):
+def calculate_followed_users_likes_scores(user_id, stories_df):  
     followed_users_filter = followers_df['follower_id'] == user_id
     if not followers_df.loc[followed_users_filter, ['following_id']].empty:
         followed_users = followers_df.loc[followed_users_filter, ['following_id']].values[0]
@@ -153,6 +152,9 @@ def recommend_stories(user_id, top_r):
     non_user_stories.loc[:, 'location_similarity'] = calculate_location_similarity(user_id, non_user_stories, locations_df)
     non_user_stories.loc[:, 'followed_user_likes'] = calculate_followed_users_likes_scores(user_id, non_user_stories)
 
+    scores = non_user_stories[['label_similarity', 'location_similarity', 'followed_user_likes']]
+    non_user_stories['recommendation_source'] = scores.idxmax(axis=1)
+
     non_user_stories.loc[:, 'combined_score'] = non_user_stories['label_similarity'] + non_user_stories['location_similarity'] + non_user_stories['followed_user_likes']
     max_score = non_user_stories['combined_score'].max()
     non_user_stories.loc[:, 'normalized_score'] = (non_user_stories['combined_score'] / max_score) * 10
@@ -161,14 +163,15 @@ def recommend_stories(user_id, top_r):
     
     columns_to_drop = [col for col in top_recommendations.columns if isinstance(top_recommendations[col].iloc[0], list)]
     top_recommendations = top_recommendations.drop(columns=columns_to_drop) 
-
+    
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)].copy()
-    user_read_stories = fetch_read_stories(user_id)
     user_liked_stories = convert_lists_to_tuples(user_liked_stories)
+    user_read_stories = fetch_read_stories(user_id)
     if not user_read_stories.empty:
         user_read_stories = convert_lists_to_tuples(user_read_stories)
     else:
         user_read_stories = pd.DataFrame(columns=user_liked_stories.columns) 
+    
     user_liked_and_read_stories = pd.concat([user_liked_stories, user_read_stories]).drop_duplicates()
 
     if not user_liked_and_read_stories.empty:
@@ -183,16 +186,18 @@ def recommend_stories(user_id, top_r):
             columns_to_drop = [col for col in top_cluster_stories.columns if isinstance(top_cluster_stories[col].iloc[0], list)]
             top_cluster_stories = top_cluster_stories.drop(columns=columns_to_drop)
 
+            top_cluster_stories['recommendation_source'] = 'clustering'
+
             # Combine with existing recommendations
             combined_recommendations = pd.concat([top_recommendations, top_cluster_stories]).head(top_r)
         
             # Get unique top N recommendations
             unique_recommendations = combined_recommendations.drop_duplicates(subset='id').head(top_r)
-            return unique_recommendations['id']
+            return unique_recommendations[['id','recommendation_source']]
         else:
-            return top_recommendations['id']
+            return top_recommendations[['id','recommendation_source']]
     # If there are no preferred cluster, use it without
-    return top_recommendations['id']
+    return top_recommendations[['id','recommendation_source']]
 
 @app.route('/recommendations', methods=['GET'])
 def get_recommendations():
@@ -204,7 +209,7 @@ def get_recommendations():
         return jsonify({"error": "User does not exist"}), 404
 
     cold_start_threshold = 3
-    top_l_stories = 3
+    top_liked_stories = 3
 
     user_likes_count = len(stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)])
     followed_users_count = len(followed_users(user_id, stories_df))
@@ -213,17 +218,18 @@ def get_recommendations():
     user_interactions = user_likes_count + followed_users_count + user_comments_count
 
     if user_interactions < cold_start_threshold:
-        most_liked_stories = fetch_most_liked_stories(top_l_stories)
-        return jsonify(most_liked_stories['id'].tolist())
+        most_liked_stories = fetch_most_liked_stories(top_liked_stories)
+        most_liked_stories['recommendation_source'] = 'most liked stories'
+        return jsonify(most_liked_stories[['id', 'recommendation_source']].to_dict(orient='records'))
     else:
         recommendations = recommend_stories(user_id, top_r=3)
         if isinstance(recommendations, pd.Series):
             return jsonify(recommendations.tolist())
         elif isinstance(recommendations, pd.DataFrame) and 'id' in recommendations.columns:
-            return jsonify(recommendations['id'].tolist())
+            return jsonify(recommendations.to_dict(orient='records'))
         else:
-            return jsonify([])
-    
+            return jsonify([]) 
+        
 @app.after_request
 def after_request(response):
     return response

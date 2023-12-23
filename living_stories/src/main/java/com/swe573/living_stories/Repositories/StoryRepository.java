@@ -1,6 +1,6 @@
 package com.swe573.living_stories.Repositories;
 
-import com.swe573.living_stories.Confrugation.DateParser;
+import com.swe573.living_stories.Configuration.DateParser;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Requests.SearchRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
