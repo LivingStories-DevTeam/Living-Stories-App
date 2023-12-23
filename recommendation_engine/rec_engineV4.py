@@ -148,14 +148,14 @@ def recommend_stories(user_id, top_r):
     stories_df['Cluster'] = cluster_stories(X)
     non_user_stories = stories_df[stories_df['user_id'] != user_id].copy()
 
-    non_user_stories.loc[:, 'label_similarity'] = calculate_label_similarity(user_id, non_user_stories)
-    non_user_stories.loc[:, 'location_similarity'] = calculate_location_similarity(user_id, non_user_stories, locations_df)
-    non_user_stories.loc[:, 'followed_user_likes'] = calculate_followed_users_likes_scores(user_id, non_user_stories)
+    non_user_stories.loc[:, 'label similarity'] = calculate_label_similarity(user_id, non_user_stories)
+    non_user_stories.loc[:, 'location similarity'] = calculate_location_similarity(user_id, non_user_stories, locations_df)
+    non_user_stories.loc[:, 'followed user likes'] = calculate_followed_users_likes_scores(user_id, non_user_stories)
 
-    scores = non_user_stories[['label_similarity', 'location_similarity', 'followed_user_likes']]
-    non_user_stories['recommendation_source'] = scores.idxmax(axis=1)
+    scores = non_user_stories[['label similarity', 'location similarity', 'followed user likes']]
+    non_user_stories['Recommendation Reason'] = scores.idxmax(axis=1)
 
-    non_user_stories.loc[:, 'combined_score'] = non_user_stories['label_similarity'] + non_user_stories['location_similarity'] + non_user_stories['followed_user_likes']
+    non_user_stories.loc[:, 'combined_score'] = non_user_stories['label similarity'] + non_user_stories['location similarity'] + non_user_stories['followed user likes']
     max_score = non_user_stories['combined_score'].max()
     non_user_stories.loc[:, 'normalized_score'] = (non_user_stories['combined_score'] / max_score) * 10
 
@@ -186,18 +186,18 @@ def recommend_stories(user_id, top_r):
             columns_to_drop = [col for col in top_cluster_stories.columns if isinstance(top_cluster_stories[col].iloc[0], list)]
             top_cluster_stories = top_cluster_stories.drop(columns=columns_to_drop)
 
-            top_cluster_stories['recommendation_source'] = 'clustering'
+            top_cluster_stories['Recommendation Reason'] = 'Content Similarity'
 
             # Combine with existing recommendations
             combined_recommendations = pd.concat([top_recommendations, top_cluster_stories]).head(top_r)
         
             # Get unique top N recommendations
             unique_recommendations = combined_recommendations.drop_duplicates(subset='id').head(top_r)
-            return unique_recommendations[['id','recommendation_source']]
+            return unique_recommendations[['id','Recommendation Reason']]
         else:
-            return top_recommendations[['id','recommendation_source']]
+            return top_recommendations[['id','Recommendation Reason']]
     # If there are no preferred cluster, use it without
-    return top_recommendations[['id','recommendation_source']]
+    return top_recommendations[['id','Recommendation Reason']]
 
 @app.route('/recommendations', methods=['GET'])
 def get_recommendations():
@@ -214,13 +214,14 @@ def get_recommendations():
     user_likes_count = len(stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)])
     followed_users_count = len(followed_users(user_id, stories_df))
     user_comments_count = len(comments_df[comments_df['user_id'] == user_id])
+    user_read_stories_count = len(fetch_read_stories(user_id))
 
-    user_interactions = user_likes_count + followed_users_count + user_comments_count
+    user_interactions = user_likes_count + followed_users_count + user_comments_count + user_read_stories_count
 
     if user_interactions < cold_start_threshold:
         most_liked_stories = fetch_most_liked_stories(top_liked_stories)
-        most_liked_stories['recommendation_source'] = 'most liked stories'
-        return jsonify(most_liked_stories[['id', 'recommendation_source']].to_dict(orient='records'))
+        most_liked_stories['Recommendation Reason'] = 'Most Liked Stories'
+        return jsonify(most_liked_stories[['id', 'Recommendation Reason']].to_dict(orient='records'))
     else:
         recommendations = recommend_stories(user_id, top_r=3)
         if isinstance(recommendations, pd.Series):
