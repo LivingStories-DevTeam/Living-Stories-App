@@ -10,7 +10,7 @@ import {
 
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import {  Row,  } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import NavBar from "../Components/NavBar";
 import { Link, useNavigate } from "react-router-dom";
 import { Autocomplete, GoogleMap, Marker } from "@react-google-maps/api";
@@ -18,6 +18,7 @@ import { StoryInt } from "../../Interfaces/StoryInt";
 import Story from "../Components/StoryCard";
 import CancelIcon from "@mui/icons-material/Cancel";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import SearchIcon from "@mui/icons-material/Search";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import PeopleIcon from "@mui/icons-material/People";
@@ -117,7 +118,7 @@ const UserSearch: React.FC = () => {
   };
   return (
     <div
-      className="w-4/5 mx-auto mr-4 border-customGreen border-solid border-3"
+      className="w-1/2 mx-auto mr-4 border-customGreen border-solid border-3"
       style={{
         backgroundColor: "#fff",
         borderRadius: "8px",
@@ -148,7 +149,10 @@ const UserSearch: React.FC = () => {
           <span className="bg-blue-100 text-blue-800 text-2xl font-semibold me-2 my-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-2">
             Results
           </span>
-          <ul style={{ listStyle: "none", marginRight: "10px" }}>
+          <ul
+            className="flex flex-wrap  justify-center"
+            style={{ listStyle: "none", marginRight: "10px" }}
+          >
             {users.reverse().map((user: UserSearchResult) => (
               <Card
                 sx={{
@@ -157,7 +161,7 @@ const UserSearch: React.FC = () => {
                   width: "100%",
                   height: "100%",
                 }}
-                className="shadow-md h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
+                className="shadow-md m-4 h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
               >
                 <div className="p-4">
                   <Link to={`/user/${user.name}`}>
@@ -477,7 +481,7 @@ const StroySearch: React.FC = () => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: 10,
+            marginBottom: 5,
             boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
           }}
         >
@@ -936,29 +940,40 @@ const StroySearch: React.FC = () => {
           <button
             type="button"
             onClick={onFinish}
-            className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-10 mt-2"
+            className="text-white text-3xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg px-5 py-2.5 text-center me-2 mb-10 mt-2"
           >
-            Search !
+            Search <SearchIcon fontSize="large" />
           </button>
         </div>
 
         {stories != null && (
-          <div className="max-w-screen-md mx-auto ">
+          <div
+            className="w-4/5 mx-auto mr-4 text-center border-customGreen items-center p-4 border-solid border-3"
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: 10,
+              boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+            }}
+          >
             <h2>
               <span className="bg-blue-100 text-blue-800 text-2xl font-semibold me-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-2">
                 Results
               </span>
             </h2>
-            <ul style={{ listStyle: "none", marginRight: "10px" }}>
+            <div className="flex flex-wrap">
               {stories
                 ?.slice()
                 .reverse()
                 .map((story: StoryInt) => (
-                  <li key={story.id}>
+                  <div key={story.id} className="w-1/2 mb-4">
+                    {/* Use w-1/2 to make each item take up half of the container's width */}
                     <Story story={story} />
-                  </li>
+                  </div>
                 ))}
-            </ul>
+            </div>
           </div>
         )}
       </div>
