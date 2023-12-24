@@ -1,4 +1,4 @@
-import { Avatar, Badge, Card, Col, Row } from "antd";
+import { Avatar, Badge, Card, Col, Form, Row, Tag } from "antd";
 import React from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
@@ -39,9 +39,10 @@ interface Story {
 
 interface StoryProps {
   story: Story;
+  similarity?: string;
 }
 
-const StoryComponent: React.FC<StoryProps> = ({ story }) => {
+const StoryComponent: React.FC<StoryProps> = ({ story, similarity }) => {
   return (
     <div
       onClick={() => {
@@ -99,6 +100,15 @@ const StoryComponent: React.FC<StoryProps> = ({ story }) => {
               <p>   {story.endDate}</p>
             </Col>}
             {story.decade!==null && <Col style={{marginLeft:"10px"}}>{story.decade}</Col>}
+            {similarity &&
+            <Col
+              offset={1}>
+                <Form.Item
+                  label={"Similarity"}>
+                    <Tag color="orange">{similarity}</Tag>
+                </Form.Item>
+            </Col>
+            }
           </Row>
         </Card>
       </Badge.Ribbon>

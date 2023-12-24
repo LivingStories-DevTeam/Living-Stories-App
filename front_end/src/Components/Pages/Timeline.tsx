@@ -171,12 +171,12 @@ const Timeline: React.FC = () => {
         let sortedResults = [...searchResult];
         if (value === "descending") {
             sortedResults.sort((a, b) =>
-                dayjs(b.startDate, ["DD/MM/YYYY", "MM/YYYY"]).unix() - dayjs(a.startDate, ["DD/MM/YYYY", "MM/YYYY"]).unix()
+                dayjs(b.startDate, ["DD/MM/YYYY", "MM/YYYY", "YYYY"]).unix() - dayjs(a.startDate, ["DD/MM/YYYY", "MM/YYYY", "YYYY"]).unix()
             );
         }
         else if (value === "ascending") {
             sortedResults.sort((a, b) =>
-                dayjs(a.startDate, ["DD/MM/YYYY", "MM/YYYY"]).unix() - dayjs(b.startDate, ["DD/MM/YYYY", "MM/YYYY"]).unix()
+                dayjs(a.startDate, ["DD/MM/YYYY", "MM/YYYY", "YYYY"]).unix() - dayjs(b.startDate, ["DD/MM/YYYY", "MM/YYYY", "YYYY"]).unix()
             );
         }
         setSearchResult(sortedResults);
@@ -368,7 +368,7 @@ const Timeline: React.FC = () => {
                 });
                 let searchResultMapped = searchResult.map((item: any) => ({
                     key: item?.id,
-                    title: item?.endDate ? <Space align="center" direction="vertical"><span>{item.startDate} <MinusOutlined /> {item.endDate}</span><Text style={{ fontSize: "smaller" }}>{item.header}</Text></Space> : <Space align="center" direction="vertical">{item.startDate}<Text style={{ fontSize: "small" }}>{item.header}</Text></Space>,
+                    title: item?.endDate ? <Space size={1} style={{ textAlign: "center" }} align="center" direction="vertical"><span>{item.startDate} <MinusOutlined /> {item.endDate}</span><Text style={{ fontSize: "smaller" }}>{item.header}</Text></Space> : <Space size={1} style={{ textAlign: "center" }} align="center" direction="vertical">{item.startDate}<Text style={{ fontSize: "small" }}>{item.header}</Text></Space>,
                     media: item?.imageData?.find(() => true) ? {
                         name: "IMAGE",
                         source: {
@@ -376,7 +376,7 @@ const Timeline: React.FC = () => {
                         },
                         type: "IMAGE"
                     } : undefined,
-                    cardTitle: <a onClick={() => window.location.href = `/stories/${item.id}`}>{item.header}</a>,
+                    cardTitle: <a onClick={() => window.open(`/stories/${item.id}`, "_blank")}>{item.header}</a>,
                     startDate: item.startDate,
                     endDate: item.endDate
                 })).filter((item: any) => item.media);
@@ -711,7 +711,7 @@ const Timeline: React.FC = () => {
                             /> */}
                             <Chrono
                                 allowDynamicUpdate
-                                mode={"HORIZONTAL"}
+                                mode={"VERTICAL"}
                                 slideShow
                                 mediaHeight={naturalHeight}
                                 mediaWidth={naturalWidth}

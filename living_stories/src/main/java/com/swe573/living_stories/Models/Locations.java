@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
+@Transactional
 @Entity
 @Table(name = "locations")
 @Getter
@@ -32,7 +34,7 @@ public class Locations {
 
     private String type; 
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<List<Double>> coordinates = new ArrayList<>(); 
 
     private Double radius; 

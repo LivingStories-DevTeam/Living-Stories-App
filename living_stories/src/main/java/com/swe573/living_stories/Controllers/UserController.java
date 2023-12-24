@@ -1,18 +1,26 @@
 package com.swe573.living_stories.Controllers;
 
+import com.swe573.living_stories.Models.Activity;
+import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Models.User;
+import com.swe573.living_stories.Repositories.UserRepository;
 import com.swe573.living_stories.Requests.EditUser;
 import com.swe573.living_stories.Requests.SearchRequest;
+import com.swe573.living_stories.Responses.FollowerResponse;
+import com.swe573.living_stories.Responses.LikeListResponse;
 import com.swe573.living_stories.Services.ActivityService;
+import com.swe573.living_stories.Services.StoryService;
 import com.swe573.living_stories.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -25,6 +33,11 @@ public class UserController {
     @Autowired
     private ActivityService activityService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private StoryService storyService;
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User newUser = userService.createUser(user);
@@ -118,6 +131,69 @@ public class UserController {
 
         return ResponseEntity.notFound().build();
     }
+    @GetMapping("/Likelist/{storyId}")
+    public ResponseEntity<List<LikeListResponse>> getLikeList(@PathVariable Long storyId, HttpServletRequest request) {
+        Long id = userService.isUserLoggedIn(request);
+        Optional<User> optionalUser = userService.getUserById(id);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            Story story = storyService.getStoryById(storyId);
+            List<Long> likedUserList = story.getLikes();
+            List<LikeListResponse> LikeList = new ArrayList<>();
+
+            for (Long LikedUserId : likedUserList) {
+                Integer followerCount = userRepository.getFollowerCount(LikedUserId);
+                Integer storyCount = userRepository.getStoryCount(LikedUserId);
+
+                LikeListResponse LikeResponse = new LikeListResponse();
+                LikeResponse.setFollowerCount(followerCount.toString());
+                LikeResponse.setStoryCount(storyCount.toString());
+
+                LikeResponse.setPhoto(userRepository.getReferenceById(LikedUserId).getPhoto());
+                LikeResponse.setUserName(userRepository.getReferenceById(LikedUserId).getName());
+                LikeResponse.setId(LikedUserId);
+                LikeList.add(LikeResponse);
+            }
+            if (LikeList.isEmpty()) {
+                return ResponseEntity.internalServerError().build();
+            }
+            return ResponseEntity.ok(LikeList);
+        }
+        return ResponseEntity.internalServerError().build();
+    }
+    @GetMapping("/followerlist/{userId}")
+    public ResponseEntity<List<FollowerResponse>> getFollowerList(@PathVariable Long userId, HttpServletRequest request) {
+        Long id = userService.isUserLoggedIn(request);
+        Optional<User> optionalUser = userService.getUserById(userId);
+
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            List<Long> followingIds = userRepository.getFollowerList(user.getId());
+            List<FollowerResponse> followerList = new ArrayList<>();
+
+            for (Long followingId : followingIds) {
+                Integer followerCount = userRepository.getFollowerCount(followingId);
+                Integer storyCount = userRepository.getStoryCount(followingId);
+
+                FollowerResponse followerResponse = new FollowerResponse();
+                followerResponse.setFollowerCount(followerCount.toString());
+                followerResponse.setStoryCount(storyCount.toString());
+
+                followerResponse.setPhoto(userRepository.getReferenceById(followingId).getPhoto());
+                followerResponse.setUserName(userRepository.getReferenceById(followingId).getName());
+                followerResponse.setId(followingId);
+                followerList.add(followerResponse);
+            }
+            if (followerList.isEmpty()) {
+                return ResponseEntity.internalServerError().build();
+            }
+            return ResponseEntity.ok(followerList);
+        }
+        return ResponseEntity.internalServerError().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         if (userService.deleteUserById(id)) {

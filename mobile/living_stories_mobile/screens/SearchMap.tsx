@@ -114,9 +114,14 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     flex: 1,
     alignContent: "center",
+    justifyContent: "center",
+    borderColor: "#1f6c5c", 
+    borderWidth: 2, 
+    borderRadius: 10,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    borderRadius: 10,
   },
   autoCompleteContainer: {
     position: "absolute",
@@ -145,14 +150,15 @@ const styles = StyleSheet.create({
   },
   button: {
     position: "absolute",
-    bottom:0,
-    backgroundColor: '#1f6c5c',
+    bottom: 0,
+    backgroundColor: "#1f6c5c",
     padding: 10,
     borderRadius: 10,
     alignContent: "center",
-    marginBottom: 50,
+    justifyContent: "center",
+
+    margin: 8,
     flex: 1,
-    marginLeft:150
   },
   buttonText:{
     color:"white"

@@ -39,6 +39,7 @@ interface Story {
 }
 const HomePage: React.FC = () => {
   const [stories, setStories] = useState<Story[]>([]);
+  const [storySimilarity, setStorySimilarity] = useState<any[]>([]);
   const [selectedOption, setSelectedOption] = useState<string>("all");
   const nav = useNavigate()
   useEffect(() => {
@@ -71,9 +72,10 @@ const HomePage: React.FC = () => {
         const secondApiResponse = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/activity/recommendedstories`,
           {
-            storyIds: response.data,
+            storyIds: response.data.map(item => item.id)
           }
         );
+        setStorySimilarity(response.data);
         setStories(secondApiResponse.data);
       }
       else {
@@ -103,7 +105,7 @@ const HomePage: React.FC = () => {
       <ul style={{ listStyle: "none", marginRight: "10px" }}>
         {stories.slice().reverse().map((story: Story) => (
           <li key={story.id}>
-            <Story story={story} />
+            <Story story={story} similarity={storySimilarity?.find(item => item?.id === story.id)?.["Recommendation Reason"]} />
           </li>
         ))}
       </ul>

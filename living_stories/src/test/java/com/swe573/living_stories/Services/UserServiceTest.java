@@ -1,6 +1,6 @@
 package com.swe573.living_stories.Services;
 
-import com.swe573.living_stories.Confrugation.JwtUtils;
+import com.swe573.living_stories.Configuration.JwtUtils;
 
 import com.swe573.living_stories.Models.User;
 

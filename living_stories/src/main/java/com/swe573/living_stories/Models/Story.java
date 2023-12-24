@@ -3,7 +3,7 @@ package com.swe573.living_stories.Models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.swe573.living_stories.Confrugation.DateParser;
+import com.swe573.living_stories.Configuration.DateParser;
 import com.swe573.living_stories.DTO.MediaDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -84,7 +84,7 @@ public class Story {
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Media> media = new ArrayList<>();
 
-    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Locations> locations = new ArrayList<>();
 
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL)
