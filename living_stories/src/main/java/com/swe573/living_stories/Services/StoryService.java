@@ -75,6 +75,7 @@ public class StoryService {
                 story.getLabels(),
                 story.getLikes(),
                 new ArrayList<Locations>(story.getLocations()),  // Assuming locations is a Collection
+                new ArrayList<Locations>(story.getLocationsAdvanced()),
                 story.getStartSeason(),
                 story.getEndSeason(),
                 DateParser.getDateFromDate(story.getStartDate()),

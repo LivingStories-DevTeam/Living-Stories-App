@@ -5,9 +5,7 @@ import com.swe573.living_stories.Models.Locations;
 import com.swe573.living_stories.Models.User;
 
 import java.util.ArrayList;
-import java.util.Date;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 @Getter
@@ -23,7 +21,7 @@ public class StoryDTO {
     private final ArrayList<Long> likes;
 
    private final ArrayList<Locations> locations;
-
+    private final ArrayList<Locations> locationsAdvanced;
     private final String startSeason;
 
     private final String endSeason;
@@ -40,12 +38,13 @@ public class StoryDTO {
 
 
     public StoryDTO(Long id, String header, ArrayList<String> labels, ArrayList<Long> likes, ArrayList<Locations> locations,
-                    String startSeason, String endSeason, String startDate, String endDate, String decade, ArrayList<Comment> comments, User user){
+                    ArrayList<Locations> locationsAdvance, String startSeason, String endSeason, String startDate, String endDate, String decade, ArrayList<Comment> comments, User user){
         this.id = id;
         this.header = header;
         this.labels = labels;
         this.likes = likes;
         this.locations = locations;
+        this.locationsAdvanced = locationsAdvance;
 
         this.startSeason = startSeason;
         this.endSeason = endSeason;
@@ -58,6 +57,7 @@ public class StoryDTO {
 
     public StoryDTO(){
         this.locations = null;
+        this.locationsAdvanced =null;
         this.comments = null;
         this.id = null;
         this.header = null;
