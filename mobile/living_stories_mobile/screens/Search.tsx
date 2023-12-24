@@ -995,30 +995,41 @@ const Search = ({ route, navigation }: any) => {
               <Text>
                 {lat && lng ? (
                   <>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setLat("");
-                        setLng("");
-                        setRadius("");
-                      }}
-                      style={{
-                        backgroundColor: "#731300",
-                        margin: 10,
-                        borderRadius: 7,
-                        padding: 4,
-                      }}
+                    <View
+                      style={{ alignItems: "center", justifyContent: "center" }}
                     >
-                      <Text
+                      <TouchableOpacity
+                        onPress={() => {
+                          setLat("");
+                          setLng("");
+                          setRadius("");
+                        }}
                         style={{
-                          color: "white",
+                          backgroundColor: "#731300",
+                          margin: 10,
+                          borderRadius: 15,
+                          padding: 10,
+                          width: 140,
+                          flex: 1,
+                          flexDirection: "row",
                           alignItems: "center",
                           justifyContent: "center",
                         }}
                       >
-                        Clear Location
-                      </Text>
-                    </TouchableOpacity>
-
+                        <Text
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "white",
+                          }}
+                        >
+                          Clear Location{" "}
+                          <Feather name="x-circle" size={20} color="#ffffff" />
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
                     <View
                       style={{ alignItems: "center", justifyContent: "center" }}
                     >
@@ -1028,17 +1039,19 @@ const Search = ({ route, navigation }: any) => {
                           padding: 15,
                           borderRadius: 50,
                           margin: 10,
-                          width:110,
+                          width: 110,
                           flex: 1,
                           flexDirection: "row",
-                          alignItems: "center", justifyContent: "center"
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                       >
                         <TouchableOpacity
                           style={{
                             flex: 1,
                             flexDirection: "row",
-                            alignItems: "center", justifyContent: "center"
+                            alignItems: "center",
+                            justifyContent: "center",
                           }}
                           onPress={() => {
                             const adjustedRadius = radius;
@@ -1049,10 +1062,10 @@ const Search = ({ route, navigation }: any) => {
                             });
                           }}
                         >
-                         <Text>Timeline </Text><Feather name="clock" size={20} color="#212121" />
+                          <Text>Timeline </Text>
+                          <Feather name="clock" size={20} color="#212121" />
                         </TouchableOpacity>
                       </View>
-                      
                     </View>
                   </>
                 ) : (
