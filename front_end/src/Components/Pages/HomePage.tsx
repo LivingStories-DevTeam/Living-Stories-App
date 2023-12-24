@@ -38,7 +38,7 @@ interface Story {
 }
 const HomePage: React.FC = () => {
   const [stories, setStories] = useState<Story[]>([]);
-  const [storySimilarity, setStorySimilarity] = useState<any[]>([]);
+  const [storySimilarity, setStorySimilarity] = useState<any[] | null>([]);
   const [selectedOption, setSelectedOption] = useState<string>("all");
   const nav = useNavigate();
   useEffect(() => {
@@ -61,28 +61,28 @@ const HomePage: React.FC = () => {
         }
       );
       const userId = userIdPromise.data.id;
-      const url =
-        selectedOption === "all"
-          ? `${import.meta.env.VITE_BACKEND_URL}/stories`
-          : selectedOption === "followings"
-          ? `${import.meta.env.VITE_BACKEND_URL}/stories/following`
-          : `${
-              import.meta.env.VITE_BACKEND_PYTHON_URL
-            }/recommendations?user_id=${userId}`;
-      const response = await axios.get<Story[]>(url, {
-        withCredentials: true,
-      });
       if (selectedOption === "recommended") {
-        const secondApiResponse = await axios.post(
+        const url = `${import.meta.env.VITE_BACKEND_PYTHON_URL}/recommendations?user_id=${userId}`
+        const response = await axios.get<Story[]>(url, {
+          withCredentials: true,
+        });
+        const secondResponse = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/activity/recommendedstories`,
           {
             storyIds: response.data.map(item => item.id)
           }
         );
-        setStories(secondApiResponse.data);
+        setStories(secondResponse.data);
         setStorySimilarity(response.data);
       } else {
+        let url = selectedOption === "all"
+          ? `${import.meta.env.VITE_BACKEND_URL}/stories`
+          : `${import.meta.env.VITE_BACKEND_URL}/stories/following`;
+        let response = await axios.get<Story[]>(url, {
+          withCredentials: true,
+        });
         setStories(response.data);
+        setStorySimilarity(null);
       }
     };
 
@@ -124,7 +124,7 @@ const HomePage: React.FC = () => {
             .reverse()
             .map((story: Story) => (
               <div key={story.id} className="p-2">
-                <Story story={story} similarity={storySimilarity?.find(item => item?.id === story.id)?.["Recommendation Reason"]}/>
+                <Story story={story} similarity={storySimilarity?.find(item => item?.id === story.id)?.["Recommendation Reason"]} />
               </div>
             ))}
         </div>
