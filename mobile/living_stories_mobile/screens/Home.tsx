@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Button, View ,Image} from "react-native";
+import { Button, View, Image } from "react-native";
 import Feed from "./Feed";
 import Profile from "./Profile";
 import PostStory from "./PostStory";
@@ -33,7 +33,7 @@ const Home = ({ navigation }: any) => {
                 navigation.navigate("Search");
               }}
             >
-              <View style={{marginRight:30}}>
+              <View style={{ marginRight: 30 }}>
                 <Ionicons name="md-search" size={30} color="#1f6c5c" />
               </View>
             </TouchableOpacity>
@@ -45,7 +45,6 @@ const Home = ({ navigation }: any) => {
               }}
             />
           ),
-          
         }}
       />
       <Tab.Screen
@@ -77,12 +76,6 @@ const Home = ({ navigation }: any) => {
             <Button onPress={() => onLogout!()} title="Logout" />
           ),
         }}
-      />
-      <Tab.Screen
-        name="Timeline"
-        component={Timeline}
-        options={{headerShown:false}}
-        
       />
     </Tab.Navigator>
   );

@@ -13,6 +13,7 @@ import EditStory from "./screens/EditStory";
 import SearchMap from "./screens/SearchMap";
 import Search from "./screens/Search";
 import Activity from "./screens/Activity";
+import Timeline from "./screens/Timeline";
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -64,6 +65,13 @@ export const Layout = () => {
               <Stack.Screen
                 name="Search"
                 component={Search}
+                options={{
+                  headerShown: true,
+                }}
+              />
+              <Stack.Screen
+                name="Timeline"
+                component={Timeline}
                 options={{
                   headerShown: true,
                 }}
