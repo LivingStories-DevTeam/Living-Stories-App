@@ -39,7 +39,9 @@ const Timeline = ({ route, navigation }: any) => {
   const [radius, setRadius] = useState(route.params?.radius);
 
   const fallAnimation = new Animated.Value(0);
-  const scrollViewRef = useRef(null);
+  // const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView>(null); // Use React.RefObject<ScrollView>
+
   const [change, setChange] = useState<number>(0);
   const [backgroundImage, setBackgroundImage] = useState(
     require("../assets/Autumn_Loop_Large.gif")
@@ -157,65 +159,51 @@ const Timeline = ({ route, navigation }: any) => {
     ],
   };
 
-  const handleScroll = (event: any) => {
+
+  const handleScrollEnd = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const screenWidth = Dimensions.get("window").width;
 
-    if (initialMiddlePage === 0) {
-      const initialPage = Math.round(offsetX / screenWidth);
-      setInitialMiddlePage(initialPage);
-    }
+    // Calculate the index of the item in the middle of the screen
+    const middlePage = Math.round((offsetX+100) / screenWidth);
 
-    // Adjust the range to be broader
-    const middlePage = Math.round((offsetX + screenWidth / 2) / screenWidth);
-
-    // Check if responseFollowersData is not null and middlePage is within the array bounds
     if (stories && middlePage >= 0 && middlePage < stories.length) {
-      // Change background based on the current middle page's season
       const currentSeason = stories[middlePage]?.startSeason;
-
+     // console.log("Offset: "+offsetX+" width: "+screenWidth+ " Middlepage: "+middlePage)
       console.log("Current Season:", currentSeason);
 
       switch (currentSeason) {
         case "fall":
           setBackgroundImage(require("../assets/Autumn_Loop_Large.gif"));
-          setLeaf(require("../assets/autumn_final_GIF.gif"));
           break;
         case "winter":
           setBackgroundImage(require("../assets/Winter_Loop_Large.gif"));
-          setLeaf(require("../assets/winter_final_GIF.gif"));
           break;
         case "summer":
           setBackgroundImage(require("../assets/Summer_Loop_Large.gif"));
-          setLeaf(require("../assets/summer_final_GIF.gif"));
           break;
         case "spring":
           setBackgroundImage(require("../assets/Spring_Loop_Large.gif"));
-          setLeaf(require("../assets/spring_final_GIF.gif"));
           break;
         // Add more cases for other seasons
         default:
           setBackgroundImage(require("../assets/Autumn_Loop_Large.gif"));
-          setLeaf(require("../assets/autumn_final_GIF.gif"));
           break;
       }
     }
   };
-
   return (
     <>
       <ImageBackground source={backgroundImage} style={styles.container}>
-        <ScrollView
+       <ScrollView
           ref={scrollViewRef}
           horizontal
           showsHorizontalScrollIndicator={false}
           scrollEventThrottle={16}
-          onScroll={(event) => {
-            handleScroll(event);
-          }}
+          onScroll={handleScrollEnd}
         >
           {stories &&
-            stories.map((story: any) => {
+            stories.map((story: any,index: number) => {
               // Find the corresponding leaf based on the startSeason
               const selectedLeaf = leaves.find(
                 (leaf) => leaf.season === story.startSeason
@@ -230,6 +218,8 @@ const Timeline = ({ route, navigation }: any) => {
                 <TouchableOpacity
                   key={story.id}
                   onPress={() => startFallingAnimation(story.id)}
+                  style={{ marginRight: index === stories.length - 1 ? 100 : 0 }}
+       
                 >
                   <View style={{ alignItems: "center" }}>
                     <View
@@ -274,8 +264,7 @@ const Timeline = ({ route, navigation }: any) => {
                   </Animated.View>
                 </TouchableOpacity>
               );
-            })}
-        </ScrollView>
+            })}</ScrollView>
       </ImageBackground>
     </>
   );
