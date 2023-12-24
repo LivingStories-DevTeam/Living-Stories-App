@@ -4,14 +4,16 @@ import { StoryInt } from "../../Interfaces/StoryInt";
 import { Button } from "antd";
 import PlusCircleFilled from "@ant-design/icons/lib/icons/PlusCircleFilled";
 import MinusCircleFilled from "@ant-design/icons/lib/icons/MinusCircleFilled";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 
 interface User {
   id: number;
-  name:string
+  name: string;
 }
 type Props = {
-    id:number ;
-    followers?: User[];
+  id: number;
+  followers?: User[];
 };
 
 function FollowButton({ followers, id }: Props) {
@@ -37,16 +39,15 @@ function FollowButton({ followers, id }: Props) {
         console.error(error);
       }
     };
-  
+
     fetchUser();
   }, [followers]);
-  
 
   const handleClick = () => {
-    
-
     axios
-      .post(`${import.meta.env.VITE_BACKEND_URL}/users/follow/${id}`, null, { withCredentials: true })
+      .post(`${import.meta.env.VITE_BACKEND_URL}/users/follow/${id}`, null, {
+        withCredentials: true,
+      })
       .then((response) => {
         if (response.status === 200) {
           setFollowed(true);
@@ -57,12 +58,28 @@ function FollowButton({ followers, id }: Props) {
         console.error("Error liking:", error);
       });
   };
-    
-  
 
   return (
     <>
-      <Button onClick={handleClick}icon={icon}  type="primary">{followed ? "Unfollow!" : "Follow"}</Button>
+      {" "}
+      <button
+        onClick={handleClick}
+        className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+      >
+        <span className="relative px-5 py-2.5 transition-all ease-in duration-75  rounded-md group-hover:bg-opacity-0">
+          {followed ? (
+            <>
+              <PersonRemoveAlt1Icon />{"  "}
+              Unfollow
+            </>
+          ) : (
+            <>
+              <PersonAddIcon />{"  "}
+              Follow
+            </>
+          )}
+        </span>
+      </button>
     </>
   );
 }
