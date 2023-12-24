@@ -22,7 +22,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 
     @Query("SELECT s FROM Story s" +
             " WHERE" +
-            " (:header IS NULL OR LOWER(s.header) LIKE CONCAT('%', :header, '%'))" +
+            " (:header IS NULL OR LOWER(s.header) LIKE CONCAT('%', LOWER(:header), '%'))" +
             " AND (:userName IS NULL OR LOWER(s.user.name) LIKE CONCAT('%', LOWER(:userName), '%'))" +
             " AND (:text IS NULL OR LOWER(s.richText) LIKE CONCAT('%', LOWER(:text), '%'))" +
             " AND (:city IS NULL OR EXISTS (SELECT l FROM s.locations l WHERE LOWER(l.city) LIKE CONCAT('%', LOWER(:city), '%')))" +
