@@ -5,8 +5,6 @@ import { Avatar, Chip } from "@mui/material";
 import ShareIcon from "@mui/icons-material/Share";
 import Card from "@mui/material/Card";
 import Tooltip from "@mui/material/Tooltip";
-
-import { Badge, Col, Form, Row, Tag } from "antd";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CommentIcon from "@mui/icons-material/Comment";
