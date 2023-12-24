@@ -420,7 +420,7 @@ const StoryPage = ({ route, navigation }: any) => {
                     {storyResponse?.comments.length}
                   </Text>
                   <TouchableOpacity onPress={() =>{navigation.navigate("LikedUsers" , {storyId:storyId})}}>
-                  <Text style={[styles.link , {marginLeft:20}]}>See Users Liked Story</Text>
+                  <Text style={[styles.link , {marginLeft:20}]}>See Likes</Text>
                 </TouchableOpacity>
                 </View>
                 <View style={styles.commentContainer}>
