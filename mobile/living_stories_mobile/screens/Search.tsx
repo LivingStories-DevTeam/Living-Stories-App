@@ -154,7 +154,7 @@ const Search = ({ route, navigation }: any) => {
       const { latitude, longitude } = location.coords;
       setLat(latitude);
       setLng(longitude);
-      setRadius(1);
+      setRadius(2000);
       console.log("User Location:", { latitude, longitude });
     } catch (error) {
       console.error("Error getting location:", error);
