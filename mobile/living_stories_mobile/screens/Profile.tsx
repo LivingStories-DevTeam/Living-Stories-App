@@ -1,6 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { SafeAreaView, Text, View, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Modal,
+} from "react-native";
 import { API_URL } from "../contexts/AuthContext";
 import { ImageBackground } from "react-native";
 import { ScrollView } from "react-native";
@@ -9,6 +16,7 @@ import { Image } from "react-native";
 import Card from "../components/Card";
 import { Feather } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import Followers from "../components/Followers";
 
 interface Story {
   id: number;
@@ -48,65 +56,68 @@ interface User {
 const Profile = ({ route, navigation }: any) => {
   const { name } = route.params;
   const [user, setUser] = useState<User | null>(null);
+
   const [followed, setFollowed] = useState<boolean | null>(null);
   const [trigger, setTrigger] = useState(false);
   const [loading, setLoading] = useState(false);
-
- const fetchUser = async () => {
-      try {
-        const response = await axios.get<User>(`${API_URL}/users/${name}`);
-
-        setUser(response.data);
-        await checkfollowed();
-      } catch (error) {
-        console.error(error);
+  const [modalVisible, setModalVisible] = useState(false);
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get<User>(`${API_URL}/users/${name}`);
+      const response_user = await axios.get<User>(`${API_URL}/users/profile`)
+      setUser(response.data);
+      if (response_user.data.name === name) {
+        navigation.navigate("My Profile")
       }
-    };
+      
+      await checkfollowed();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleCardPress = (storyId: number) => {
     navigation.push("Story", { storyId });
   };
-    const checkfollowed = async () => {
-      try {
-        const response = await axios.get<number>(
-          `${API_URL}/users/isfollower/${user?.id}`,
-          {
-            withCredentials: true,
-          }
-        );
-        const result = response.data;
-        if (result === 1) {
-          setFollowed(true);
-          setLoading(false); 
-        } else {
-          setFollowed(false);
-          setLoading(false); 
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    useEffect(() => {
-      fetchUser();
-    }, [trigger, name]);
-    useEffect(() => {
-      checkfollowed();
-    }, [user]);
-
-    const handleFollowClick = async () => {
-      try {
-        setLoading(true); 
-        await axios.post(`${API_URL}/users/follow/${user?.id}`, null, {
+  const checkfollowed = async () => {
+    try {
+      const response = await axios.get<number>(
+        `${API_URL}/users/isfollower/${user?.id}`,
+        {
           withCredentials: true,
-        });
-        setTrigger(!trigger);
-        
-      } catch (error) {
-        console.error("Error liking:", error);
-        
-      } 
-    };
+        }
+      );
+      const result = response.data;
+      if (result === 1) {
+        setFollowed(true);
+        setLoading(false);
+      } else {
+        setFollowed(false);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [trigger, name]);
+  useEffect(() => {
+    checkfollowed();
+  }, [user]);
+
+  const handleFollowClick = async () => {
+    try {
+      setLoading(true);
+      await axios.post(`${API_URL}/users/follow/${user?.id}`, null, {
+        withCredentials: true,
+      });
+      setTrigger(!trigger);
+    } catch (error) {
+      console.error("Error liking:", error);
+    }
+  };
   return (
     <>
       {user ? (
@@ -116,6 +127,7 @@ const Profile = ({ route, navigation }: any) => {
             style={styles.background}
           >
             <SafeAreaView style={styles.container}>
+
               <ScrollView>
                 <View style={styles.back}>
                   <View style={styles.header}>
@@ -139,17 +151,17 @@ const Profile = ({ route, navigation }: any) => {
                     <TouchableOpacity
                       style={{ marginRight: 20 }}
                       onPress={handleFollowClick}
-                    >{loading ? (
-                      <ActivityIndicator size="small" color="#ffffff" />
-                    ) : (
-                      followed !== null && (
-                        followed ? (
+                    >
+                      {loading ? (
+                        <ActivityIndicator size="small" color="#ffffff" />
+                      ) : (
+                        followed !== null &&
+                        (followed ? (
                           <Feather name="user-minus" size={30} color="white" />
                         ) : (
                           <Feather name="user-plus" size={30} color="white" />
-                        )
-                      )
-                    )}
+                        ))
+                      )}
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -168,10 +180,14 @@ const Profile = ({ route, navigation }: any) => {
                       <Feather name="book" size={25} color="#212121" />{" "}
                       {user?.stories?.length}
                     </Text>
-                    <Text>
-                      <Feather name="users" size={25} color="#212121" />{" "}
-                      {user.followers?.length}
-                    </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Followers", { userId: user.id })}
+                    >
+                      <Text>
+                        <Feather name="users" size={25} color="#212121" />{" "}
+                        {user.followers?.length}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                   <View style={{ marginTop: 10, backgroundColor: "white" }}>
                     <View>
@@ -211,6 +227,7 @@ const Profile = ({ route, navigation }: any) => {
                     </View>
                   </View>
                 </View>
+
               </ScrollView>
             </SafeAreaView>
           </ImageBackground>
@@ -234,6 +251,20 @@ const Profile = ({ route, navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  }, 
+  button: {
+    position: "absolute",
+    bottom: 0,
+    backgroundColor: "#1f6c5c",
+    padding: 10,
+    borderRadius: 10,
+    alignContent: "center",
+    marginBottom: 50,
+    flex: 1,
+    marginLeft: 150,
+  },
+  buttonText: {
+    color: "white",
   },
   back: {
     flex: 0.3,
