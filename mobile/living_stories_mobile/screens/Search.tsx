@@ -204,7 +204,7 @@ const Search = ({ route, navigation }: any) => {
         ...(header && { header: header }),
         ...(lat && { latitude: lat }),
         ...(lng && { longitude: lng }),
-        ...(lng && { radius: radius }),
+        ...(lng && { radius: radius / 1000 }),
         ...(city && { city: city }),
         ...(country && { country: country }),
         ...(label && { label: label }),
@@ -363,13 +363,12 @@ const Search = ({ route, navigation }: any) => {
     setSelectedDecade(value);
   };
 
-  
-  const handleDataFromChild = (latit:number , long:number , rad: number ) => {
+  const handleDataFromChild = (latit: number, long: number, rad: number) => {
     // Callback function to receive data from the child component
-    setLat(latit)
-    setLng(long)
-    setRadius(rad)
-    console.log(latit, long , rad )
+    setLat(latit);
+    setLng(long);
+    setRadius(rad);
+    console.log(latit, long, rad);
   };
 
   console.log(startDate);
@@ -963,7 +962,6 @@ const Search = ({ route, navigation }: any) => {
                       <TouchableOpacity
                         onPress={() => {
                           setModalVisible(!modalVisible);
-
                         }}
                       >
                         <Text style={styles.buttonText}>Close</Text>
@@ -1020,6 +1018,42 @@ const Search = ({ route, navigation }: any) => {
                         Clear Location
                       </Text>
                     </TouchableOpacity>
+
+                    <View
+                      style={{ alignItems: "center", justifyContent: "center" }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: "white",
+                          padding: 15,
+                          borderRadius: 50,
+                          margin: 10,
+                          width:110,
+                          flex: 1,
+                          flexDirection: "row",
+                          alignItems: "center", justifyContent: "center"
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            alignItems: "center", justifyContent: "center"
+                          }}
+                          onPress={() => {
+                            const adjustedRadius = radius;
+                            navigation.navigate("Timeline", {
+                              lat,
+                              lng,
+                              radius: adjustedRadius,
+                            });
+                          }}
+                        >
+                         <Text>Timeline </Text><Feather name="clock" size={20} color="#212121" />
+                        </TouchableOpacity>
+                      </View>
+                      
+                    </View>
                   </>
                 ) : (
                   <Text></Text>
@@ -1089,7 +1123,7 @@ const Search = ({ route, navigation }: any) => {
       )}
       {selectedSearchIndex === 1 && (
         <>
-          <ScrollView >
+          <ScrollView>
             <View
               style={{
                 backgroundColor: "white",
@@ -1233,9 +1267,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 150,
   },
-    buttonText: {
+  buttonText: {
     color: "white",
-  }
+  },
 });
 const secondStyles = StyleSheet.create({
   container: {
@@ -1273,7 +1307,6 @@ const secondStyles = StyleSheet.create({
     marginRight: 8,
     flexDirection: "row",
   },
-  
 });
 
 export default Search;

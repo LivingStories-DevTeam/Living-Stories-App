@@ -16,7 +16,7 @@ const SearchMap = ({ route, navigation, onLocationChange }: any) => {
   const [radius, setRadius] = useState(1); // Initial radius in meters
   const handleSendData = () => {
     // Call the callback function to send data to the parent
-    onLocationChange(region.latitude, region.longitude, radius/1000);
+    onLocationChange(region.latitude, region.longitude, radius);
     console.log(region.latitude, region.longitude, radius/1000)
  
   };
