@@ -182,16 +182,8 @@ const Story: React.FC = () => {
       lat: Number(place.geometry.location.lat().toFixed(6)),
       lng: Number(place.geometry.location.lng().toFixed(6)),
       name: place.name,
-      city: await getLocationName(
-        Number(place.geometry.location.lat().toFixed(6)),
-        Number(place.geometry.location.lng().toFixed(6)),
-        1
-      ),
-      country: await getLocationName(
-        Number(place.geometry.location.lat().toFixed(6)),
-        Number(place.geometry.location.lng().toFixed(6)),
-        2
-      ),
+      city: await getLocationName(Number(place.geometry.location.lat().toFixed(6)), Number(place.geometry.location.lng().toFixed(6)), 1),
+      country: await getLocationName(Number(place.geometry.location.lat().toFixed(6)), Number(place.geometry.location.lng().toFixed(6)), 2),
       type: "Point",
       coordinates: [
         [
