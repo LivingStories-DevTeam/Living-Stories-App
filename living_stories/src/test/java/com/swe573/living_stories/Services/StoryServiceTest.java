@@ -1,4 +1,5 @@
 package com.swe573.living_stories.Services;
+import com.swe573.living_stories.DTO.StoryDTO;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Repositories.StoryRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
@@ -92,7 +93,7 @@ class StoryServiceTest {
         when(storyRepository.findAll()).thenReturn(stories);
 
 
-        List<Story> result = storyService.getAllStories();
+        List<StoryDTO> result = storyService.getAllStories();
 
 
         assertNotNull(result);

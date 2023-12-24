@@ -1,11 +1,8 @@
 package com.swe573.living_stories.Controllers;
 
-import com.swe573.living_stories.Models.Comment;
-import com.swe573.living_stories.Models.Media;
-import com.swe573.living_stories.Models.RecommendUser;
+import com.swe573.living_stories.DTO.StoryDTO;
+import com.swe573.living_stories.Models.*;
 import com.swe573.living_stories.DTO.MediaDTO;
-import com.swe573.living_stories.Models.Story;
-import com.swe573.living_stories.Models.User;
 import com.swe573.living_stories.Requests.AdvancedSearchRequest;
 import com.swe573.living_stories.Requests.SearchRequest;
 import com.swe573.living_stories.Requests.StoryRequest;
@@ -20,10 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/stories")
@@ -151,20 +145,11 @@ public class StoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Story>> getAllStories(HttpServletRequest request) {
+    public ResponseEntity<List<StoryDTO>> getAllStories(HttpServletRequest request) {
         Long userId = userService.isUserLoggedIn(request);
 
-        List<Story> stories = storyService.getAllStories();
-        for (Story story : stories) {
-            story.setRichText(null);
-            if (story.getComments() != null) {
-                for (Comment comment : story.getComments()) {
-                    comment.setUser(null);
-                    comment.setText(null);
-                }
-            }
+        List<StoryDTO> stories = storyService.getAllStories();
 
-        }
         return ResponseEntity.ok(stories);
     }
 
