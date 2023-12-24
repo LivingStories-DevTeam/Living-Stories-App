@@ -71,7 +71,7 @@ const HomePage: React.FC = () => {
         const secondApiResponse = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/activity/recommendedstories`,
           {
-            storyIds: response.data,
+            storyIds: response.data.map(item => item.id),
           }
         );
         setStories(secondApiResponse.data);
