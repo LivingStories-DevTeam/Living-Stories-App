@@ -442,10 +442,28 @@ const PostStory = ({ navigation }: any) => {
     }
   };
   const [selectedPlaces, setSelectedPlaces] = useState<Array<Location>>([]);
+  const showAlert = () => {
+    Alert.alert(
+      'Location Selection',
+      'Location selection is successful.',
+      [
 
+        {
+          text: 'OK',
+          onPress: () => {
+            setModalVisible(!modalVisible)
+            // Add your functionality here
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
   const handleDataFromChild = (data: Array<Location>) => {
     // Callback function to receive data from the child component
     setSelectedPlaces(data);
+    showAlert()
+    
   };
   ////////////////////// SUBMIT
 
@@ -1151,18 +1169,7 @@ const PostStory = ({ navigation }: any) => {
               }}
             >
               <View style={{ marginTop: 10, marginBottom: 10 }}>
-                <Text>Select Locations:</Text>
-                <TextInput
-                  style={{
-                    width: "100%",
-                    padding: 10,
-                    marginTop: 2,
-                    marginBottom: 2,
-                    borderColor: "green", // Use your custom color
-                    borderWidth: 1,
-                    borderRadius: 8,
-                  }}
-                />
+                
                 <View
                   style={{
                     alignItems: "center", // Center horizontally
@@ -1289,6 +1296,7 @@ const PostStory = ({ navigation }: any) => {
                   }}
                   onHtmlChange={({ html }) => {
                     setEditorContent(html);
+                    console.log(html)
                   }}
                 />
               </ScrollView>
