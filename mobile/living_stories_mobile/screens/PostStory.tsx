@@ -415,6 +415,9 @@ const PostStory = ({ navigation }: any) => {
     lng: number;
     city?:string;
     country?:string;
+    coordinates : any [][]
+    type:string
+    
   }
   
   const getUserLocation = async () => {
@@ -446,56 +449,23 @@ const PostStory = ({ navigation }: any) => {
   };
   ////////////////////// SUBMIT
 
-  const submitStoryold = async () => {
-    const storyRequest = {
-      editorContent,
-      header,
-      labels,
-      locationsAdvanced: selectedPlaces,
-      //mediaString: media,
-      richText: editorContent,
-      ...(startDate && { startDate: startDate }),
-      ...(endDate && { endDate: endDate }),
-      ...(startSeason && { startSeason: startSeason }),
-      ...(endSeason && { endSeason: endSeason }),
-      ...(selectedDecade && { decade: selectedDecade }),
-    };
-    async function postData() {
-      const requiredFieldsEmpty = [
-        storyRequest.richText,
-        storyRequest.header,
-        storyRequest.locationsAdvanced,
-        storyRequest.startDate,
-      ].some((value) => value === undefined || value === "");
-      if (requiredFieldsEmpty) {
-        alert(
-          "The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location."
-        );
-        return;
-      } else {
-        try {
-          const response = await axios.post(
-            `${API_URL}/stories/advanced`,
-            storyRequest,
-            {
-              withCredentials: true,
-            }
-          );
-        } catch (error) {}
-      }
-    }
-    postData();
-  };
 
   const submitStory = async () => {
     console.log("startDate: " + startDate);
     console.log("endDate: " + endDate);
-    
+    setSelectedPlaces(selectedPlaces.map(item => ({
+      ...item, 
+      coordinates: [[item.lng , item.lat] ],
+      type :"Point"
+
+    })))
     const storyRequest = {
       text:editorContent,
       header,
       labels,
       locations:selectedPlaces,
+      locationsAdvanced:selectedPlaces,
+      
       //mediaString: media,
       richText: editorContent,
       ...(startDate && { startDate: startDate }),
@@ -521,10 +491,12 @@ const PostStory = ({ navigation }: any) => {
         return;
       } else {
         try {
+
         
           console.log(storyRequest);
+          
           const response = await axios.post(
-            `${API_URL}/stories`,
+            `${API_URL}/stories/advanced`,
             storyRequest
           );
           if (response.status === 200) {
