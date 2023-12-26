@@ -5,6 +5,7 @@ import com.swe573.living_stories.Models.Locations;
 import com.swe573.living_stories.Models.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -31,14 +32,14 @@ public class StoryDTO {
     private final String endDate;
     private final String decade;
 
-    private final ArrayList<Comment>  comments;
+    private final Comment[]  comments;
 
     @JsonIncludeProperties(value = { "id", "name", "photo" })
     private final User user;
 
 
     public StoryDTO(Long id, String header, ArrayList<String> labels, ArrayList<Long> likes, ArrayList<Locations> locations,
-                    ArrayList<Locations> locationsAdvance, String startSeason, String endSeason, String startDate, String endDate, String decade, ArrayList<Comment> comments, User user){
+                    ArrayList<Locations> locationsAdvance, String startSeason, String endSeason, String startDate, String endDate, String decade, int comments_size, User user){
         this.id = id;
         this.header = header;
         this.labels = labels;
@@ -51,7 +52,9 @@ public class StoryDTO {
         this.startDate = startDate;
         this.endDate = endDate;
         this.decade = decade;
-        this.comments = comments;
+        Comment[] emptyArray = new Comment[comments_size];
+        Arrays.fill(emptyArray,null);
+        this.comments = emptyArray;
         this.user = user;
     }
 

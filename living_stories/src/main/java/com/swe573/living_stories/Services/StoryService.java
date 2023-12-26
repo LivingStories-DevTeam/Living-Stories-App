@@ -81,7 +81,7 @@ public class StoryService {
                 DateParser.getDateFromDate(story.getStartDate()),
                 DateParser.getDateFromDate(story.getEndDate()),
                 story.getDecade(),
-                new ArrayList<Comment>(story.getComments()),  // Assuming comments is a Collection
+                story.getComments().size(),  // Assuming comments is a Collection
                 story.getUser());
     }
     public Story getStoryById(Long id) {
