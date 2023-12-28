@@ -143,20 +143,23 @@ public class UserController {
             List<LikeListResponse> LikeList = new ArrayList<>();
 
             for (Long LikedUserId : likedUserList) {
-                Integer followerCount = userRepository.getFollowerCount(LikedUserId);
-                Integer storyCount = userRepository.getStoryCount(LikedUserId);
+                Optional<User> optUser = userService.getUserById(LikedUserId);
+                if (optUser.isPresent()) {
+                    Integer followerCount = userRepository.getFollowerCount(LikedUserId);
+                    Integer storyCount = userRepository.getStoryCount(LikedUserId);
 
-                LikeListResponse LikeResponse = new LikeListResponse();
-                LikeResponse.setFollowerCount(followerCount.toString());
-                LikeResponse.setStoryCount(storyCount.toString());
+                    LikeListResponse LikeResponse = new LikeListResponse();
+                    LikeResponse.setFollowerCount(followerCount.toString());
+                    LikeResponse.setStoryCount(storyCount.toString());
 
-                LikeResponse.setPhoto(userRepository.getReferenceById(LikedUserId).getPhoto());
-                LikeResponse.setUserName(userRepository.getReferenceById(LikedUserId).getName());
-                LikeResponse.setId(LikedUserId);
-                LikeList.add(LikeResponse);
+                    LikeResponse.setPhoto(userRepository.getReferenceById(LikedUserId).getPhoto());
+                    LikeResponse.setUserName(userRepository.getReferenceById(LikedUserId).getName());
+                    LikeResponse.setId(LikedUserId);
+                    LikeList.add(LikeResponse);
+                }
             }
             if (LikeList.isEmpty()) {
-                return ResponseEntity.internalServerError().build();
+                return ResponseEntity.noContent().build();
             }
             return ResponseEntity.ok(LikeList);
         }

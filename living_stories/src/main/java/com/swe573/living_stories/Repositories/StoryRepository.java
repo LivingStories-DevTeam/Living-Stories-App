@@ -1,6 +1,7 @@
 package com.swe573.living_stories.Repositories;
 
 import com.swe573.living_stories.Configuration.DateParser;
+import com.swe573.living_stories.DTO.StoryDTO;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Requests.SearchRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -60,15 +61,10 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
             @Param("isInterval") Boolean isInterval
     );
 
-    
 
 
-
-
-
-
-
-
+    @Query("SELECT e FROM Story e LEFT JOIN FETCH e.locations ORDER BY e.id asc")
+    List<Story> findAllOrdered();
 
 
 }

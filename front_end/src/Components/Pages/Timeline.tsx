@@ -711,7 +711,7 @@ const Timeline: React.FC = () => {
                             /> */}
                             <Chrono
                                 allowDynamicUpdate
-                                mode={"VERTICAL"}
+                                mode={"HORIZONTAL"}
                                 slideShow
                                 mediaHeight={naturalHeight}
                                 mediaWidth={naturalWidth}

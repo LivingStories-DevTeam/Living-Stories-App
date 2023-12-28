@@ -258,12 +258,12 @@ const PostStory = ({ navigation }: any) => {
     return years;
   };
   const years = generateYears(1880, 2023);
-  const [stDecade , setStDecade ]= useState<string|undefined>()
+  const [stDecade, setStDecade] = useState<string | undefined>();
   const handleDecadeChange = (value: number) => {
     setStartDate("01/01/" + value.toString());
     setEndDate("01/01/" + (value + 9).toString());
     setSelectedDecade(value);
-    setStDecade((value -1).toString()+"s")
+    setStDecade((value - 1).toString() + "s");
   };
 
   const showDatepicker = () => {
@@ -277,8 +277,8 @@ const PostStory = ({ navigation }: any) => {
   };
   const handleDateChange = (_: any, selectedDate?: Date) => {
     if (selectedDate) {
-      const formattedDate = dayjs(selectedDate).format('DD/MM/YYYY');
-   
+      const formattedDate = dayjs(selectedDate).format("DD/MM/YYYY");
+
       setDate(selectedDate);
       setStartDate(formattedDate);
       setEndDate("");
@@ -288,8 +288,8 @@ const PostStory = ({ navigation }: any) => {
   };
   const handleStartDateChange = (_: any, selectedDate?: Date) => {
     if (selectedDate) {
-      const formattedDate = dayjs(selectedDate).format('DD/MM/YYYY');
-   
+      const formattedDate = dayjs(selectedDate).format("DD/MM/YYYY");
+
       setDatePickerStart(selectedDate);
       setStartDate(formattedDate);
     }
@@ -298,8 +298,8 @@ const PostStory = ({ navigation }: any) => {
   };
   const handleEndDateChange = (_: any, selectedDate?: Date) => {
     if (selectedDate) {
-      const formattedDate = dayjs(selectedDate).format('DD/MM/YYYY');
-   
+      const formattedDate = dayjs(selectedDate).format("DD/MM/YYYY");
+
       setDatePickerEnd(selectedDate);
 
       setEndDate(formattedDate);
@@ -413,10 +413,12 @@ const PostStory = ({ navigation }: any) => {
     name: string;
     lat: number;
     lng: number;
-    city?:string;
-    country?:string;
+    city?: string;
+    country?: string;
+    coordinates: any[][];
+    type: string;
   }
-  
+
   const getUserLocation = async () => {
     try {
       // Request permission to access location
@@ -439,70 +441,51 @@ const PostStory = ({ navigation }: any) => {
     }
   };
   const [selectedPlaces, setSelectedPlaces] = useState<Array<Location>>([]);
-
+  const showAlert = () => {
+    Alert.alert(
+      "Location Selection",
+      "Location selection is successful.",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            setModalVisible(!modalVisible);
+            // Add your functionality here
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
   const handleDataFromChild = (data: Array<Location>) => {
     // Callback function to receive data from the child component
     setSelectedPlaces(data);
+    showAlert();
   };
   ////////////////////// SUBMIT
 
-  const submitStoryold = async () => {
-    const storyRequest = {
-      editorContent,
-      header,
-      labels,
-      locationsAdvanced: selectedPlaces,
-      //mediaString: media,
-      richText: editorContent,
-      ...(startDate && { startDate: startDate }),
-      ...(endDate && { endDate: endDate }),
-      ...(startSeason && { startSeason: startSeason }),
-      ...(endSeason && { endSeason: endSeason }),
-      ...(selectedDecade && { decade: selectedDecade }),
-    };
-    async function postData() {
-      const requiredFieldsEmpty = [
-        storyRequest.richText,
-        storyRequest.header,
-        storyRequest.locationsAdvanced,
-        storyRequest.startDate,
-      ].some((value) => value === undefined || value === "");
-      if (requiredFieldsEmpty) {
-        alert(
-          "The necessary field is empty! Please make sure necessary fields like header and text are not empty, and the story has a start date and at least one location."
-        );
-        return;
-      } else {
-        try {
-          const response = await axios.post(
-            `${API_URL}/stories/advanced`,
-            storyRequest,
-            {
-              withCredentials: true,
-            }
-          );
-        } catch (error) {}
-      }
-    }
-    postData();
-  };
-
   const submitStory = async () => {
-    console.log("startDate: " + startDate);
-    console.log("endDate: " + endDate);
-    
+    setSelectedPlaces(
+      selectedPlaces.map((item) => ({
+        ...item,
+        coordinates: [[item.lng, item.lat]],
+        type: "Point",
+      }))
+    );
     const storyRequest = {
-      text:editorContent,
+      text: "",
       header,
       labels,
-      locations:selectedPlaces,
+      locations: selectedPlaces,
+      locationsAdvanced: selectedPlaces,
+
       //mediaString: media,
       richText: editorContent,
       ...(startDate && { startDate: startDate }),
       ...(endDate && { endDate: endDate }),
       ...(startSeason && { startSeason: startSeason }),
       ...(endSeason && { endSeason: endSeason }),
-      ...(stDecade && { decade: stDecade })
+      ...(stDecade && { decade: stDecade }),
     };
     async function postData() {
       const requiredFieldsEmpty = [
@@ -510,9 +493,7 @@ const PostStory = ({ navigation }: any) => {
         storyRequest.header,
         storyRequest.locations,
         storyRequest.startDate,
-      ].some(
-        (value) => value === undefined || value === "" 
-      );
+      ].some((value) => value === undefined || value === "");
 
       if (requiredFieldsEmpty) {
         alert(
@@ -521,23 +502,23 @@ const PostStory = ({ navigation }: any) => {
         return;
       } else {
         try {
-        
+          console.log("Editor: " + storyRequest.richText);
           console.log(storyRequest);
+
           const response = await axios.post(
-            `${API_URL}/stories`,
+            `${API_URL}/stories/advanced`,
             storyRequest
           );
           if (response.status === 200) {
             Alert.alert("You have published the story successfully.");
-  
-            // Set the values to null after a successful response
-            setStartDate("")
-            setEndDate("")
-            setStartSeason("")
-            setEndSeason("")
-            setStDecade(undefined)
-          }
 
+            // Set the values to null after a successful response
+            setStartDate("");
+            setEndDate("");
+            setStartSeason("");
+            setEndSeason("");
+            setStDecade(undefined);
+          }
         } catch (error) {
           console.error("Error:", error);
         }
@@ -1159,7 +1140,6 @@ const PostStory = ({ navigation }: any) => {
                 </>
               )}
             </View>
-
             <View
               style={{
                 borderWidth: 3,
@@ -1179,18 +1159,6 @@ const PostStory = ({ navigation }: any) => {
               }}
             >
               <View style={{ marginTop: 10, marginBottom: 10 }}>
-                <Text>Select Locations:</Text>
-                <TextInput
-                  style={{
-                    width: "100%",
-                    padding: 10,
-                    marginTop: 2,
-                    marginBottom: 2,
-                    borderColor: "green", // Use your custom color
-                    borderWidth: 1,
-                    borderRadius: 8,
-                  }}
-                />
                 <View
                   style={{
                     alignItems: "center", // Center horizontally
@@ -1317,6 +1285,7 @@ const PostStory = ({ navigation }: any) => {
                   }}
                   onHtmlChange={({ html }) => {
                     setEditorContent(html);
+                    console.log(html);
                   }}
                 />
               </ScrollView>

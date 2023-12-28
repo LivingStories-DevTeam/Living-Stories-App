@@ -2,6 +2,7 @@ package com.swe573.living_stories.Services;
 
 import com.swe573.living_stories.Configuration.DateParser;
 import com.swe573.living_stories.DTO.MediaDTO;
+import com.swe573.living_stories.DTO.StoryDTO;
 import com.swe573.living_stories.Models.*;
 import com.swe573.living_stories.Repositories.StoryRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
@@ -59,10 +60,30 @@ public class StoryService {
         return storyRepository.save(oldStory);
     }
 
-    public List<Story> getAllStories() {
-        return storyRepository.findAll();
+    public List<StoryDTO> getAllStories() {
+        return mapToDTOList(storyRepository.findAllOrdered());
     }
-
+    public List<StoryDTO> mapToDTOList(List<Story> stories) {
+        return stories.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+    public StoryDTO mapToDTO(Story story) {
+        return new StoryDTO(
+                story.getId(),
+                story.getHeader(),
+                story.getLabels(),
+                story.getLikes(),
+                new ArrayList<Locations>(story.getLocations()),  // Assuming locations is a Collection
+                new ArrayList<Locations>(story.getLocationsAdvanced()),
+                story.getStartSeason(),
+                story.getEndSeason(),
+                DateParser.getDateFromDate(story.getStartDate()),
+                DateParser.getDateFromDate(story.getEndDate()),
+                story.getDecade(),
+                story.getComments().size(),  // Assuming comments is a Collection
+                story.getUser());
+    }
     public Story getStoryById(Long id) {
         Optional<Story> story = storyRepository.findById(id);
         if (story.isPresent()) {

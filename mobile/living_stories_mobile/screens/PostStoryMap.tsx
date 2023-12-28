@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import * as Location from "expo-location";
+
 import MapView, { LatLng, Marker } from "react-native-maps";
 import { Google_Api_Key } from "../contexts/AuthContext";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -37,6 +39,28 @@ const PostStoryMap = ({ route, navigation, onLocationChange }: any) => {
   const [finalPlaces, setFinalPlaces] = useState<Array<Location>>(
     []
   );
+  const getUserLocation = async () => {
+    try {
+      // Request permission to access location
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
+        return;
+      }
+
+      // Get user's current location
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setRegion({
+        latitude:latitude , 
+        longitude:longitude
+      });
+      console.log("User Location:", { latitude, longitude });
+    } catch (error) {
+      console.error("Error getting location:", error);
+    }
+  };
 
   const handleSendData = () => {
     // Call the callback function to send data to the parent
@@ -195,7 +219,12 @@ const getLocationDetails = async (latitude: number, longitude: number): Promise<
       </ScrollView>
       <View style={styles.button}>
         <TouchableOpacity onPress={handleSendData}>
-          <Text style={styles.buttonText}>Save Selection</Text>
+          <Text style={styles.buttonText}>Add Locations</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={[styles.button , {end:0}]}>
+        <TouchableOpacity onPress={getUserLocation}>
+          <Text style={styles.buttonText}>Get My Location</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
