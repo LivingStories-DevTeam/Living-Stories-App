@@ -52,10 +52,11 @@ const ProfileStoryComponent: React.FC<StoryProps> = ({ story }) => {
   };
 
 
-  const handleCopy = (storyid : number) => {
-    const url = `http://34.107.94.81:3000/stories/${storyid}`;
+  const handleCopy = (storyid: number) => {
+    const url = `${window.location.origin}/stories/${storyid}`;
     navigator.clipboard.writeText(url);
   };
+  
 
   return (
     <div
