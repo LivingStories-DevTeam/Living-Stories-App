@@ -47,44 +47,38 @@ interface Story {
 }
 
 const EdittStory = ({ navigation, route }: any) => {
-    const { storyId } = route.params;
+  const { storyId } = route.params;
 
   const _editor = useRef<QuillEditor>(null);
   const [webtoken, setWebToken] = useState<string>();
   const [storyResponse, setStoryResponse] = useState<Story>();
-
-
-
-  const [editorContent, setEditorContent] = useState<String>(
-    "<p>Hello my name is Sanan. Test from mobile.</p>"
+  const [editorContent, setEditorContent] = useState<string>(
+    "<p>Enter Your Story Here</p>"
   );
+
+  const [loading, setLoading] = useState(true);
+
   const fetchData = async () => {
     try {
       const response = await axios.get(`${API_URL}/stories/${storyId}`);
-        setStoryResponse(response.data);
-        const responseData = response.data;
+      setStoryResponse(response.data);
+      const responseData = response.data;
 
-        // Update state directly from response.data
-      
-        setEditorContent(responseData.richText);
-        setHeader(responseData.header);
-        setLabels(responseData.labels)
+      // Update state directly from response.data
 
+      setEditorContent(responseData.richText);
+      setHeader(responseData.header);
+      setLabels(responseData.labels);
+      setLoading(false);
       console.log(response.data);
     } catch (error) {
       console.error("Request failed:", error);
     }
   };
- 
 
-
- 
   useEffect(() => {
-   fetchData()
-    
+    fetchData();
   }, [storyId]);
-
-  
 
   const [header, setHeader] = useState<string>("");
   const [labels, setLabels] = useState<string[]>([]);
@@ -181,62 +175,51 @@ const EdittStory = ({ navigation, route }: any) => {
     type: string;
   }
 
-  
-
   const submitStory = async () => {
-   
     const storyRequest = {
-      
       header,
       labels,
 
-
       //mediaString: media,
       richText: editorContent,
-   
     };
     async function postData() {
       const requiredFieldsEmpty = [
         storyRequest.richText,
         storyRequest.header,
-        storyRequest.labels
-        
+        storyRequest.labels,
+      ];
 
-      ]
+      try {
+        console.log("Editor: " + storyRequest.richText);
+        console.log(storyRequest);
 
-      
-        try {
-          console.log("Editor: " + storyRequest.richText);
-          console.log(storyRequest);
-
-          const response = await axios.post(
-            `${API_URL}/stories/edit/${storyId}`,
-            storyRequest
+        const response = await axios.post(
+          `${API_URL}/stories/edit/${storyId}`,
+          storyRequest
+        );
+        if (response.status === 200) {
+          Alert.alert(
+            "Success",
+            "You have edited the story successfully.",
+            [
+              {
+                text: "OK",
+                onPress: () => {
+                  navigation.replace("Story", { storyId });
+                },
+                style: "default", // Button style: 'default' (default), 'cancel', 'destructive'
+              },
+            ],
+            { cancelable: false } // Prevent dismissing the alert by tapping outside of it
           );
-          if (response.status === 200) {
-            Alert.alert(
-                'Success',
-                'You have edited the story successfully.',
-                [
-                  {
-                    text: 'OK', 
-                    onPress: () => {
-                        navigation.replace("Story", { storyId });
-                    },
-                    style: 'default', // Button style: 'default' (default), 'cancel', 'destructive'
-                  },
-                ],
-                { cancelable: false } // Prevent dismissing the alert by tapping outside of it
-              );
 
-            // Set the values to null after a successful response
-
-          }
-        } catch (error) {
-          console.error("Error:", error);
+          // Set the values to null after a successful response
         }
+      } catch (error) {
+        console.error("Error:", error);
       }
-    
+    }
 
     postData();
   };
@@ -251,9 +234,7 @@ const EdittStory = ({ navigation, route }: any) => {
         contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="always"
       >
-        <View style={{ backgroundColor: "#ebfff0" }}>
-
-
+        <View style={{ backgroundColor: "#ebfff0", height:"auto" }}>
           <View style={{ marginLeft: 2, marginRight: 2 }}>
             <View>
               <View
@@ -344,13 +325,9 @@ const EdittStory = ({ navigation, route }: any) => {
                   ))}
                 </ScrollView>
               </View>
-            </View>
-
-                   
-              <ScrollView>
-                <QuillEditor
+            </View>{loading ? (<Text>Loading your Story...</Text>) : (<ScrollView><QuillEditor
                   ref={_editor}
-                  initialHtml="<h1>Enter Your Story Here</h1>"
+                  initialHtml={editorContent}
                   style={{
                     ...Platform.select({
                       ios: {
@@ -367,40 +344,36 @@ const EdittStory = ({ navigation, route }: any) => {
                     setEditorContent(html);
                     console.log(html);
                   }}
-                />
-              </ScrollView>
-              <View
+                /></ScrollView>)}<View
+              style={{
+                flexDirection: "row",
+                backgroundColor: "#ededed",
+              }}
+            ><TouchableOpacity
                 style={{
-                  flexDirection: "row",
-                  backgroundColor: "#ededed",
+                  marginHorizontal: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
+                onPress={pickImage}
               >
-                <TouchableOpacity
-                  style={{
-                    marginHorizontal: 1,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  onPress={pickImage}
-                >
-                  <Feather name="image" size={28} color="black" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{
-                    marginHorizontal: 1,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  onPress={takePhoto}
-                >
-                  <Feather name="camera" size={28} color="black" />
-                </TouchableOpacity>
-                <QuillToolbar editor={_editor} options="full" theme="light" />
-              </View>
+                <Feather name="image" size={28} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  marginHorizontal: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={takePhoto}
+              >
+                <Feather name="camera" size={28} color="black" />
+              </TouchableOpacity>
+              <QuillToolbar editor={_editor} options="full" theme="light" />
             </View>
           </View>
-    
-        
+        </View>
+
         <View
           style={{
             marginHorizontal: 5,
