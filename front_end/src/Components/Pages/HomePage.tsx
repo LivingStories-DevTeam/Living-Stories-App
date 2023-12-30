@@ -4,6 +4,7 @@ import Story from "../Components/StoryCard";
 import axios from "axios";
 import NavBar from "../Components/NavBar";
 import { Radio, RadioChangeEvent, Row } from "antd";
+import loading from "../icons/loading1.gif";
 import { ConsoleSqlOutlined } from "@ant-design/icons";
 
 type Option = {
@@ -62,22 +63,25 @@ const HomePage: React.FC = () => {
       );
       const userId = userIdPromise.data.id;
       if (selectedOption === "recommended") {
-        const url = `${import.meta.env.VITE_BACKEND_PYTHON_URL}/recommendations?user_id=${userId}`
+        const url = `${
+          import.meta.env.VITE_BACKEND_PYTHON_URL
+        }/recommendations?user_id=${userId}`;
         const response = await axios.get<Story[]>(url, {
           withCredentials: true,
         });
         const secondResponse = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/activity/recommendedstories`,
           {
-            storyIds: response.data.map(item => item.id)
+            storyIds: response.data.map((item) => item.id),
           }
         );
         setStories(secondResponse.data);
         setStorySimilarity(response.data);
       } else {
-        let url = selectedOption === "all"
-          ? `${import.meta.env.VITE_BACKEND_URL}/stories`
-          : `${import.meta.env.VITE_BACKEND_URL}/stories/following`;
+        let url =
+          selectedOption === "all"
+            ? `${import.meta.env.VITE_BACKEND_URL}/stories`
+            : `${import.meta.env.VITE_BACKEND_URL}/stories/following`;
         let response = await axios.get<Story[]>(url, {
           withCredentials: true,
         });
@@ -94,7 +98,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="bg-customGreen h-full">
+    <div className="bg-customGreen h-screen">
       <NavBar />
       <h1
         className="text-6xl text-white"
@@ -107,7 +111,7 @@ const HomePage: React.FC = () => {
       >
         Recent Stories
       </h1>
-      <div className="bg-yellow-50 rounded-3xl mx-5 mt-5 h-full">
+      <div className="bg-green-50 rounded-3xl mx-auto px-32 mt-5 h-fit w-fit">
         <Row style={{ justifyContent: "center" }}>
           <Radio.Group
             style={{ margin: "5px" }}
@@ -124,14 +128,29 @@ const HomePage: React.FC = () => {
             .reverse()
             .map((story: Story) => (
               <div key={story.id} className="p-2">
-                <Story story={story} similarity={storySimilarity?.find(item => item?.id === story.id)?.["Recommendation Reason"]} />
+                <Story
+                  story={story}
+                  similarity={
+                    storySimilarity?.find((item) => item?.id === story.id)?.[
+                      "Recommendation Reason"
+                    ]
+                  }
+                />
               </div>
             ))}
         </div>
       </div>
       {stories.length === 0 && (
-        <h2 className="text-white text-5xl" style={{ textAlignLast: "center" }}>
-          Nothing to show!
+        <h2 className="text-white text-5xl mt-12 text-center">
+          Getting Stories ...
+          <div className="flex justify-center items-center mt-4">
+            <img
+              src={loading}
+              alt="Loading"
+              width="500" // Set the width as needed
+              height="500" // Set the height as needed
+            />
+          </div>
         </h2>
       )}
     </div>
