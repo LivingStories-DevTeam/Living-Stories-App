@@ -13,7 +13,7 @@ import {
   Polygon,
   Rectangle,
 } from "@react-google-maps/api";
-import { Avatar, Chip } from "@mui/material";
+import { Avatar, Chip, Card } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LikeButton from "../Components/LikeButton";
 import FollowButtonIcon from "../Components/FollowButton";
@@ -28,6 +28,8 @@ import fall from "../icons/fall.png";
 import spring from "../icons/spring.png";
 import start from "../icons/sunrise.png";
 import end from "../icons/sunset.png";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
 interface StoryPageProps {
   story: StoryInt;
 }
@@ -69,6 +71,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
   const [mapKey, setMapKey] = useState(0);
   const [isAuthor, setIsAuthor] = useState<boolean>(false);
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [likedUsers, setLikedUsers] = useState<UserInfo[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -100,6 +103,28 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
 
     fetchUser();
     fetchData();
+  }, [story]);
+
+  useEffect(() => {
+    const fetchLikes = async () => {
+      const url = `${import.meta.env.VITE_BACKEND_URL}/users/Likelist/${
+        story.id
+      }`;
+
+      try {
+        const response = await axios.get<UserInfo[]>(url);
+
+        if (response.data) {
+          setLikedUsers(response.data);
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    console.log(storyId);
+
+    fetchLikes();
   }, [story]);
 
   useEffect(() => {
@@ -258,7 +283,6 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
     lat: !latAvg ? latSumOld : latAvg,
     lng: !lngAvg ? lngSumOld : lngAvg,
   };
-
   const handleCommentChange: React.ChangeEventHandler<HTMLTextAreaElement> = (
     event
   ) => {
@@ -300,6 +324,12 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
         return spring; // Replace with the default image path
     }
   };
+
+  ///////////// MODAL
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
     <>
@@ -389,6 +419,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                 //center={{ lat: 41.0856396, lng: 29.0424937 }}
                 center={mapCenter}
               >
+                {" "}
                 <StoryMarkers
                   slocations={(story as any).locationsAdvanced}
                   slocationsold={(story as any).locations}
@@ -464,8 +495,67 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
           <div className="flex items-center">
             <LikeButton type="story" id={story.id} />
 
-            <p className="text-black font-semibold ml-2 text-lg">
-              Likes: {story.likes.length}
+            <p className="text-black font-semibold ml-2 text-xl flex text-center justify-center items-center">
+              Likes:{" "}
+              <div
+                onClick={handleOpen}
+                className="ml-2 text-white bg-gradient-to-r cursor-pointer rounded-full from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-medium  px-3 py-1 text-center "
+              >
+                {story.likes.length}
+              </div>
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
+                  <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-black md:text-3xl lg:text-4xl">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                      {story.header}'s
+                    </span>{" "}
+                    Likes
+                  </h1>
+                  {likedUsers &&
+                    likedUsers.reverse().map((user, index) => (
+                      <Card
+                        sx={{
+                          maxWidth: 350,
+                          minWidth: 300,
+                          width: "100%",
+                          height: "100%",
+                        }}
+                        className="shadow-md mx-auto m-4 h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
+                      >
+                        <div className="p-4">
+                          <Link to={`/user/${user?.name}`}>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center">
+                                <Avatar
+                                  sx={{ width: 75, height: 75 }}
+                                  alt={user?.name}
+                                  className="mr-2"
+                                />
+                                <span className="text-black text-base font-semibold">
+                                  {user?.name}
+                                </span>
+                              </div>
+                              <p className="text-black text-sm mb-2">
+                                <HistoryEduIcon
+                                  fontSize="large"
+                                  className="mx-1"
+                                />
+                                {user?.stories?.length}
+                                <PeopleIcon fontSize="large" className="mx-1" />
+                                {user?.followers?.length}
+                              </p>
+                            </div>
+                          </Link>
+                        </div>
+                      </Card>
+                    ))}
+                </Box>
+              </Modal>
             </p>
           </div>
         </Container>
