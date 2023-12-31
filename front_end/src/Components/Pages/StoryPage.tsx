@@ -534,6 +534,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                                 <Avatar
                                   sx={{ width: 75, height: 75 }}
                                   alt={user?.name}
+                                  src={user?.photo ? String(user.photo) : ''}
                                   className="mr-2"
                                 />
                                 <span className="text-black text-base font-semibold">
