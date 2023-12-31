@@ -116,7 +116,7 @@ const ProfilePage: React.FC = () => {
         user?.id
       }`;
       try {
-        const response = await axios.get<User[]>(url);
+        const response = await axios.get<User[]>(url,{ withCredentials: true });
         if (response.data) {
           setFollowerList(response.data);
           console.log(response.data);

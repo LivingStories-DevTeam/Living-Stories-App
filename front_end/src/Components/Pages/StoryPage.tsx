@@ -111,7 +111,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
       }`;
 
       try {
-        const response = await axios.get<UserInfo[]>(url);
+        const response = await axios.get<UserInfo[]>(url,{ withCredentials: true });
 
         if (response.data) {
           setLikedUsers(response.data);
