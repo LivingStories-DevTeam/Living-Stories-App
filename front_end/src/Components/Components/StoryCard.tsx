@@ -53,7 +53,7 @@ const StoryComponent: React.FC<StoryProps> = ({ story, similarity }) => {
   };
 
   const handleCopy = (storyid: number) => {
-    const url = `http://34.107.94.81:3000/stories/${storyid}`;
+    const url = `${window.location.origin}/stories/${storyid}`;
     navigator.clipboard.writeText(url);
   };
 

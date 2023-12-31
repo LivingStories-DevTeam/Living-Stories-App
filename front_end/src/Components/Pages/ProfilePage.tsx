@@ -4,17 +4,19 @@ import axios from "axios";
 import StoryComponent from "../Components/ProfileStoryCard";
 import NavBar from "../Components/NavBar";
 import PeopleIcon from "@mui/icons-material/People";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Upload from "antd/es/upload/Upload";
 import FollowButton from "../Components/Follow";
 import { UploadFile } from "antd";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import EditIcon from "@mui/icons-material/Edit";
 import { UploadChangeParam } from "antd/es/upload";
-import { Avatar } from "@mui/material";
+import { Avatar, Card } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
 
 interface Story {
   id: number;
@@ -68,6 +70,7 @@ const ProfilePage: React.FC = () => {
   const [photo, setPhoto] = useState<string>("");
   const [trigger, setTrigger] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [followerList, setFollowerList] = useState<User[]>([]);
 
   const navigate = useNavigate();
 
@@ -106,7 +109,25 @@ const ProfilePage: React.FC = () => {
     };
 
     fetchUser();
-  }, [name,trigger]);
+  }, [name, trigger]);
+
+  useEffect(() => {
+    const fetchFollowers = async () => {
+      const url = `${import.meta.env.VITE_BACKEND_URL}/users/followerlist/${
+        user?.id
+      }`;
+      try {
+        const response = await axios.get<User[]>(url);
+        if (response.data) {
+          setFollowerList(response.data);
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchFollowers();
+  }, [user]);
 
   /////// EDITING
 
@@ -123,11 +144,12 @@ const ProfilePage: React.FC = () => {
         editUserData,
         { withCredentials: true }
       );
-      console.log(response.data);setTrigger(!trigger);setEditing(false);
+      console.log(response.data);
+      setTrigger(!trigger);
+      setEditing(false);
     } catch (error) {
       console.error(error);
     }
-    
   };
 
   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -143,6 +165,12 @@ const ProfilePage: React.FC = () => {
     };
     reader.readAsDataURL(info.file.originFileObj as Blob);
   };
+
+  ///////////// MODAL
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   if (!user) {
     return <div>Loading...</div>;
@@ -279,12 +307,76 @@ const ProfilePage: React.FC = () => {
                     <div className="flex">
                       {user.followers && (
                         <p>
-                          <PeopleIcon /> {user.followers.length}
+                          <Modal
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                          >
+                            <Box className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
+                              <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-black md:text-3xl lg:text-4xl">
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                                  {user.name}'s
+                                </span>{" "}
+                                Followers
+                              </h1>
+                              <div>
+                                {followerList &&
+                                  followerList.reverse().map((user, index) => (
+                                    <Card
+                                      sx={{
+                                        maxWidth: 350,
+                                        minWidth: 300,
+                                        width: "100%",
+                                        height: "100%",
+                                      }}
+                                      className="shadow-md mx-auto m-4 h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
+                                    >
+                                      <div className="p-4">
+                                        <Link to={`/user/${user.name}`}>
+                                          <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center">
+                                              <Avatar
+                                                sx={{ width: 75, height: 75 }}
+                                                alt={user.name}
+                                                className="mr-2"
+                                              />
+                                              <span className="text-black text-base font-semibold">
+                                                {user.name}
+                                              </span>
+                                            </div>
+                                            <p className="text-black text-sm mb-2">
+                                              <HistoryEduIcon
+                                                fontSize="large"
+                                                className="mx-1"
+                                              />
+                                              {user.stories?.length}
+                                              <PeopleIcon
+                                                fontSize="large"
+                                                className="mx-1"
+                                              />
+                                              {user.followers?.length}
+                                            </p>
+                                          </div>
+                                        </Link>
+                                      </div>
+                                    </Card>
+                                  ))}
+                              </div>
+                            </Box>
+                          </Modal>
+                          <PeopleIcon
+                            fontSize="large"
+                            className="cursor-pointer hover:text-blue-500"
+                            onClick={handleOpen}
+                          />{" "}
+                          {user.followers.length}
                         </p>
                       )}
                       {user.stories && (
                         <p>
-                          <HistoryEduIcon /> {user.stories.length}
+                          <HistoryEduIcon fontSize="large" />{" "}
+                          {user.stories.length}
                         </p>
                       )}
                     </div>

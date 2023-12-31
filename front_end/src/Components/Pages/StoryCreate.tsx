@@ -8,6 +8,7 @@ import ReactQuill, { Quill } from "react-quill";
 import NavBar from "../Components/NavBar";
 import dayjs from "dayjs";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
 import DatePicker from "antd/es/date-picker";
 import {
   Layout,
@@ -56,6 +57,7 @@ type Option = {
   label: string;
   value: string;
 };
+
 const options: Option[] = [
   { label: "Exact Date", value: "exact-year" },
   { label: "Month", value: "month" },
@@ -182,8 +184,16 @@ const Story: React.FC = () => {
       lat: Number(place.geometry.location.lat().toFixed(6)),
       lng: Number(place.geometry.location.lng().toFixed(6)),
       name: place.name,
-      city: await getLocationName(Number(place.geometry.location.lat().toFixed(6)), Number(place.geometry.location.lng().toFixed(6)), 1),
-      country: await getLocationName(Number(place.geometry.location.lat().toFixed(6)), Number(place.geometry.location.lng().toFixed(6)), 2),
+      city: await getLocationName(
+        Number(place.geometry.location.lat().toFixed(6)),
+        Number(place.geometry.location.lng().toFixed(6)),
+        1
+      ),
+      country: await getLocationName(
+        Number(place.geometry.location.lat().toFixed(6)),
+        Number(place.geometry.location.lng().toFixed(6)),
+        2
+      ),
       type: "Point",
       coordinates: [
         [
@@ -587,6 +597,69 @@ const Story: React.FC = () => {
       "overlaycomplete",
       onOverlayComplete
     );
+  };
+
+  const handleGetUserLocation = async () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          const lat = Number(latitude.toFixed(6));
+          const lng = Number(longitude.toFixed(6));
+          const name = await getLocationName(
+            Number(lat.toFixed(6)),
+            Number(lng.toFixed(6)),
+            0
+          );
+
+          let city = await getLocationName(
+            Number(lat.toFixed(6)),
+            Number(lng.toFixed(6)),
+            1
+          );
+          let country = await getLocationName(
+            Number(lat.toFixed(6)),
+            Number(lng.toFixed(6)),
+            2
+          );
+
+          const newLocation = {
+            name: name,
+            latitude: lat,
+            longitude: lng,
+          };
+          const backendLocationData = {
+            lat: lat,
+            lng: lng,
+            name: name,
+            city: city,
+            country: country,
+            type: "Point",
+            coordinates: [[lng, lat]],
+            radius: null,
+          };
+          setLocations((prevLocations) => {
+            const updatedLocations = [...prevLocations, newLocation];
+            console.log("New locations array:", updatedLocations);
+            return updatedLocations;
+          });
+          setLocationsBackend((prevLocations) => [
+            ...prevLocations,
+            backendLocationData,
+          ]);
+          setMapCenter({
+            lat: newLocation.latitude,
+            lng: newLocation.longitude,
+          });
+          console.log("Location Data for Backend:", backendLocationData);
+        },
+        (error) => {
+          console.error("Error getting location:", error.message);
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser");
+    }
   };
 
   return (
@@ -1021,25 +1094,32 @@ const Story: React.FC = () => {
             <div className="w-4/5">
               <div>
                 <label>Locations:</label>
-                <Autocomplete
-                  onLoad={(autocomplete) => {
-                    autocompleteRef.current = autocomplete;
-                  }}
-                  onPlaceChanged={handleLocationSelect}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    style={{
-                      marginBottom: "5px",
-                      marginTop: "5px",
-                      width: "100%",
-                      minWidth: "100px",
-                      maxWidth: "200px",
-                      touchAction: "pan-y",
+                <div className="flex w-full">
+                  <Autocomplete
+                    onLoad={(autocomplete) => {
+                      autocompleteRef.current = autocomplete;
                     }}
-                  />
-                </Autocomplete>
+                    onPlaceChanged={handleLocationSelect}
+                  >
+                    <input
+                      type="text"
+                      className="form-control"
+                      style={{
+                        marginBottom: "5px",
+                        marginTop: "5px",
+                        width: "100%",
+                        minWidth: "100px",
+                        maxWidth: "200px",
+                        touchAction: "pan-y",
+                      }}
+                    />
+                  </Autocomplete><div className="justify-center text-center items-center my-auto">
+                  <MyLocationIcon
+                    onClick={handleGetUserLocation}
+                    fontSize="large"
+                    style={{ marginLeft: "5px", cursor: "pointer" }}
+                  /></div>
+                </div>
                 <div
                   className="align-items-center"
                   style={{
@@ -1079,7 +1159,6 @@ const Story: React.FC = () => {
                       />
                     </div>
                   ))}
-          
                 </div>
               </div>
             </div>
@@ -1116,7 +1195,6 @@ const Story: React.FC = () => {
           >
             Create Story!
           </button>
-      
         </div>
       </div>
     </div>
