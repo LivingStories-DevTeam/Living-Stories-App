@@ -80,7 +80,9 @@ export const Layout = () => {
                 name="Timeline"
                 component={Timeline}
                 options={{
-                  headerShown: true,
+                  headerTransparent: true,
+                  headerTitle: "Timeline",
+                  headerTintColor: "white",
                 }}
               />
             </>
