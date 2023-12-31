@@ -28,7 +28,6 @@ import fall from "../icons/fall.png";
 import spring from "../icons/spring.png";
 import start from "../icons/sunrise.png";
 import end from "../icons/sunset.png";
-import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 interface StoryPageProps {
   story: StoryInt;
@@ -509,7 +508,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
               >
-                <Box className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
+                <div className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
                   <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-black md:text-3xl lg:text-4xl">
                     <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                       {story.header}'s
@@ -555,7 +554,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                         </div>
                       </Card>
                     ))}
-                </Box>
+                </div>
               </Modal>
             </p>
           </div>

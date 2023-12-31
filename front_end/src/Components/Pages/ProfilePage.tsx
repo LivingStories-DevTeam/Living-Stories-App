@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import StoryComponent from "../Components/ProfileStoryCard";
 import NavBar from "../Components/NavBar";
 import PeopleIcon from "@mui/icons-material/People";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Upload from "antd/es/upload/Upload";
 import FollowButton from "../Components/Follow";
 import { UploadFile } from "antd";
@@ -15,7 +15,6 @@ import { Avatar, Card } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import CloseIcon from "@mui/icons-material/Close";
-import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 
 interface Story {
@@ -313,7 +312,7 @@ const ProfilePage: React.FC = () => {
                             aria-labelledby="modal-modal-title"
                             aria-describedby="modal-modal-description"
                           >
-                            <Box className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
+                            <div className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
                               <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-black md:text-3xl lg:text-4xl">
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                                   {user.name}'s
@@ -364,7 +363,7 @@ const ProfilePage: React.FC = () => {
                                     </Card>
                                   ))}
                               </div>
-                            </Box>
+                            </div>
                           </Modal>
                           <PeopleIcon
                             fontSize="large"
