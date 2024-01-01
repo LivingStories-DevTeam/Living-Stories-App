@@ -56,6 +56,14 @@ interface User {
   photo?: ArrayBuffer | null;
 }
 
+interface LikesUser {
+  id: number;
+  userName: string;
+  photo?: string | null;
+  storyCount?: string;
+  followerCount?: string;
+}
+
 interface UserInfo {
   id: number;
   name: string;
@@ -70,7 +78,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
   const [mapKey, setMapKey] = useState(0);
   const [isAuthor, setIsAuthor] = useState<boolean>(false);
   const [user, setUser] = useState<UserInfo | null>(null);
-  const [likedUsers, setLikedUsers] = useState<UserInfo[]>([]);
+  const [likedUsers, setLikedUsers] = useState<LikesUser[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -111,7 +119,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
       }`;
 
       try {
-        const response = await axios.get<UserInfo[]>(url,{ withCredentials: true });
+        const response = await axios.get<LikesUser[]>(url,{ withCredentials: true });
 
         if (response.data) {
           setLikedUsers(response.data);
@@ -527,17 +535,17 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                         className="shadow-md mx-auto m-4 h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
                       >
                         <div className="p-4">
-                          <Link to={`/user/${user?.name}`}>
+                          <Link to={`/user/${user?.userName}`}>
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center">
                                 <Avatar
                                   sx={{ width: 75, height: 75 }}
-                                  alt={user?.name}
+                                  alt={user?.userName}
                                   src={user?.photo ? String(user.photo) : ''}
                                   className="mr-2"
                                 />
                                 <span className="text-black text-base font-semibold">
-                                  {user?.name}
+                                  {user?.userName}
                                 </span>
                               </div>
                               <p className="text-black text-sm mb-2">
@@ -545,9 +553,9 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                                   fontSize="large"
                                   className="mx-1"
                                 />
-                                {user?.stories?.length}
+                                {user?.storyCount}
                                 <PeopleIcon fontSize="large" className="mx-1" />
-                                {user?.followers?.length}
+                                {user?.followerCount}
                               </p>
                             </div>
                           </Link>
