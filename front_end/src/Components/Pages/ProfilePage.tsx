@@ -169,11 +169,35 @@ const ProfilePage: React.FC = () => {
     const reader = new FileReader();
     reader.onloadend = () => {
       const imageDataUrl = reader.result as string;
-      setPhoto(imageDataUrl);
-      console.log(photo);
+  
+      // Create an image element to draw on canvas
+      const image = new Image();
+      image.src = imageDataUrl;
+  
+      image.onload = () => {
+        // Create a canvas
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+  
+        // Set canvas dimensions to match image dimensions
+        canvas.width = image.width;
+        canvas.height = image.height;
+  
+        // Draw the image on the canvas
+        ctx?.drawImage(image, 0, 0, image.width, image.height);
+  
+        // Convert the canvas content to a compressed data URL (80% quality)
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+  
+        // Set the compressed data URL as the new photo state
+        setPhoto(compressedDataUrl);
+        console.log(compressedDataUrl);
+      };
     };
+  
     reader.readAsDataURL(info.file.originFileObj as Blob);
   };
+  
 
   ///////////// MODAL
 
