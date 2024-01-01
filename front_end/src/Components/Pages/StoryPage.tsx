@@ -119,7 +119,9 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
       }`;
 
       try {
-        const response = await axios.get<LikesUser[]>(url,{ withCredentials: true });
+        const response = await axios.get<LikesUser[]>(url, {
+          withCredentials: true,
+        });
 
         if (response.data) {
           setLikedUsers(response.data);
@@ -516,7 +518,11 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
               >
-                <div className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
+                <div
+                  className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4"
+                  style={{ overflowY: "auto", maxHeight: "80vh" }}
+                >
+                  {" "}
                   <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-black md:text-3xl lg:text-4xl">
                     <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                       {story.header}'s
@@ -541,7 +547,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                                 <Avatar
                                   sx={{ width: 75, height: 75 }}
                                   alt={user?.userName}
-                                  src={user?.photo ? String(user.photo) : ''}
+                                  src={user?.photo ? String(user.photo) : ""}
                                   className="mr-2"
                                 />
                                 <span className="text-black text-base font-semibold">

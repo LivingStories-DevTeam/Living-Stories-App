@@ -124,7 +124,9 @@ const ProfilePage: React.FC = () => {
         user?.id
       }`;
       try {
-        const response = await axios.get<LikesUser[]>(url,{ withCredentials: true });
+        const response = await axios.get<LikesUser[]>(url, {
+          withCredentials: true,
+        });
         if (response.data) {
           setFollowerList(response.data);
           console.log(response.data);
@@ -134,7 +136,7 @@ const ProfilePage: React.FC = () => {
       }
     };
     fetchFollowers();
-  }, [user]);
+  }, [user, trigger, name]);
 
   /////// EDITING
 
@@ -320,7 +322,10 @@ const ProfilePage: React.FC = () => {
                             aria-labelledby="modal-modal-title"
                             aria-describedby="modal-modal-description"
                           >
-                            <div className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
+                            <div
+                              className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4"
+                              style={{ overflowY: "auto", maxHeight: "80vh" }}
+                            >
                               <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-black md:text-3xl lg:text-4xl">
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                                   {user.name}'s
@@ -328,7 +333,7 @@ const ProfilePage: React.FC = () => {
                                 Followers
                               </h1>
                               <div>
-                                {followerList &&
+                              {followerList &&
                                   followerList.reverse().map((user, index) => (
                                     <Card
                                       sx={{
@@ -346,7 +351,11 @@ const ProfilePage: React.FC = () => {
                                               <Avatar
                                                 sx={{ width: 75, height: 75 }}
                                                 alt={user.userName}
-                                                src={user?.photo ? String(user.photo) : ''}
+                                                src={
+                                                  user?.photo
+                                                    ? String(user.photo)
+                                                    : ""
+                                                }
                                                 className="mr-2"
                                               />
                                               <span className="text-black text-base font-semibold">
@@ -370,6 +379,7 @@ const ProfilePage: React.FC = () => {
                                       </div>
                                     </Card>
                                   ))}
+                                  
                               </div>
                             </div>
                           </Modal>
@@ -381,6 +391,7 @@ const ProfilePage: React.FC = () => {
                           {user.followers.length}
                         </p>
                       )}
+
                       {user.stories && (
                         <p>
                           <HistoryEduIcon fontSize="large" />{" "}
