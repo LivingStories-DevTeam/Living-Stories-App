@@ -28,7 +28,6 @@ import fall from "../icons/fall.png";
 import spring from "../icons/spring.png";
 import start from "../icons/sunrise.png";
 import end from "../icons/sunset.png";
-import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 interface StoryPageProps {
   story: StoryInt;
@@ -57,6 +56,14 @@ interface User {
   photo?: ArrayBuffer | null;
 }
 
+interface LikesUser {
+  id: number;
+  userName: string;
+  photo?: string | null;
+  storyCount?: string;
+  followerCount?: string;
+}
+
 interface UserInfo {
   id: number;
   name: string;
@@ -71,7 +78,7 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
   const [mapKey, setMapKey] = useState(0);
   const [isAuthor, setIsAuthor] = useState<boolean>(false);
   const [user, setUser] = useState<UserInfo | null>(null);
-  const [likedUsers, setLikedUsers] = useState<UserInfo[]>([]);
+  const [likedUsers, setLikedUsers] = useState<LikesUser[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -112,7 +119,9 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
       }`;
 
       try {
-        const response = await axios.get<UserInfo[]>(url);
+        const response = await axios.get<LikesUser[]>(url, {
+          withCredentials: true,
+        });
 
         if (response.data) {
           setLikedUsers(response.data);
@@ -509,7 +518,11 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
               >
-                <Box className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
+                <div
+                  className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4"
+                  style={{ overflowY: "auto", maxHeight: "80vh" }}
+                >
+                  {" "}
                   <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-black md:text-3xl lg:text-4xl">
                     <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
                       {story.header}'s
@@ -528,16 +541,17 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                         className="shadow-md mx-auto m-4 h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
                       >
                         <div className="p-4">
-                          <Link to={`/user/${user?.name}`}>
+                          <Link to={`/user/${user?.userName}`}>
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center">
                                 <Avatar
                                   sx={{ width: 75, height: 75 }}
-                                  alt={user?.name}
+                                  alt={user?.userName}
+                                  src={user?.photo ? String(user.photo) : ""}
                                   className="mr-2"
                                 />
                                 <span className="text-black text-base font-semibold">
-                                  {user?.name}
+                                  {user?.userName}
                                 </span>
                               </div>
                               <p className="text-black text-sm mb-2">
@@ -545,16 +559,16 @@ const StoryPage: React.FC<StoryPageProps> = ({ story }) => {
                                   fontSize="large"
                                   className="mx-1"
                                 />
-                                {user?.stories?.length}
+                                {user?.storyCount}
                                 <PeopleIcon fontSize="large" className="mx-1" />
-                                {user?.followers?.length}
+                                {user?.followerCount}
                               </p>
                             </div>
                           </Link>
                         </div>
                       </Card>
                     ))}
-                </Box>
+                </div>
               </Modal>
             </p>
           </div>

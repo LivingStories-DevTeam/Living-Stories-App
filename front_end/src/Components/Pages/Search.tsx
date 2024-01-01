@@ -948,9 +948,8 @@ const StroySearch: React.FC = () => {
 
         {stories != null && (
           <div
-            className="w-4/5 mx-auto mr-4 text-center border-customGreen items-center p-4 border-solid border-3"
+            className="w-4/5 sm:w-fit lg:w-4/5 md:w-4/5 2xl:w-4/5 mx-auto mr-4 bg-gray-50 text-center border-customGreen items-center p-4 border-solid border-3"
             style={{
-              backgroundColor: "#fff",
               borderRadius: "8px",
               alignItems: "center",
               justifyContent: "center",
@@ -963,12 +962,12 @@ const StroySearch: React.FC = () => {
                 Results
               </span>
             </h2>
-            <div className="flex flex-wrap">
+            <div className="flex flex-wrap mx-auto">
               {stories
                 ?.slice()
                 .reverse()
                 .map((story: StoryInt) => (
-                  <div key={story.id} className="w-1/2 mb-4">
+                  <div key={story.id} className="mx-auto mb-4">
                     {/* Use w-1/2 to make each item take up half of the container's width */}
                     <Story story={story} />
                   </div>
