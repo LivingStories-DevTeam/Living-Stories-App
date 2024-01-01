@@ -144,7 +144,9 @@ const Story: React.FC = () => {
         <NavBar />
 
         <h1 className="text-5xl font-extrabold dark:text-black text-center my-2">
-          Edit Your Story {header&& ": " + header}
+          Edit Story <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-500">
+          {header&& ": " + header}
+                                </span> 
         </h1>
         <div style={{ marginLeft: 2, marginRight: 2 }}>
           <Container>
