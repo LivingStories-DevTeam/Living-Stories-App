@@ -841,6 +841,7 @@ When the Followers or Likes list gets long, it didnt scroll and kept getting lon
 ### DEMO
 #### Timeline onScroll Design Changes
 In Mobile Timeline page, i've worked on the feature of Detecting which story is in the middle of the screen when the user is scrolling horizontally, and based on the season of that story, it's background leaf is different, and the whole page's background GIF changes to correspond the season.
+
 ![image](https://github.com/SWE574-G3/Living-Stories-App/assets/103641847/4b01069a-9133-4b80-9676-fa59e6377ce5)![image](https://github.com/SWE574-G3/Living-Stories-App/assets/103641847/847e4818-84bd-41be-a1b6-74f4c29f0939)
 
 #### Created Months and Years Pickers manually
