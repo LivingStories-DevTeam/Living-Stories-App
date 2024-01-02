@@ -1,4 +1,4 @@
-![sign_up](https://github.com/SWE574-G3/Living-Stories-App/assets/110849135/37eda85b-875c-41fa-9a65-961be83ff578)# User Manual
+# User Manual
 
 ## Web Application
 
