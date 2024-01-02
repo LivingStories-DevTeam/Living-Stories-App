@@ -128,16 +128,17 @@ In summary we have delivered the following:
 
 
 ### Design (Software & Mockups)
+![GeneralDesign](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/ad939ac3-1674-4b58-9190-6714a940f05a)
 
 ![UseCaseDiagram](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/da0e1786-d6dc-4643-8254-046400787f04)
-![SignUpSequence](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/5c685cd9-169b-4fe7-91b4-8089f86b09c9)
-![RecommendtationActivity](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/fc41cd17-a7bd-4803-a2a8-36af3c03c14a)
-![PostSequence](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/214dc6c8-5257-4ea9-a89b-d64ced5f6252)
 ![LoginSequence](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/b6f00186-7514-43e8-945d-0eec2fceff36)
-![LikeSequence](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/f3e10fc3-dd0c-4f09-a609-7a208f8faa57)
-![GeneralDesign](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/ad939ac3-1674-4b58-9190-6714a940f05a)
-![CommentSequence](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/0102f8c0-41b4-433e-98ca-f8ed86486125)
+![SignUpSequence](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/5c685cd9-169b-4fe7-91b4-8089f86b09c9)
+![PostSequence](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/214dc6c8-5257-4ea9-a89b-d64ced5f6252)
 
+![LikeSequence](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/f3e10fc3-dd0c-4f09-a609-7a208f8faa57)
+
+![CommentSequence](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/0102f8c0-41b4-433e-98ca-f8ed86486125)
+![RecommendtationActivity](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/fc41cd17-a7bd-4803-a2a8-36af3c03c14a)
 
 
 ### Status of the project
