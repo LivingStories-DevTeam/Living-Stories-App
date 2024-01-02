@@ -227,6 +227,9 @@ Consider splitting StoryService in the future.
 
 #### Manual Tests:
 
+Every team member tested the functionalties that we have implemented in the production environment with real users. 
+No serious bugs have been observed so far in the current state of the project.
+
 # Individual Contributions
 ## SANAN EMINLI
 
