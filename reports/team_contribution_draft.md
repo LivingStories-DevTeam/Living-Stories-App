@@ -46,9 +46,9 @@
 
 ## Demo User
 
-Email: suzan.uskudarli@gmail.com
-Name: Suzan Üsküdarlı
-Password: 123456
+Email: **suzan.uskudarli@gmail.com**\
+Name: **Suzan Üsküdarlı**\
+Password: **123456**
 
 
 ## Project Details
