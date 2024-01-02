@@ -605,3 +605,55 @@ To address the problem, I used geolocational ray tracing, harnessing the capabil
 ### Documantation
 
 **Explanation:** While I have not yet created inherent documentation, I am in the process of composing a comprehensive user and system manual. This manual will specifically cater to the customers.
+
+
+# Individual Contributions
+
+## Burak Koçak
+
+### Executive Summary
+
+Throughout the project, I have actively participated in several key developments, contributing to enhancements in both the frontend and backend aspects of our application.
+
+- **Activity Stream:** As a part of back end team, I did major contributions to the design, development, testing and maintaining for the Activity Stream feature.
+- **Follower List:** I did major contributions to the Follower list implementation on back end.
+- **Like List:** I did implement Like list feautre on back end side.
+
+- **StoryDTO for performance:** To improve performance I added a DTO to back end for faster home page loading.
+
+- **Bug fixes:** I did a lot of bug fixes and refactoring on back end for maintainibility.
+
+
+### Detailed Contributions
+
+**Note:** Each of the referenced issues includes associated commits. [Requirements](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) for the project are mentioned in the descriptions of each effort. However, specific URLs for these requirements are not individually provided, as they are documented collectively.
+
+#### Activity Stream
+
+**Related Requirements:** 
+- [1.1.19](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+- [1.2.8](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+- [1.2.21](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+
+**Related Issues:**
+- [Finalize activity endpoint and provide example request and reponse. #84](https://github.com/SWE574-G3/Living-Stories-App/issues/84)
+	- **Code Description:** The activity stream logic and endpoint is finalized with this issue.
+- [Add activity count endpoint on back-end #126](https://github.com/SWE574-G3/Living-Stories-App/issues/126)
+    - **Code Description:** There was another request for activity stream functionality to imporve its utilization on front end.
+
+#### Like List and Follow List
+
+
+**Related Issues:**
+- [Create liked user list #158](https://github.com/SWE574-G3/Living-Stories-App/issues/158)
+    - **Code Description:** Implemented Liked user list which lets users to see who liked a specific story and their followers and story counts.
+- [FollowerList Endpoint #171](https://github.com/SWE574-G3/Living-Stories-App/issues/171)
+    - **Code Description:** Implemented followerlist user list which lets users to see who liked a specific story and their followers and story counts.
+
+#### Bug fixes
+- [Header Search Bug #98](https://github.com/SWE574-G3/Living-Stories-App/issues/171)
+    - **Code Description:** There was a issue where when header is given the search was not functioning
+- [Fix newflag bug #128](https://github.com/SWE574-G3/Living-Stories-App/issues/128)
+    - **Code Description:** new Flag was not functionong correctly for activities. Tis has been fixed.
+- [Improve Home page loading performance #124](https://github.com/SWE574-G3/Living-Stories-App/issues/124)
+    - **Code Description:** Improved the performance of the loadıing for home page.
