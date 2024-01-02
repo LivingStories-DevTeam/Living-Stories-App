@@ -209,6 +209,24 @@ In summary we have delivered the following:
 
 ### Test Results
 
+#### Backend Service Unit Tests:
+
+![image](https://github.com/SWE574-G3/Living-Stories-App/assets/64078926/9edc270d-4636-42aa-9d22-cb881840ca25)
+
+Final coverage is seen in the screenshot above.
+The percentages for each class are Class Coverage, Method Coverage and Line Coverage respectively.
+
+StoryService has a lot of functionality in a singe service due to new requirements which makes it hard to test unit by unit.
+Tried to cover core functionalities (of stories) as much as possible.
+Consider splitting StoryService in the future.
+
+
+#### Recommendation Engine Unit Tests:
+
+#### Selenium Tests:
+
+#### Manual Tests:
+
 # Individual Contributions
 ## SANAN EMINLI
 
