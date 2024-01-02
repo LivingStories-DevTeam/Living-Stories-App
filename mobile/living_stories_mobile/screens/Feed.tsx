@@ -19,9 +19,9 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const Feed = ({ navigation }: any) => {
   const { onLogout } = useAuth();
-  const [responseData, setResponseData] = useState(null);
+  const [responseData, setResponseData] = useState<any>(null);
   const [responseFollowersData, setFollowersResponseData] = useState(null);
-  const [responseRecomendationData, setRecomendationData] = useState(null);
+  const [responseRecomendationData, setRecomendationData] = useState<any>(null);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -50,7 +50,7 @@ const Feed = ({ navigation }: any) => {
       const secondApiResponse = await axios.post(
         `${API_URL}/activity/recommendedstories`,
         {
-          storyIds: numbersArray,
+          storyIds: firstApiResponse.data.map(item=> item.id),
         }
       );
       console.log(secondApiResponse.request)
@@ -190,7 +190,7 @@ const Feed = ({ navigation }: any) => {
             {selectedIndex === 1 && (
               <>
                 {responseFollowersData &&
-                  responseFollowersData.map((item: any, index: any) => (
+                  (responseFollowersData as any).map((item: any, index: any) => (
                     <>
                       <TouchableOpacity
                         onPress={() => handleCardPress(item.id)}

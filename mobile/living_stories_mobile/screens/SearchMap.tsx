@@ -6,21 +6,51 @@ import { Google_Api_Key } from "../contexts/AuthContext";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
+import * as Location from "expo-location";
 
-const SearchMap = ({ route, navigation }: any) => {
+const SearchMap = ({ route, navigation, onLocationChange }: any) => {
   const [region, setRegion] = useState<LatLng>({
     latitude: 41.0864,
     longitude: 29.0455,
   });
 
   const [radius, setRadius] = useState(1); // Initial radius in meters
-
+  const handleSendData = () => {
+    // Call the callback function to send data to the parent
+    onLocationChange(region.latitude, region.longitude, radius);
+    console.log(region.latitude, region.longitude, radius/1000)
+ 
+  };
   const handleMapPress = (event: { nativeEvent: { coordinate: LatLng } }) => {
     const { coordinate } = event.nativeEvent;
     setRegion({
       latitude: coordinate.latitude,
       longitude: coordinate.longitude,
     });
+  };
+
+
+  const getUserLocation = async () => {
+    try {
+      // Request permission to access location
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
+        return;
+      }
+
+      // Get user's current location
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setRegion({
+        latitude:latitude , 
+        longitude:longitude
+      });
+      console.log("User Location:", { latitude, longitude });
+    } catch (error) {
+      console.error("Error getting location:", error);
+    }
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -95,14 +125,15 @@ const SearchMap = ({ route, navigation }: any) => {
       <View style={styles.button}>
         <TouchableOpacity
           onPress={() => {
-            navigation.replace("Search", {
-              lat: region.latitude,
-              lng: region.longitude,
-              radius: radius/1000,
-            });
+            handleSendData()
           }}
         >
           <Text style={styles.buttonText}>Select Location</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={[styles.button , {end:0}]}>
+        <TouchableOpacity onPress={getUserLocation}>
+          <Text style={styles.buttonText}>Get My Location</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -113,9 +144,14 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     flex: 1,
     alignContent: "center",
+    justifyContent: "center",
+    borderColor: "#1f6c5c", 
+    borderWidth: 2, 
+    borderRadius: 10,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
+    borderRadius: 10,
   },
   autoCompleteContainer: {
     position: "absolute",
@@ -141,19 +177,18 @@ const styles = StyleSheet.create({
     marginBottom: 100,
     marginLeft: 20,
     marginRight: 20,
-
-    // Other styles for the slider
   },
   button: {
     position: "absolute",
-    bottom:0,
-    backgroundColor: '#1f6c5c',
+    bottom: 0,
+    backgroundColor: "#1f6c5c",
     padding: 10,
     borderRadius: 10,
     alignContent: "center",
-    marginBottom: 50,
+    justifyContent: "center",
+
+    margin: 8,
     flex: 1,
-    marginLeft:150
   },
   buttonText:{
     color:"white"

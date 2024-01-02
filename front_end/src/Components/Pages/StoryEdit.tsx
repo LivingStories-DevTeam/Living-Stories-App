@@ -7,10 +7,8 @@ import { Params, useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import { Col, Row, Container } from "react-bootstrap";
 import NavBar from "../Components/NavBar";
-import dayjs from "dayjs";
-import { RadioGroup } from "../Components/DateRadio";
-import DatePicker from "antd/es/date-picker";
-
+import CancelIcon from "@mui/icons-material/Cancel";
+import { Chip } from "@mui/material";
 const urlEndpoint = `${import.meta.env.VITE_BACKEND_URL}/stories`;
 const api_key = import.meta.env.VITE_GOOGLE_API_KEY;
 const containerStyle = {
@@ -46,26 +44,25 @@ const Story: React.FC = () => {
   useEffect(() => {
     // Fetch story data from API using the ID parameter
     const fetchStory = async () => {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/stories/${id}`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/stories/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
       setLabels(response.data.labels);
-      setHeader(response.data.header)
-      setEditorContent(response.data.richText)
-
+      setHeader(response.data.header);
+      setEditorContent(response.data.richText);
     };
 
     fetchStory();
   }, [id]);
- 
-  
+
   const [header, setHeader] = useState<string>("");
-  
+
   const [labels, setLabels] = useState<string[]>([]);
 
   const [editorContent, setEditorContent] = useState("");
- 
- 
 
   const navigate = useNavigate();
 
@@ -82,8 +79,6 @@ const Story: React.FC = () => {
       navigate("/login");
     }
   }, []);
-  
-
 
   const handleSubmit = () => {
     const editRequest: any = {
@@ -144,79 +139,145 @@ const Story: React.FC = () => {
   ];
   return (
     <>
-      <NavBar />
-      <Container>
-        <Row>
-          <Col>
-            <form>
-              <div className="form-group">
-                <label>Header:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={header}
-                  onChange={handleHeaderChange}
-                />
-              </div>
+      {" "}
+      <div className="bg-green-50 h-screen">
+        <NavBar />
 
-              <div className="form-group">
-                <label>Labels (comma-separated):</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={labels.join(", ")}
-                  onChange={handleLabelsChange}
-                />
-              </div>
-              <ul style={{ display: "flex", flexDirection: "row" }}>
-                {labels.map((value, index) => (
-                  <div key={index}>
-                    <li
+        <h1 className="text-5xl font-extrabold dark:text-black text-center my-2">
+          Edit Story <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-500">
+          {header&& ": " + header}
+                                </span> 
+        </h1>
+        <div style={{ marginLeft: 2, marginRight: 2 }}>
+          <Container>
+            <Row>
+              <Col>
+                <form
+                  className="border-customGreen border-solid border-3"
+                  style={{
+                    backgroundColor: "#fff",
+                    borderRadius: "8px",
+                    padding: 1,
+                    paddingRight: 15,
+                    paddingLeft: 15,
+                    marginBottom: 10,
+                    marginTop: 10,
+                    boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+                    touchAction: "pan-y",
+                  }}
+                >
+                  <div className="form-group" style={{ marginTop: 10 }}>
+                    <label>Title:</label>
+
+                    <input
+                      className="w-full px-4 py-2 mt-2 text-customGreenD bg-white border rounded-md focus:border-customGreenD focus:ring-customGreenD focus:outline-none focus:ring focus:ring-opacity-40"
+                      onChange={handleHeaderChange}
+                      value={header}
+                      type="text"
+                    />
+                  </div>
+
+                  <div
+                    className="form-group"
+                    style={{ marginTop: 10, marginBottom: 10 }}
+                  >
+                    <label>Labels (comma-separated):</label>
+
+                    <input
+                      className="w-full px-4 py-2 mt-2 text-customGreenD bg-white border rounded-md focus:border-customGreenD focus:ring-customGreenD focus:outline-none focus:ring focus:ring-opacity-40"
+                      onChange={handleLabelsChange}
+                      value={labels.join(", ")}
+                      type="text"
+                    />
+                  </div>
+                  <div style={{ width: "100%", overflowX: "auto" }}>
+                    <ul
                       style={{
-                        display: "inline-block",
-                        marginRight: "0.5em",
-                        marginLeft: "0.5em",
+                        display: "flex",
+                        flexDirection: "row",
+                        backgroundColor: "#fff",
+                        borderRadius: "8px",
+                        touchAction: "pan-y",
                       }}
                     >
-                      {value}
-                    </li>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() =>
-                        setLabels(labels.filter((_, i) => i !== index))
-                      }
-                    >
-                      Remove
-                    </button>
+                      {labels.map((value, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            backgroundColor: "#fff",
+                            paddingTop: 5,
+                            paddingBottom: 5,
+                            touchAction: "pan-y",
+                          }}
+                        >
+                          <Chip
+                            style={{
+                              backgroundColor: "#1f6c5c",
+                              color: "#fff",
+                            }}
+                            label={value}
+                          />
+                          <CancelIcon
+                            type="button"
+                            style={{ color: "#ad0202" }}
+                            onClick={() =>
+                              setLabels(labels.filter((_, i) => i !== index))
+                            }
+                          />
+                        </div>
+                      ))}
+                    </ul>
                   </div>
-                ))}
-              </ul>
-            </form>
-          </Col>
-        </Row>
-        
+                </form>
+              </Col>
+            </Row>
           </Container>
-
-
-      <Container>
-        <Row>
-          <Col sm = {12}>
+          <div
+            className="border-customGreen border-solid border-3 w-4/5 text-center mx-auto h-96"
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              padding: 10,
+              marginBottom: 10,
+              marginTop: "10px",
+              boxShadow: "0px 0px 10px 2px rgba(0, 0, 0, 0.1)",
+              touchAction: "pan-y",
+            }}
+          >
             <ReactQuill
               theme="snow"
               value={editorContent}
               onChange={handleEditorChange}
               formats={formats}
               modules={modules}
+              style={{
+                height: "80%",
+                backgroundColor: "#fff",
+                touchAction: "pan-y",
+              }}
             />
-          </Col>
-          
- 
-        </Row>
-      </Container>
-      <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
-        Submit
-      </button>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              touchAction: "pan-y",
+            }}
+          >
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="text-white bg-gradient-to-r from-green-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-10 mt-2"
+            >
+              Update Story!
+            </button>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

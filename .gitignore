@@ -1,3 +1,4 @@
-
 mobile/living_stories_mobile/.env
 mobile/living_stories_mobile/contexts/AuthContext.tsx
+recommendation_engine/.pytest_cache
+recommendation_engine/.coverage

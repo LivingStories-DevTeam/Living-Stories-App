@@ -419,6 +419,9 @@ const StoryPage = ({ route, navigation }: any) => {
                     <Feather name="message-circle" size={25} color="#212121" />{" "}
                     {storyResponse?.comments.length}
                   </Text>
+                  <TouchableOpacity onPress={() =>{navigation.navigate("LikedUsers" , {storyId:storyId})}}>
+                  <Text style={[styles.link , {marginLeft:20}]}>See Likes</Text>
+                </TouchableOpacity>
                 </View>
                 <View style={styles.commentContainer}>
                   <Text style={{ color: "gray" }}>Comment</Text>
@@ -479,6 +482,7 @@ const StoryPage = ({ route, navigation }: any) => {
                       </View>
                     ))}
                 </View>
+ 
               </ScrollView>
             </KeyboardAvoidingView>
           </SafeAreaView>

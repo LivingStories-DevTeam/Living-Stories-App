@@ -1,6 +1,7 @@
 package com.swe573.living_stories.Repositories;
 
-import com.swe573.living_stories.Confrugation.DateParser;
+import com.swe573.living_stories.Configuration.DateParser;
+import com.swe573.living_stories.DTO.StoryDTO;
 import com.swe573.living_stories.Models.Story;
 import com.swe573.living_stories.Requests.SearchRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +23,7 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
 
     @Query("SELECT s FROM Story s" +
             " WHERE" +
-            " (:header IS NULL OR LOWER(s.header) LIKE CONCAT('%', :header, '%'))" +
+            " (:header IS NULL OR LOWER(s.header) LIKE CONCAT('%', LOWER(:header), '%'))" +
             " AND (:userName IS NULL OR LOWER(s.user.name) LIKE CONCAT('%', LOWER(:userName), '%'))" +
             " AND (:text IS NULL OR LOWER(s.richText) LIKE CONCAT('%', LOWER(:text), '%'))" +
             " AND (:city IS NULL OR EXISTS (SELECT l FROM s.locations l WHERE LOWER(l.city) LIKE CONCAT('%', LOWER(:city), '%')))" +
@@ -60,15 +61,10 @@ public interface StoryRepository extends JpaRepository<Story, Long> {
             @Param("isInterval") Boolean isInterval
     );
 
-    
 
 
-
-
-
-
-
-
+    @Query("SELECT e FROM Story e LEFT JOIN FETCH e.locations ORDER BY e.id asc")
+    List<Story> findAllOrdered();
 
 
 }

@@ -1,6 +1,6 @@
 package com.swe573.living_stories.Services;
 
-import com.swe573.living_stories.Confrugation.JwtUtils;
+import com.swe573.living_stories.Configuration.JwtUtils;
 
 import com.swe573.living_stories.Models.User;
 
@@ -331,6 +331,37 @@ class UserServiceTest {
         verify(userRepository, times(1)).findByNameContainingIgnoreCase(name);
     }
 
+    @Test
+    void testDeleteUserById_UserExists() {
+        // Arrange
+        Long userId = 1L;
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(new User()));
+
+        // Act
+        boolean result = userService.deleteUserById(userId);
+
+        // Assert
+        assertTrue(result);
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).deleteById(userId);
+    }
+
+    @Test
+    void testDeleteUserById_UserNotExists() {
+        // Arrange
+        Long userId = 1L;
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // Act
+        boolean result = userService.deleteUserById(userId);
+
+        // Assert
+        assertFalse(result);
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(0)).deleteById(userId);
+    }
 
 
 }

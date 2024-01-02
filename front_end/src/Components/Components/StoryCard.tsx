@@ -1,8 +1,13 @@
-import { Avatar, Badge, Card, Col, Row } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-
+import { Avatar, Chip } from "@mui/material";
+import ShareIcon from "@mui/icons-material/Share";
+import Card from "@mui/material/Card";
+import Tooltip from "@mui/material/Tooltip";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import CommentIcon from "@mui/icons-material/Comment";
 interface Story {
   id: number;
 
@@ -19,9 +24,8 @@ interface Story {
     lat: number;
     lng: number;
     name: string;
-    country?:string;
-    city?:string
-
+    country?: string;
+    city?: string;
   }[];
   comments: {
     text: string;
@@ -34,74 +38,133 @@ interface Story {
   startDate?: string;
   endDate?: string;
   likes: number[];
-  decade?:string
+  decade?: string;
 }
 
 interface StoryProps {
   story: Story;
+  similarity?: string;
 }
 
-const StoryComponent: React.FC<StoryProps> = ({ story }) => {
-  return (
-    <div
-      onClick={() => {
-        window.location.href = `/stories/${story.id}`;
-      }}
-      style={{ textDecoration: "none", cursor: "pointer" }}
-    >
-      <Badge.Ribbon
-      placement="end"
-        text={
-          <div>
-            {story.labels.map((label, index) => (
-              <p key={index}>{label}</p>
-            ))}
-          </div>
-        }
-        color="lime"
-      >
-        <Card
-          title={story.header}
-          hoverable={true}
-          style={{ margin: "5px" }}
-        >
-          <Row>
-            {story.user?.name && (
-              <Col xs={3}>
-                {story.user?.photo ? (
-                  <Avatar
-                    size={"large"}
-                    src={<img src={story.user.photo} alt="avatar" />}
-                  />
-                ) : (
-                  <Avatar
-                    style={{ backgroundColor: "#87d068" }}
-                    size={"large"}
-                    icon={<UserOutlined />}
-                  ></Avatar>
-                )}{" "}
-                <p> {story.user.name}</p>
-              </Col>
-            )}
-            <Col xs={6}>
-              <p>Locations:</p>{" "}
-              {(story as any).locationsAdvanced?.map((location: any) => (
-                <p key={location.id}>{`${location.city} / ${location.country}`}</p>
-              ))}
-            </Col>
-            <Col >
-              <p style={{marginLeft:"10px"}}>Likes: {story.likes.length}</p>
-              <p style={{marginLeft:"10px"}}>Comments:{story.comments.length} </p>
-            </Col>
+const StoryComponent: React.FC<StoryProps> = ({ story, similarity }) => {
+  const [showMore, setShowMore] = useState(false);
+  const handleShowMore = () => {
+    setShowMore(!showMore);
+  };
 
-            {story.decade === undefined || story.decade === null && <Col style={{marginLeft:"10px"}}>
-              <p >   {story.startDate} </p>
-              <p>   {story.endDate}</p>
-            </Col>}
-            {story.decade!==null && <Col style={{marginLeft:"10px"}}>{story.decade}</Col>}
-          </Row>
-        </Card>
-      </Badge.Ribbon>
+  const handleCopy = (storyid: number) => {
+    const url = `${window.location.origin}/stories/${storyid}`;
+    navigator.clipboard.writeText(url);
+  };
+
+  return (
+    <div style={{ textDecoration: "none", cursor: "pointer" }} className="m-4">
+      <Card
+        sx={{ maxWidth: 750, minWidth: 700, width: "100%", height: "100%" }}
+        className="shadow-md h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
+      >
+        <Tooltip title="Copy">
+          <ShareIcon
+            onClick={() => handleCopy(story.id)}
+            className="shareicon cursor-pointer m-3 transition duration-500 ease-in-out transform hover:scale-125 absolute top-0 right-0 z-50"
+          />
+        </Tooltip>
+        <div className="p-4">
+          <Link to={`/stories/${story.id}`}>
+            <p className="text-gray-700 float-right flex text-sm mb-2 mt-4">
+              {story.decade === undefined ||
+                (story.decade === null && (
+                  <>
+                    {story.startDate} - {story.endDate}
+                  </>
+                ))}
+              {story.decade !== null && <>{story.decade}</>}
+            </p>{" "}
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              {story.header}
+            </h2>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <Avatar
+                  sx={{ width: 50, height: 50 }}
+                  alt={story.user?.name}
+                  src={story.user?.photo}
+                  className="mr-2"
+                />
+                <span className="text-gray-700 text-base font-semibold">
+                  {story.user?.name}
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <p className="text-gray-700 flex text-sm mb-2">
+                <LocationOnIcon fontSize="small" className="mr-1" />
+                {(story as any).locationsAdvanced?.map((location: any) => (
+                  <p
+                    key={location.id}
+                  >{`${location.city} / ${location.country}`}</p>
+                ))}
+              </p>
+              {similarity && (
+                <div>
+                  <label className="text-sm font-semibold">
+                    Similarity: &nbsp;
+                  </label>
+                  <Chip
+                    color="warning"
+                    className="bg-orange-60"
+                    label={similarity}
+                  />
+                </div>
+              )}
+              <p className="text-gray-700 text-sm mb-2">
+                <ThumbUpOffAltIcon fontSize="small" className="mx-1" />
+                {story.likes.length}
+                <CommentIcon fontSize="small" className="mx-1" />
+                {story.comments.length}
+              </p>
+            </div>
+          </Link>
+          <div>
+            {story.labels && (
+              <div>
+                {story.labels.slice(0, 6).map((label, index) => (
+                  <Chip
+                    className="w-fit feed-chip bg-customGreen mr-1"
+                    key={label}
+                    color="success"
+                    label={label}
+                    size="small"
+                  />
+                ))}
+                {story.labels.length > 6 &&
+                  story.labels.slice(6).length > 0 && (
+                    <button
+                      className="text-blue-500 text-sm float-right font-semibold mt-2 focus:outline-none"
+                      onClick={handleShowMore}
+                    >
+                      {showMore
+                        ? "Show Less"
+                        : `+${story.labels.slice(6).length} more`}
+                    </button>
+                  )}
+                {showMore &&
+                  story.labels
+                    .slice(6)
+                    .map((label, index) => (
+                      <Chip
+                        className="w-fit feed-chip bg-customGreen mr-1"
+                        key={label}
+                        label={label}
+                        color="success"
+                        size="small"
+                      />
+                    ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
     </div>
   );
 };

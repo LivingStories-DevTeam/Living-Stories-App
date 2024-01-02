@@ -30,8 +30,8 @@ const Timeline: React.FC = () => {
     const [screenSpin, setScreenSpin] = useState<boolean>(false);
     const [circleOnce, setCircleOnce] = useState<boolean>(false);
     const [nativeCircle, setNativeCircle] = useState<google.maps.Circle | null>(null);
-    const [naturalWidth, setNaturalWidth] = useState<number>(500);
-    const [naturalHeight, setNaturalHeigth] = useState<number>(500);
+    const [naturalWidth, setNaturalWidth] = useState<number>(600);
+    const [naturalHeight, setNaturalHeigth] = useState<number>(300);
     const radius = Form.useWatch("radius", form);
     const radiusVisual = Form.useWatch("radiusVisual", form);
     const key = Form.useWatch("key", form);
@@ -171,12 +171,12 @@ const Timeline: React.FC = () => {
         let sortedResults = [...searchResult];
         if (value === "descending") {
             sortedResults.sort((a, b) =>
-                dayjs(b.startDate, "DD/MM/YYYY").unix() - dayjs(a.startDate, "DD/MM/YYYY").unix()
+                dayjs(b.startDate, ["DD/MM/YYYY", "MM/YYYY", "YYYY"]).unix() - dayjs(a.startDate, ["DD/MM/YYYY", "MM/YYYY", "YYYY"]).unix()
             );
         }
         else if (value === "ascending") {
             sortedResults.sort((a, b) =>
-                dayjs(a.startDate, "DD/MM/YYYY").unix() - dayjs(b.startDate, "DD/MM/YYYY").unix()
+                dayjs(a.startDate, ["DD/MM/YYYY", "MM/YYYY", "YYYY"]).unix() - dayjs(b.startDate, ["DD/MM/YYYY", "MM/YYYY", "YYYY"]).unix()
             );
         }
         setSearchResult(sortedResults);
@@ -368,7 +368,7 @@ const Timeline: React.FC = () => {
                 });
                 let searchResultMapped = searchResult.map((item: any) => ({
                     key: item?.id,
-                    title: item?.endDate ? `${item.startDate} ${<MinusOutlined />} ${item.endDate}` : `${item.startDate}`,
+                    title: item?.endDate ? <Space size={1} style={{ textAlign: "center" }} align="center" direction="vertical"><span>{item.startDate} <MinusOutlined /> {item.endDate}</span><Text style={{ fontSize: "smaller" }}>{item.header}</Text></Space> : <Space size={1} style={{ textAlign: "center" }} align="center" direction="vertical">{item.startDate}<Text style={{ fontSize: "small" }}>{item.header}</Text></Space>,
                     media: item?.imageData?.find(() => true) ? {
                         name: "IMAGE",
                         source: {
@@ -376,7 +376,9 @@ const Timeline: React.FC = () => {
                         },
                         type: "IMAGE"
                     } : undefined,
-                    cardTitle: <a onClick={() => window.location.href = `/stories/${item.id}`}>{item.header}</a>
+                    cardTitle: <a onClick={() => window.open(`/stories/${item.id}`, "_blank")}>{item.header}</a>,
+                    startDate: item.startDate,
+                    endDate: item.endDate
                 })).filter((item: any) => item.media);
                 setSearchResult(searchResultMapped);
             }
@@ -711,19 +713,14 @@ const Timeline: React.FC = () => {
                                 allowDynamicUpdate
                                 mode={"HORIZONTAL"}
                                 slideShow
-                                useReadMore
                                 mediaHeight={naturalHeight}
                                 mediaWidth={naturalWidth}
                                 cardHeight={naturalHeight}
                                 cardWidth={naturalWidth}
+                                slideItemDuration={5000}
                                 onItemSelected={(item: any) => calculateIntrinsicSize(item.cardTitle)}
-                                timelineCircleDimension={32}
                                 enableOutline
                                 items={searchResult}
-                                fontSizes={{
-                                    title: "1.2rem"
-                                }}
-
                                 theme={{
                                     titleColor: "black",
                                     titleColorActive: "black",

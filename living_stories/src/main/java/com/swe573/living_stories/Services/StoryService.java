@@ -1,7 +1,8 @@
 package com.swe573.living_stories.Services;
 
-import com.swe573.living_stories.Confrugation.DateParser;
+import com.swe573.living_stories.Configuration.DateParser;
 import com.swe573.living_stories.DTO.MediaDTO;
+import com.swe573.living_stories.DTO.StoryDTO;
 import com.swe573.living_stories.Models.*;
 import com.swe573.living_stories.Repositories.StoryRepository;
 import com.swe573.living_stories.Repositories.UserRepository;
@@ -59,10 +60,30 @@ public class StoryService {
         return storyRepository.save(oldStory);
     }
 
-    public List<Story> getAllStories() {
-        return storyRepository.findAll();
+    public List<StoryDTO> getAllStories() {
+        return mapToDTOList(storyRepository.findAllOrdered());
     }
-
+    public List<StoryDTO> mapToDTOList(List<Story> stories) {
+        return stories.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+    public StoryDTO mapToDTO(Story story) {
+        return new StoryDTO(
+                story.getId(),
+                story.getHeader(),
+                story.getLabels(),
+                story.getLikes(),
+                new ArrayList<Locations>(story.getLocations()),  // Assuming locations is a Collection
+                new ArrayList<Locations>(story.getLocationsAdvanced()),
+                story.getStartSeason(),
+                story.getEndSeason(),
+                DateParser.getDateFromDate(story.getStartDate()),
+                DateParser.getDateFromDate(story.getEndDate()),
+                story.getDecade(),
+                story.getComments().size(),  // Assuming comments is a Collection
+                story.getUser());
+    }
     public Story getStoryById(Long id) {
         Optional<Story> story = storyRepository.findById(id);
         if (story.isPresent()) {
@@ -126,11 +147,13 @@ public class StoryService {
             Story story = optionalStory.get();
             for (Locations location : locationsList) {
                 location.setStory(story);
+                location.setType(location.getType());
+                location.setCoordinates(location.getCoordinates());
+                location.setRadius(location.getRadius());
             }
             story.setLocations(locationsList);
             storyRepository.save(story);
             return true;
-
         }
         return false;
     }
@@ -251,8 +274,15 @@ public class StoryService {
                 }
             }
         }
-        filteredStories.sort(Comparator.comparing(Story::getStartDate));
-        return filteredStories;
+        Set<Long> storyIds = new HashSet<>();
+        List<Story> uniqueFilteredStories = new ArrayList<>();
+        for (Story story : filteredStories) {
+            if (storyIds.add(story.getId())) {
+                uniqueFilteredStories.add(story);
+            }
+        }
+        uniqueFilteredStories.sort(Comparator.comparing(Story::getStartDate));
+        return uniqueFilteredStories;
     }
 
     private boolean searchCriteria(Story story, AdvancedSearchRequest request) {
@@ -276,7 +306,11 @@ public class StoryService {
 
     private boolean locationMatches(Locations location, Point searchCenter, double radiusInDegrees,
             GeometryFactory geometryFactory) {
-        switch (location.getType()) {
+        String type = location.getType();
+        if (type == null) {
+            type = "Point";
+        }
+        switch (type) {
             case "Point":
                 return markerMatches(location, searchCenter, radiusInDegrees, geometryFactory);
             case "Circle":
@@ -284,14 +318,22 @@ public class StoryService {
             case "Polygon":
                 return polygonMatches(location, searchCenter, radiusInDegrees, geometryFactory);
             default:
-                return false;
+                return markerMatches(location, searchCenter, radiusInDegrees, geometryFactory);
         }
     }
 
-    private boolean markerMatches(Locations location, Point searchCenter, double radiusInDegrees,
-            GeometryFactory geometryFactory) {
-        List<Double> latLng = location.getCoordinates().get(0);
-        Point locationPoint = geometryFactory.createPoint(new Coordinate(latLng.get(0), latLng.get(1)));
+    private boolean markerMatches(Locations location, Point searchCenter, double radiusInDegrees, GeometryFactory geometryFactory) {
+        List<List<Double>> coordinates = location.getCoordinates();
+        double lat, lng;
+        if (coordinates.isEmpty() || coordinates.get(0).isEmpty()) {
+            lat = location.getLat();
+            lng = location.getLng();
+        } else {
+            List<Double> latLng = coordinates.get(0);
+            lat = latLng.get(0);
+            lng = latLng.get(1);
+        }
+        Point locationPoint = geometryFactory.createPoint(new Coordinate(lat, lng));
         return locationPoint.isWithinDistance(searchCenter, radiusInDegrees);
     }
 

@@ -7,16 +7,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ReactQuill, { Quill } from "react-quill";
 import { Col, Row, Container } from "react-bootstrap";
-import NavBar from "../Components/NavBar";
 import dayjs from "dayjs";
-import { RadioGroup } from "../Components/DateRadio";
 import DatePicker from "antd/es/date-picker";
 import { Radio, RadioChangeEvent, Select, TimePicker } from "antd";
 import type { Dayjs } from "dayjs";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ImageCompress from "quill-image-compress";
 import { Chip } from "@mui/material";
-
+import MyLocationIcon from "@mui/icons-material/MyLocation";
 Quill.register("modules/imageCompress", ImageCompress);
 
 const urlEndpoint = `${import.meta.env.VITE_BACKEND_URL}/stories`;
@@ -95,7 +93,6 @@ const StoryCreateMobile: React.FC = () => {
   const [selectedDecadeValue, setSelectedDecadeValue] = useState<number>();
   const [decade, setDecade] = useState<string>();
   const [posted, setPosted] = useState(false);
-
 
   const seasonOptions = [
     { value: "spring", label: "Spring" },
@@ -190,6 +187,75 @@ const StoryCreateMobile: React.FC = () => {
 
       console.log(locationData);
       setMapCenter({ lat: locationData.lat, lng: locationData.lng });
+    }
+  };
+
+  const handleGetUserLocation = async () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          const name = "User Location";
+          const lat = Number(latitude.toFixed(6));
+          const lng = Number(longitude.toFixed(6));
+          let city = "";
+          let country = "";
+
+          try {
+            const response = await axios.get(
+              `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${api_key}`
+            );
+
+            const { results } = response.data;
+
+            results.forEach((result: any) => {
+              const address_components = result.address_components;
+              console.log(address_components);
+
+              address_components?.forEach(
+                (component: google.maps.GeocoderAddressComponent) => {
+                  if (component.types.includes("country")) {
+                    country = component.long_name;
+                  }
+
+                  if (
+                    component.types.includes("administrative_area_level_1") ||
+                    component.types.includes("locality") ||
+                    component.types.includes("administrative_area_level_2")
+                  ) {
+                    city = component.long_name;
+                  }
+                }
+              );
+
+              if (city && country) {
+                return; // Stop the iteration
+              }
+            });
+
+            const locationData: Location = {
+              name: results[1].formatted_address,
+              lat: Number(lat.toFixed(6)),
+              lng: Number(lng.toFixed(6)),
+              city: city,
+              country: country,
+            };
+            console.log(locationData);
+
+            // Assuming you have defined setLocations and setMapCenter somewhere
+            setLocations([...locations, locationData]);
+            setMapCenter({ lat: locationData.lat, lng: locationData.lng });
+          } catch (error) {
+            console.log("Error fetching geolocation data:", error);
+          }
+        },
+        (error) => {
+          console.error("Error getting location:", error.message);
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser");
     }
   };
 
@@ -435,7 +501,6 @@ const StoryCreateMobile: React.FC = () => {
                       flexDirection: "row",
                       backgroundColor: "#fff",
                       borderRadius: "8px",
-                      touchAction: "pan-y",
                     }}
                   >
                     {labels.map((value, index) => (
@@ -447,7 +512,6 @@ const StoryCreateMobile: React.FC = () => {
                           backgroundColor: "#fff",
                           paddingTop: 5,
                           paddingBottom: 5,
-                          touchAction: "pan-y",
                         }}
                       >
                         <Chip
@@ -786,25 +850,31 @@ const StoryCreateMobile: React.FC = () => {
             <div>
               <div className="form-group">
                 <label>Locations:</label>
-                <Autocomplete
-                  onLoad={(autocomplete) => {
-                    autocompleteRef.current = autocomplete;
-                  }}
-                  onPlaceChanged={handleLocationSelect}
-                >
-                  <input
-                    type="text"
-                    className="form-control"
-                    style={{
-                      marginBottom: "5px",
-                      marginTop: "5px",
-                      width: "100%",
-                      minWidth: "100px",
-                      maxWidth: "200px",
-                      touchAction: "pan-y",
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Autocomplete
+                    onLoad={(autocomplete) => {
+                      autocompleteRef.current = autocomplete;
                     }}
+                    onPlaceChanged={handleLocationSelect}
+                  >
+                    <input
+                      type="text"
+                      className="form-control"
+                      style={{
+                        marginBottom: "5px",
+                        marginTop: "5px",
+                        width: "100%",
+                        minWidth: "100px",
+                        maxWidth: "200px",
+                        touchAction: "pan-y",
+                      }}
+                    />
+                  </Autocomplete>
+                  <MyLocationIcon
+                    onClick={handleGetUserLocation}
+                    style={{ marginLeft: "5px", cursor: "pointer" }}
                   />
-                </Autocomplete>
+                </div>
                 <div
                   style={{
                     maxHeight: 250,

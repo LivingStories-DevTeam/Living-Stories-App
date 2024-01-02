@@ -82,7 +82,7 @@ const MyProfile = ({ navigation }: any) => {
       const manipulatedImage = await ImageManipulator.manipulateAsync(
         result.assets[0].uri,
         [{ resize: { width: 300 } }],
-        { format: ImageManipulator.SaveFormat.JPEG, base64: true }
+        { format: ImageManipulator.SaveFormat.JPEG, compress:0.2  , base64: true }
       );
 
       // Set the base64 string in the state
@@ -131,6 +131,8 @@ const MyProfile = ({ navigation }: any) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      
+
     },
     back: {
       flex: 0.3,
@@ -138,7 +140,7 @@ const MyProfile = ({ navigation }: any) => {
       justifyContent: "center",
     },
     content: {
-      flex: 1,
+     
       backgroundColor: "white",
       borderRadius: 15,
       height: "100%",
@@ -407,10 +409,14 @@ const MyProfile = ({ navigation }: any) => {
                       <Feather name="book" size={25} color="#212121" />{" "}
                       {user?.stories?.length}
                     </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Followers", { userId:user.id })}
+                    > 
                     <Text>
                       <Feather name="users" size={25} color="#212121" />{" "}
                       {user?.followers?.length}
                     </Text>
+                    </TouchableOpacity>
                   </View>
                   <View style={{ marginTop: 10, backgroundColor: "white" }}>
                     <View>
