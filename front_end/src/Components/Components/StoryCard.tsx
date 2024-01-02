@@ -102,7 +102,7 @@ const StoryComponent: React.FC<StoryProps> = ({ story, similarity }) => {
                 {(story as any).locationsAdvanced?.map((location: any) => (
                   <p
                     key={location.id}
-                  >{`${location.city} / ${location.country}`}</p>
+                  >{`${location.city} / ${location.country}  `}</p>
                 ))}
               </p>
               {similarity && (
