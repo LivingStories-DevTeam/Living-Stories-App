@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Button, View ,Image} from "react-native";
+import { Button, View, Image } from "react-native";
 import Feed from "./Feed";
 import Profile from "./Profile";
 import PostStory from "./PostStory";
@@ -8,6 +8,7 @@ import MyProfile from "./MyProfile";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ActivityButton from "../components/ActivityButton";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import Timeline from "./Timeline";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,7 +33,7 @@ const Home = ({ navigation }: any) => {
                 navigation.navigate("Search");
               }}
             >
-              <View style={{marginRight:30}}>
+              <View style={{ marginRight: 30 }}>
                 <Ionicons name="md-search" size={30} color="#1f6c5c" />
               </View>
             </TouchableOpacity>
@@ -44,7 +45,6 @@ const Home = ({ navigation }: any) => {
               }}
             />
           ),
-          
         }}
       />
       <Tab.Screen

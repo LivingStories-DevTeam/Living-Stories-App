@@ -86,7 +86,7 @@ const ProfileCard: React.FC<CardProps> = ({
     },
   });
   const handleEditPress = (storyId: number) => {
-    navigation.navigate("EditStory", { storyId });
+    navigation.replace("EditStory", { storyId });
   };
   return (
     <View style={styles.cardContainer}>

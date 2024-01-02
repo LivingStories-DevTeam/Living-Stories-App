@@ -154,7 +154,7 @@ const Search = ({ route, navigation }: any) => {
       const { latitude, longitude } = location.coords;
       setLat(latitude);
       setLng(longitude);
-      setRadius(1);
+      setRadius(2000);
       console.log("User Location:", { latitude, longitude });
     } catch (error) {
       console.error("Error getting location:", error);
@@ -204,7 +204,7 @@ const Search = ({ route, navigation }: any) => {
         ...(header && { header: header }),
         ...(lat && { latitude: lat }),
         ...(lng && { longitude: lng }),
-        ...(lng && { radius: radius }),
+        ...(lng && { radius: radius / 1000 }),
         ...(city && { city: city }),
         ...(country && { country: country }),
         ...(label && { label: label }),
@@ -363,13 +363,12 @@ const Search = ({ route, navigation }: any) => {
     setSelectedDecade(value);
   };
 
-  
-  const handleDataFromChild = (latit:number , long:number , rad: number ) => {
+  const handleDataFromChild = (latit: number, long: number, rad: number) => {
     // Callback function to receive data from the child component
-    setLat(latit)
-    setLng(long)
-    setRadius(rad)
-    console.log(latit, long , rad )
+    setLat(latit);
+    setLng(long);
+    setRadius(rad);
+    console.log(latit, long, rad);
   };
 
   console.log(startDate);
@@ -963,7 +962,6 @@ const Search = ({ route, navigation }: any) => {
                       <TouchableOpacity
                         onPress={() => {
                           setModalVisible(!modalVisible);
-
                         }}
                       >
                         <Text style={styles.buttonText}>Close</Text>
@@ -997,29 +995,78 @@ const Search = ({ route, navigation }: any) => {
               <Text>
                 {lat && lng ? (
                   <>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setLat("");
-                        setLng("");
-                        setRadius("");
-                      }}
-                      style={{
-                        backgroundColor: "#731300",
-                        margin: 10,
-                        borderRadius: 7,
-                        padding: 4,
-                      }}
+                    <View
+                      style={{ alignItems: "center", justifyContent: "center" }}
                     >
-                      <Text
+                      <TouchableOpacity
+                        onPress={() => {
+                          setLat("");
+                          setLng("");
+                          setRadius("");
+                        }}
                         style={{
-                          color: "white",
+                          backgroundColor: "#731300",
+                          margin: 10,
+                          borderRadius: 15,
+                          padding: 10,
+                          width: 140,
+                          flex: 1,
+                          flexDirection: "row",
                           alignItems: "center",
                           justifyContent: "center",
                         }}
                       >
-                        Clear Location
-                      </Text>
-                    </TouchableOpacity>
+                        <Text
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "white",
+                          }}
+                        >
+                          Clear Location{" "}
+                          <Feather name="x-circle" size={20} color="#ffffff" />
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{ alignItems: "center", justifyContent: "center" }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: "white",
+                          padding: 15,
+                          borderRadius: 50,
+                          margin: 10,
+                          width: 110,
+                          flex: 1,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                          onPress={() => {
+                            const adjustedRadius = radius;
+                            navigation.navigate("Timeline", {
+                              lat,
+                              lng,
+                              radius: adjustedRadius,
+                            });
+                          }}
+                        >
+                          <Text>Timeline </Text>
+                          <Feather name="clock" size={20} color="#212121" />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
                   </>
                 ) : (
                   <Text></Text>
@@ -1089,7 +1136,7 @@ const Search = ({ route, navigation }: any) => {
       )}
       {selectedSearchIndex === 1 && (
         <>
-          <ScrollView >
+          <ScrollView>
             <View
               style={{
                 backgroundColor: "white",
@@ -1233,9 +1280,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 150,
   },
-    buttonText: {
+  buttonText: {
     color: "white",
-  }
+  },
 });
 const secondStyles = StyleSheet.create({
   container: {
@@ -1273,7 +1320,6 @@ const secondStyles = StyleSheet.create({
     marginRight: 8,
     flexDirection: "row",
   },
-  
 });
 
 export default Search;

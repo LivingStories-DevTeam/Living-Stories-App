@@ -6,6 +6,7 @@ import { Google_Api_Key } from "../contexts/AuthContext";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
+import * as Location from "expo-location";
 
 const SearchMap = ({ route, navigation, onLocationChange }: any) => {
   const [region, setRegion] = useState<LatLng>({
@@ -16,7 +17,7 @@ const SearchMap = ({ route, navigation, onLocationChange }: any) => {
   const [radius, setRadius] = useState(1); // Initial radius in meters
   const handleSendData = () => {
     // Call the callback function to send data to the parent
-    onLocationChange(region.latitude, region.longitude, radius/1000);
+    onLocationChange(region.latitude, region.longitude, radius);
     console.log(region.latitude, region.longitude, radius/1000)
  
   };
@@ -26,6 +27,30 @@ const SearchMap = ({ route, navigation, onLocationChange }: any) => {
       latitude: coordinate.latitude,
       longitude: coordinate.longitude,
     });
+  };
+
+
+  const getUserLocation = async () => {
+    try {
+      // Request permission to access location
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
+        return;
+      }
+
+      // Get user's current location
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setRegion({
+        latitude:latitude , 
+        longitude:longitude
+      });
+      console.log("User Location:", { latitude, longitude });
+    } catch (error) {
+      console.error("Error getting location:", error);
+    }
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -104,6 +129,11 @@ const SearchMap = ({ route, navigation, onLocationChange }: any) => {
           }}
         >
           <Text style={styles.buttonText}>Select Location</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={[styles.button , {end:0}]}>
+        <TouchableOpacity onPress={getUserLocation}>
+          <Text style={styles.buttonText}>Get My Location</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

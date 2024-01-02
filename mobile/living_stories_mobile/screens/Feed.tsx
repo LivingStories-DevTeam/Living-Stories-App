@@ -50,7 +50,7 @@ const Feed = ({ navigation }: any) => {
       const secondApiResponse = await axios.post(
         `${API_URL}/activity/recommendedstories`,
         {
-          storyIds: numbersArray,
+          storyIds: firstApiResponse.data.map(item=> item.id),
         }
       );
       console.log(secondApiResponse.request)
