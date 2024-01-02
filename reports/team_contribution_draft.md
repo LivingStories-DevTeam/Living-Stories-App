@@ -841,10 +841,12 @@ When the Followers or Likes list gets long, it didnt scroll and kept getting lon
 ### DEMO
 #### Timeline onScroll Design Changes
 In Mobile Timeline page, i've worked on the feature of Detecting which story is in the middle of the screen when the user is scrolling horizontally, and based on the season of that story, it's background leaf is different, and the whole page's background GIF changes to correspond the season.
-![image](https://hackmd.io/_uploads/ByGbYgGOa.png)![image](https://hackmd.io/_uploads/SJGztefOT.png)
+![image](https://github.com/SWE574-G3/Living-Stories-App/assets/103641847/4b01069a-9133-4b80-9676-fa59e6377ce5)![image](https://github.com/SWE574-G3/Living-Stories-App/assets/103641847/847e4818-84bd-41be-a1b6-74f4c29f0939)
+
 #### Created Months and Years Pickers manually
 In Mobile Search Page, we found a calendar component for choosing a full date, but couldnt find a component for choosing only month and year or only year (some component were breaking the apk build). So i had to manually create a list of months, and a list of auto generated Years, and on selecting each individually i combine them together in the needed format for the API search endpoint.
-![image](https://hackmd.io/_uploads/rkbNYefu6.png)
+![image](https://github.com/SWE574-G3/Living-Stories-App/assets/103641847/0d9f0c32-6163-47cc-8ad3-2210d1cc77a5)
+
 
 
 
