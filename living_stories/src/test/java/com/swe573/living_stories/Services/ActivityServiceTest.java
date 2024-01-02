@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,7 +42,6 @@ class ActivityServiceTest {
         Long userId = 2L;
 
         when(userRepository.getReferenceById(userId)).thenReturn(new User());
-
         when(storyRepository.getReferenceById(storyId)).thenReturn(new Story());
 
         assertDoesNotThrow(() -> activityService.recordLikeActivity(storyId, userId));
@@ -52,7 +50,72 @@ class ActivityServiceTest {
     }
 
     @Test
-    void testCheckDuplicateActivity() {
+    void testRecordPostStoryActivity() {
+        Long storyId = 1L;
+        Long userId = 2L;
+
+        when(userRepository.getReferenceById(userId)).thenReturn(new User());
+        when(storyRepository.getReferenceById(storyId)).thenReturn(new Story());
+
+        assertDoesNotThrow(() -> activityService.recordPostStoryActivity(storyId, userId));
+
+        verify(activityRepository, times(1)).save(any(Activity.class));
+    }
+
+    @Test
+    void testRecordCommentActivity() {
+        Long storyId = 1L;
+        Long userId = 2L;
+
+        when(userRepository.getReferenceById(userId)).thenReturn(new User());
+        when(storyRepository.getReferenceById(storyId)).thenReturn(new Story());
+
+        assertDoesNotThrow(() -> activityService.recordCommentActivity(storyId, userId));
+
+        verify(activityRepository, times(1)).save(any(Activity.class));
+    }
+
+    @Test
+    void testRecordFollowActivity() {
+        Long followingId = 1L;
+        Long userId = 2L;
+
+        when(userRepository.getReferenceById(userId)).thenReturn(new User());
+        when(userRepository.getReferenceById(followingId)).thenReturn(new User());
+
+        assertDoesNotThrow(() -> activityService.recordFollowActivity(followingId, userId));
+
+        verify(activityRepository, times(1)).save(any(Activity.class));
+    }
+
+    @Test
+    void testRecordBaseActivityForStory() {
+        Long storyId = 1L;
+        Long userId = 2L;
+
+        when(userRepository.getReferenceById(userId)).thenReturn(new User());
+        when(storyRepository.getReferenceById(storyId)).thenReturn(new Story());
+
+        assertDoesNotThrow(() -> activityService.recordBaseActivity(storyId, userId, "S"));
+
+        verify(activityRepository, times(1)).save(any(Activity.class));
+    }
+
+    @Test
+    void testRecordBaseActivityForFollow() {
+        Long followingId = 1L;
+        Long userId = 2L;
+
+        when(userRepository.getReferenceById(userId)).thenReturn(new User());
+        when(userRepository.getReferenceById(followingId)).thenReturn(new User());
+
+        assertDoesNotThrow(() -> activityService.recordBaseActivity(followingId, userId, "F"));
+
+        verify(activityRepository, times(1)).save(any(Activity.class));
+    }
+
+    @Test
+    void testCheckDuplicateActivityNotDuplicate() {
         Long actionItemId = 1L;
         Long userId = 2L;
         String actionType = "L";
@@ -61,5 +124,18 @@ class ActivityServiceTest {
         when(activityRepository.CheckByUserIdAndStoryId(userId, actionItemId, actionType)).thenReturn(Collections.emptyList());
 
         assertTrue(activityService.checkDuplicateActivity(actionItemId, userId, actionType));
+    }
+
+    @Test
+    void testCheckDuplicateActivityDuplicate() {
+        Long actionItemId = 1L;
+        Long userId = 2L;
+        String actionType = "L";
+
+        when(userRepository.getReferenceById(userId)).thenReturn(new User());
+        when(activityRepository.CheckByUserIdAndStoryId(userId, actionItemId, actionType))
+                .thenReturn(Collections.singletonList(new Activity()));
+
+        assertFalse(activityService.checkDuplicateActivity(actionItemId, userId, actionType));
     }
 }
