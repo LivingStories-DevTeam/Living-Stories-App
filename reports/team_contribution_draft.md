@@ -772,4 +772,156 @@ I made all the commits to the branches thus did not use any Pull requests. I han
 | [#2](https://github.com/SWE574-G3/Living-Stories-App/issues/2)       | Create custom issue labels.                                         | Closed on Dec 3, 2023 |                              | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
 
 
+# Individual Contributions
+
+## Omar Ghamrawi
+
+### Executive Summary
+
+During this project, i was responsible in developing and building the Mobile app with Senan, and General work in Frontend and design whether it's Web App or Mobile.
+
+- **Developed the Mobile App:** 
+I led the development of the Mobile app along with Senan, After we started learning all basics of React Nativefrom scratch. And worked on the following:
+    - **Created Mockups with Senan** 
+    [Mockups](https://github.com/SWE574-G3/Living-Stories-App/wiki/Scenarios-and-Mock%E2%80%90Ups)
+    - **Designed Story Card and Improved Feed Page Design** 
+Designed Story Cards that are displayed in Home page, Search Page and Profile Page, And improved the Feed Page's Design [Issue#37](https://github.com/SWE574-G3/Living-Stories-App/issues/37),[PR#27](https://github.com/SWE574-G3/Living-Stories-App/pull/27).
+    - **Developed and Designed User Profile Page** 
+Designed User's Profile Page, displaying their profile info and Stories, along with the ability to Edit their Profile. [Issue#49](https://github.com/SWE574-G3/Living-Stories-App/issues/49),  [Issue#88](https://github.com/SWE574-G3/Living-Stories-App/issues/88)
+    - **Developed and Designed Search Page** 
+Designed and Developed the Search page, for Story Search, and User Search.
+Along with finding a solution to use months and years pickers without a calendar Component for mobile. In addition to getting user's Current Location for the Search. [Issue#96](https://github.com/SWE574-G3/Living-Stories-App/issues/96), [Issue#107](https://github.com/SWE574-G3/Living-Stories-App/issues/107), [Issue#130](https://github.com/SWE574-G3/Living-Stories-App/issues/130)
+    - **Designed Comment Card** 
+Designed the comment card to be used in Story Page.
+    - **Designed Profile/Register Page** 
+[Issue#35](https://github.com/SWE574-G3/Living-Stories-App/issues/35), [Issue#36](https://github.com/SWE574-G3/Living-Stories-App/issues/36)
+    - **Designed the Story Page** 
+Designed the story page, fixing the page's format, colors, icons for seasons, comment section, Author's info and story Content. [Issue#50](https://github.com/SWE574-G3/Living-Stories-App/issues/50) 
+    - **Designed and Developed Post Story Page** 
+Designed Post story page, Implementing a Rich Text Editor, designing tags addition, with dates selection that i developed in Search Page before, in addition to Adding a photo from Camera or Gallery to the Rich Text Editor's content. [PR#163](https://github.com/SWE574-G3/Living-Stories-App/pull/163)
+[Issue#166](https://github.com/SWE574-G3/Living-Stories-App/issues/166)
+    - **Implemented Timeline Function and Improved Senan's Page Design** 
+Made a link from Search Page's location selection to Timeline page to Display Timeline stories of this location. And Implemented Fixes and Improvements on Senan's Initial Timeline design, including background change on scroll. [PR#164](https://github.com/SWE574-G3/Living-Stories-App/pull/164)
+    - **Generall Bug Fixes**
+    [Issue#138](https://github.com/SWE574-G3/Living-Stories-App/issues/138),    [Issue#133](https://github.com/SWE574-G3/Living-Stories-App/issues/133),    [Issue#165](https://github.com/SWE574-G3/Living-Stories-App/issues/165),    [Issue#139](https://github.com/SWE574-G3/Living-Stories-App/issues/139)
+    - **Debugging Errors on APK Build** 
+
+- **Redesign Web App's Frontend:** I've completely redesigned all the Web App's Frontend, improving on the current design. Changing pages format, input fields, titles and colors
+    - **Designed** 
+    Story Card, Comment Card, Feed Page, Search Page, Profile Page, Edit Profile, Story Page, Create Story Page, Edit Story Page. [PR#150](https://github.com/SWE574-G3/Living-Stories-App/pull/150), [PR#145](https://github.com/SWE574-G3/Living-Stories-App/issues/145)
+    - **Implemented** 
+        - Get User's Current Location in Create Story.
+        - Follow Author Button in Story Page
+        - Compress Uploaded Profile Picture in Profile Page
+        - Helped Erhan Design User's Followers List and Story's Likes list
+
+### My Pull Requests
+#### Freature/ Mobile Timeline [PR#164](https://github.com/SWE574-G3/Living-Stories-App/pull/164)
+I've Created this PR to develop the Timeline Page for mobile inside it, where me and Senan worked in it.
+#### Mobile new post story [PR#163](https://github.com/SWE574-G3/Living-Stories-App/pull/163)
+I've Created this PR to develop our new Post Story Page for mobile after we decided to recreate it without using WebView, where I've developed and designed the page, then senan added the map locations selections with markers.
+#### Feature/Web frontend redesign [PR#150](https://github.com/SWE574-G3/Living-Stories-App/pull/150)
+This PR was created so i could work on all the Web App's Frontend design seperately before merging it, where i did all the changes mentioned above about redesigning the frontend.
+#### Feature/new post story mobile [PR#78](https://github.com/SWE574-G3/Living-Stories-App/pull/78)
+This was created for developing out initial Mobile Post Story Page, where we used WebView to fast the process of having the page ready, but then we changed it all in PR#163 above
+#### feat: Design for Pages [PR#27](https://github.com/SWE574-G3/Living-Stories-App/pull/27)
+This was created for beginning of the design and adding pages process on mobile.
+
+### Code Reviews
+#### Reviewed Senan's code as he reviewed mine during all the PRs mentioned above.
+#### Reviewed Erhan's code in [PR#167](https://github.com/SWE574-G3/Living-Stories-App/issues/167)
+- In a meeting i've reviewed Erhan's code from this issue, and later on did some fixes and changes due to problems that appeared after build.
+    - [Removed Box Component Commit](https://github.com/SWE574-G3/Living-Stories-App/commit/b3b4c6aa24a5bee80fcde14129bcdaea1984c8f7)
+A Box component used to display Followers and likes list in Modal was Causing problems when building the WebApp on the Cloud, so i replaced it with a normal Div with styling.
+    - [Fix Credentials on Endpoints call Commit](https://github.com/SWE574-G3/Living-Stories-App/commit/5760e0f51ca7ae6803dd80f9ae12e7dfcc6b9d82)
+The Endpoint for getting User's Followers and Story Likes list, was throwing error due to not passing credentials with the api call.
+    - [Fixed Scrolling Commit](https://github.com/SWE574-G3/Living-Stories-App/commit/e760561384add5f0e5ecad70f53f44438e62d44d)
+When the Followers or Likes list gets long, it didnt scroll and kept getting longer, so i added a scrollview on the div that contains the list.
+
+### DEMO
+#### Timeline onScroll Design Changes
+In Mobile Timeline page, i've worked on the feature of Detecting which story is in the middle of the screen when the user is scrolling horizontally, and based on the season of that story, it's background leaf is different, and the whole page's background GIF changes to correspond the season.
+![image](https://hackmd.io/_uploads/ByGbYgGOa.png)![image](https://hackmd.io/_uploads/SJGztefOT.png)
+#### Created Months and Years Pickers manually
+In Mobile Search Page, we found a calendar component for choosing a full date, but couldnt find a component for choosing only month and year or only year (some component were breaking the apk build). So i had to manually create a list of months, and a list of auto generated Years, and on selecting each individually i combine them together in the needed format for the API search endpoint.
+![image](https://hackmd.io/_uploads/rkbNYefu6.png)
+
+
+
+### Issues Table
+
+
+#### Created by Me
+
+| Issue URL                                         | Issue Title                                         |
+| -------------------------------------------------- | --------------------------------------------------- |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/139 | Add Ask Permission for Gallery and Camera access for mobile                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/167 | Add Followers and Likes List on Web App                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/145   | Redesign Web App Frontend                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/138   | Fix Follow Button Update on User Profile                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/107 | Feature: Create User Search                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/89 | Add Edit Story Feature                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/88   | Add Edit Profile Feature                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/50   | Improve Design of Story Page                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/49 | Improve Design of My Profile Page                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/33 | Create Feed Page with Basic Functions                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/32   | Create My Profile Page with Basic Functions                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/31   | Create Post Story Page with Basic Functions                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/49 | Improve Design of My Profile Page                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/30 | Create Story Page with Basic Functions                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/25   | Create Mobile Screens/Pages                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/24   | Implement the Navigation system for the Mobile App                               |
+
+#### Assigned to Me
+
+| Issue URL                                         | Issue Title                                         |
+| -------------------------------------------------- | --------------------------------------------------- |
+|https://github.com/SWE574-G3/Living-Stories-App/issues/139    | Add Ask Permission for Gallery and Camera access for mobile
+| https://github.com/SWE574-G3/Living-Stories-App/issues/167 | Add Followers and Likes List on Web App                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/145 | Redesign Web App Frontend                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/140  | Profile images uploaded by user should be reduced in size                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/138   | Fix Follow Button Update on User Profile                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/133 | Correct the tag scroll bug                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/132 | Milestone 2 Review Report                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/131   | Create timeline screen                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/130   | Add current location button to the search screen                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/129 | Add current location button to the story create screen                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/107 | Feature: Create User Search                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/96   | Search possible datetime picker for search screen                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/89   | Add Edit Story Feature                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/88 | Add Edit Profile Feature                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/76 | Add story create page to the mobile                           |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/50   | Improve Design of Story Page                               |
+| https://github.com/SWE574-G3/Living-Stories-App/issues/49   | Improve Design of My Profile Page
+|https://github.com/SWE574-G3/Living-Stories-App/issues/46    | Release Pre-release Version of the Software
+|https://github.com/SWE574-G3/Living-Stories-App/issues/45    | Prepare Milestone Review Report
+|https://github.com/SWE574-G3/Living-Stories-App/issues/37    | Improve design of Story Feed page
+|https://github.com/SWE574-G3/Living-Stories-App/issues/36    | Improve design of Resgister page
+|https://github.com/SWE574-G3/Living-Stories-App/issues/35    | Improve design of Login page
+|https://github.com/SWE574-G3/Living-Stories-App/issues/33    | Create Feed Page with Basic Functions
+|https://github.com/SWE574-G3/Living-Stories-App/issues/32    | Create My Profile Page with Basic Functions
+|https://github.com/SWE574-G3/Living-Stories-App/issues/31    | Create Post Story Page with Basic Functions
+|https://github.com/SWE574-G3/Living-Stories-App/issues/30    | Create Story Page with Basic Functions
+|https://github.com/SWE574-G3/Living-Stories-App/issues/29    | Remove TailWind
+|https://github.com/SWE574-G3/Living-Stories-App/issues/23    | Implementing a Homepage Navigation Bar
+|https://github.com/SWE574-G3/Living-Stories-App/issues/9     |Getting familiar with the base project.
+|https://github.com/SWE574-G3/Living-Stories-App/issues/7    | Prepare Responsibility Assignment Matrix.
+|https://github.com/SWE574-G3/Living-Stories-App/issues/4    |Align with group members on how to handle the UI and mobile application aspect.
+|https://github.com/SWE574-G3/Living-Stories-App/issues/3    |Align with group members on backend and database technologies to be used for the project.
+|https://github.com/SWE574-G3/Living-Stories-App/issues/2    |Create custom issue labels.
+
+
+### Documentation
+- I've Worked on my Individual contribution for every Milestone.
+- Contributed generally in providing clear info to the team, on any features I've built, for Documentation.
+- Contributed in taking Meeting notes for Mobile meetings with Senan.
+- Recorded Video DEMOs for Web App and Mobile App.
+
+### Challenges
+- Getting familiar with React Native at the start of the project.
+- Not using public libraries for ready designed components for mobile, since most of them caused errors when building the APK
+- Figuring out errors on the APK build, where i had to Log android emulator.
+- Fully understanding existing code built of the SWE 573 Project we decided to work on (Senan's Living Stories).
+
+
 
