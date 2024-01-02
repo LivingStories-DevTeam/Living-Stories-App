@@ -205,6 +205,8 @@ In summary we have delivered the following:
 
 ### User Manual
 
+[User Manual](https://github.com/SWE574-G3/Living-Stories-App/blob/reports/reports/user_manual.md)
+
 ### Test Results
 
 # Individual Contributions
