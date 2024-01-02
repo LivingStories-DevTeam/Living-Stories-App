@@ -375,3 +375,233 @@ I collaborate with my teammate, Omar, to document mobile meeting notes. In addit
 ## Pull requests
 [#59](https://github.com/SWE574-G3/Living-Stories-App/pull/59): Adding mobile development folder and codes to the main. We have tested the code in the test branch and then merged it into the main branch.
 [#63](https://github.com/SWE574-G3/Living-Stories-App/pull/63): Adding executable living_stories.apk file to the main repository.  I added apk deliverables to the main branch.
+
+## Ali Hakan Özen
+
+### Executive Summary
+
+Throughout the project, I have actively participated in several key developments, contributing to enhancements in both the frontend and backend aspects of our application.
+
+- **Timeline Page Creation:** I led the development of the Timeline page, handling both its frontend and backend implementations. This included adding a quick search feature and redesigning date filterizations to enhance user interaction and functionality.
+- **Multiple Polynomial Location Service:** I created a backend service that enables the addition of multiple polynomial locations in the story creation page, significantly enhancing the storytelling aspect of our application.
+- **Image Resizing for Performance:** To improve performance, I implemented a functionality that resizes images added in the story creation page, ensuring efficient loading and better user experience.
+- **State Management Refactoring:** I refactored state management across all pages, focusing on increasing stability and performance of the application.
+- **Activity Stream Implementation:** I successfully implemented the Activity Stream on the frontend, providing users with a dynamic way to view recent activities and interactions.
+- **Recommendation Engine Integration:** I integrated a recommendation engine as a new tab on the frontend, enhancing content discoverability and personalization for users.
+- **Beam Runner for Story Compatibility:** I developed a beam runner that updates old stories, making them compatible with our new polynomial search services, ensuring seamless integration of legacy content.
+- **Property Management for Service Compatibility:** I managed property settings for old services to align them with new polynomial story functionalities, maintaining consistency and compatibility across the application.
+- **SonarCloud Integration:** To ensure high code quality, I integrated SonarCloud into our pull request process. This tool tracks code smells and bugs, aiding in maintaining coding standards and reducing potential issues.
+
+### Detailed Contributions
+
+**Clarification:** Each of the referenced issues includes associated commits. The [Requirements](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) for the project are collectively documented on the designated webpage. However, individual URLs for each specific requirement are not available as they are consolidated in a single, comprehensive document. While some requirements are not extensively differentiated across different features that utilize similar functionalities, these have been omitted for the sake of brevity.  Additionally, explicit references to code locations are not included in the issues, since the associated commits inherently contain the necessary code changes.
+
+#### Timeline Page Creation
+
+**Related Requirements:** 
+
+- 1.1.14 
+- 1.1.15
+- 1.1.18
+- 1.2.15
+- 1.2.17
+
+**Related Issues:**
+- [Design and Implement a Timeline Page #52](https://github.com/SWE574-G3/Living-Stories-App/issues/52)
+	- **Code Description:** The Timeline page was developed from scratch, encompassing both frontend and backend elements.
+- [Solution for Google Maps Radius Trigger Event #61](https://github.com/SWE574-G3/Living-Stories-App/issues/61)
+    - **Code Description:** Initially, adjustments made to the radius for the circular search did not activate the search service. This issue was identified and subsequently resolved.
+- [Revamp Timeline Page UI for Enhanced User Interface #112](https://github.com/SWE574-G3/Living-Stories-App/issues/112)
+	- **Code Description:** The Timeline page underwent a significant redesign after feedback from the _Milestone 2_ presentation. The new design features a visually appealing, horizontal layout. To augment user engagement and interactivity, intuitive navigation controls were integrated.
+- [Enhancements and Fixes Implemented for Advanced Timeline Search Functionality #114](https://github.com/SWE574-G3/Living-Stories-App/issues/114)
+	- **Code Description:** The Timeline page filter section received an enhancement with the addition of a circular search mechanism.
+
+#### Multiple Polynomial Location Service
+
+**Related Requirements:** 
+
+- 1.2.13
+
+**Related Issues:**
+- [Resolving Front-End Location City Bug #146](https://github.com/SWE574-G3/Living-Stories-App/issues/146)
+    - **Code Description:** The initial incorrect implementation of locations obtained from the Google API location service, due to the inaccurate setting of latitude and longitude values, was subsequently identified and rectified.
+
+#### Image Resizing for Performance
+
+**Related Requirements:**
+
+- 1.2.5
+
+**Related Issues:**
+- [Image Compression Feature to React-Quill #51](https://github.com/SWE574-G3/Living-Stories-App/issues/51)
+    - **Code Description:** To address the potential issue of large image sizes in stories slowing down the homepage and search functions, a compression method has been implemented for images uploaded via Quill.
+
+#### State Management Refactoring
+
+**Related Issues:**
+- [Optimize Directory Structure for Configuration #151](https://github.com/SWE574-G3/Living-Stories-App/issues/151)
+    - **Code Description:** This straightforward task entailed simply renaming directories to conform to standard naming conventions.
+- [Implementing Jakarta ID over Annotation ID for Database Recognition in Entity Classes #161](https://github.com/SWE574-G3/Living-Stories-App/issues/161)
+    - **Code Description:** The Jakarta ID reference is essential for the proper activation of JPA queries. In this instance, there was a deviation from this standard, which has now been rectified to ensure correct query functionality.
+- [Enhance Frontend State Management in React: Refactoring #11](https://github.com/SWE574-G3/Living-Stories-App/issues/11)
+    - **Code Description:** Unlike other issues, this one is not linked to a specific commit, as the task was addressed progressively through the implementation and refactoring of various code segments. The objective was to enhance state management within React, focusing on improving data response speed and adhering to standardized clean code practices.
+
+#### Activity Stream Implementation
+
+**Related Requirements:** 
+
+- 1.1.19
+
+**Related Issues:**
+- [Implemented Activity Stream Feature in Navigation Bar #119](https://github.com/SWE574-G3/Living-Stories-App/issues/119)
+    - **Code Description:** The Activity Stream feature has been seamlessly integrated into the navigation bar, represented as a bell icon. This interactive element, when clicked, triggers a side drawer, providing easy access to the activity stream from any page within the application.
+
+#### Recommendation Engine Integration
+
+**Related Requirements:** 
+
+- 1.1.13
+
+**Related Issues:**
+- [Enhance User Experience by Developing a Recommendation Data Service and Controller #101](https://github.com/SWE574-G3/Living-Stories-App/issues/101)
+    - **Code Description:** In addition to introducing a recommendation tab on the homepage, a specialized service was developed. This service facilitates communication between the backend Spring application and the recommendation engine Flask application, enabling the  transfer of data. It ensures that all necessary stories and their contents are appropriately fetched and utilized in the recommendation process.
+- [Develop a Personalized Recommendation Tab for the Home Screen #113](https://github.com/SWE574-G3/Living-Stories-App/issues/113)
+    - **Code Description:** The implementation of a recommendation engine was completed, integrating it into the frontend. This allows users to easily access personalized story recommendations directly from the home screen.
+- [Addressing Recommendation Tab Display Issue #147](https://github.com/SWE574-G3/Living-Stories-App/issues/147)
+    - **Code Description:** This issue involved setting restrictions to limit the number of stories displayed in the recommendation tab, ensuring only a specific amount of stories are recommended at a time. This problem has been effectively resolved.
+
+#### Beam Runner for Story Compatibility
+
+**Related Issues:** 
+- [Updating Legacy Story Creation Service for Polygon Creation #149](https://github.com/SWE574-G3/Living-Stories-App/issues/149)
+    - **Code Description:** A Beam Runner has been integrated into the backend application, activated automatically with each server restart. This Beam Runner operates as an auto-triggered service during application initialization. In this specific use case, it was employed to update the location properties of older stories, which were initially empty due to the introduction of a new location type.
+
+#### Property Management for Service Compatibility
+
+**Related Issues:**
+- [Enhance Location Data for Legacy Stories #148](https://github.com/SWE574-G3/Living-Stories-App/issues/148)
+    - **Code Description:** Concurrent with the implementation of drawing tools, I developed an enhanced story creation service that utilizes an advanced location property. Recognizing the ongoing need for this property in legacy services -such as our mobile application, I modified the request entity's location property. This adjustment ensures that the location is automatically set correctly, even when interfacing with legacy services.
+
+#### SonarCloud Integration
+
+**Related Issues:**
+- [Implement SonarQube Integration for Repository Code Analysis #13](https://github.com/SWE574-G3/Living-Stories-App/issues/13)
+    - **Code Description:** The integration of SonarQube for repository code analysis was achieved by setting up a _.yml_ configuration file and workflows. This configuration automates the integration with GitHub pull requests, streamlining the code analysis process.
+- [Integrate All Branches with SonarQube #41](https://github.com/SWE574-G3/Living-Stories-App/issues/41)
+    - **Code Description:** In this task, I expanded SonarCloud's quality gate criteria to include every branch in the repository, ensuring comprehensive code quality analysis across all development branches.
+
+#### Other Contributions
+
+- [Implementing a Homepage Navigation Bar #23](https://github.com/SWE574-G3/Living-Stories-App/issues/23)
+    - **Code Description:** This task involved adding templates for all pages and creating a corresponding navigation bar for the mobile application.
+- [Launch Announcement: Second Milestone Achievement #121](https://github.com/SWE574-G3/Living-Stories-App/issues/121)
+    - **Description:** For the second milestone, I initiated a dedicated pull request prior to the final merge, and also prepared a new version release of the application.
+
+### Pull Requests
+
+#### Assignee
+
+- [Comprehensive Evaluation of Project Progress: Milestone 2 #120](https://github.com/SWE574-G3/Living-Stories-App/pull/120)
+    - **Description:** I initiated a dedicated pull request prior to the final merge. [#121](https://github.com/SWE574-G3/Living-Stories-App/issues/121)
+- [Remerged into mobile #122](https://github.com/SWE574-G3/Living-Stories-App/pull/122)
+    - **Description:** I conducted a rebase and merge of the frontend branch into the mobile branch to proactively address and resolve any potential conflicts.
+- [Add area drawing to the map #83](https://github.com/SWE574-G3/Living-Stories-App/pull/83)
+    - **Description:** Regrettably, this pull request extends beyond its initial scope, as outlined in its title and description, by merging multiple functional developments at once, including the implementation of drawing tools.
+- [Bug resolved #62](https://github.com/SWE574-G3/Living-Stories-App/pull/62)
+    - **Description:** This pull request signifies a prompt and effective resolution of a reported bug, with further details available in the comment within the request. [#61](https://github.com/SWE574-G3/Living-Stories-App/issues/61)
+- [Unable to use LIKE operator... #58](https://github.com/SWE574-G3/Living-Stories-App/pull/58)
+    - **Description:** Similarly, this pull request represents a prompt resolution to a bug, with details available in the associated issue. [#57](https://github.com/SWE574-G3/Living-Stories-App/issues/57)
+- [SonarQube and Timeline Page #55](https://github.com/SWE574-G3/Living-Stories-App/pull/55)
+    - **Description:** As the title suggests, this pull request encompasses changes related to both the timeline page and SonarQube integration. It is _presumably_ deemed appropriate to merge these changes simultaneously.
+- [Create sonarcloud.yml #12](https://github.com/SWE574-G3/Living-Stories-App/pull/12)
+    - **Description:** This pull request contains a small yet crucial contribution related to the integration of SonarCloud.
+
+#### Reviewer
+
+**Clarification:** While I am the primary contributor responsible for frontend development, it is worth noting that I have not encountered frequent pull requests from other contributors that require my evaluation for frontend-related changes.
+
+- [Feature/Web frontend redesign #150](https://github.com/SWE574-G3/Living-Stories-App/pull/150)
+    - **Description:** This pull request reflects Omar's redesign of the frontend user interface. In this pull request, I addressed all the visual enhancements. We meticulously tackled potential conflicts to ensure their resolution was precise and did not inadvertently lead to any other issues. However, it can be _noted_ that a detailed explanation of these steps was not included in the comment section, which, in hindsight, is regrettable.
+
+### Demo
+
+**Clarification:** This section highlights the most challenging aspect of development.
+
+**Description:** As illustrated in the image below, a circular search mechanism has been incorporated to facilitate the location-based search for stories. Initially, this implementation was relatively straightforward when stories were point-based. However, with the introduction of the new feature, polynomial locations, the circular search had to be significantly enhanced to effectively detect stories within these complex location boundaries.
+
+![image](https://hackmd.io/_uploads/HJOfWhxd6.png)
+
+To address the problem, I used geolocational ray tracing, harnessing the capabilities of the Geometry Factory from the OSGeo library. All of these methods, written in the service layer, exclusively serve this specific purpose.
+
+```
+    private boolean locationMatches(Locations location, Point searchCenter, double radiusInDegrees, GeometryFactory geometryFactory) {
+        String type = location.getType();
+        if (type == null) {
+            type = "Point";
+        }
+        switch (type) {
+            case "Point":
+                return markerMatches(location, searchCenter, radiusInDegrees, geometryFactory);
+            case "Circle":
+                return circleMatches(location, searchCenter, radiusInDegrees, geometryFactory);
+            case "Polygon":
+                return polygonMatches(location, searchCenter, radiusInDegrees, geometryFactory);
+            default:
+                return markerMatches(location, searchCenter, radiusInDegrees, geometryFactory);
+        }
+    }
+    
+    private boolean markerMatches(Locations location, Point searchCenter, double radiusInDegrees, GeometryFactory geometryFactory) {
+        List<List<Double>> coordinates = location.getCoordinates();
+        double lat, lng;
+        if (coordinates.isEmpty() || coordinates.get(0).isEmpty()) {
+            lat = location.getLat();
+            lng = location.getLng();
+        } else {
+            List<Double> latLng = coordinates.get(0);
+            lat = latLng.get(0);
+            lng = latLng.get(1);
+        }
+        Point locationPoint = geometryFactory.createPoint(new Coordinate(lat, lng));
+        return locationPoint.isWithinDistance(searchCenter, radiusInDegrees);
+    }
+    
+        private boolean circleMatches(Locations location, Point searchCenter, double radiusInDegrees, GeometryFactory geometryFactory) {
+        List<Double> centerLatLng = location.getCoordinates().get(0);
+        Point center = geometryFactory.createPoint(new Coordinate(centerLatLng.get(0), centerLatLng.get(1)));
+        double localRadiusInDegrees = metersToDegrees(location.getRadius());
+        Geometry circle = createCircle(center, localRadiusInDegrees, geometryFactory);
+        return circle.intersects(searchCenter.buffer(radiusInDegrees));
+    }
+
+    private Geometry createCircle(Point center, double radius, GeometryFactory geometryFactory) {
+        int sides = 32;
+        Coordinate coords[] = new Coordinate[sides + 1];
+        for (int i = 0; i < sides; i++) {
+            double angle = ((double) i / (double) sides) * Math.PI * 2.0;
+            double dx = Math.cos(angle) * radius;
+            double dy = Math.sin(angle) * radius;
+            coords[i] = new Coordinate(center.getX() + dx, center.getY() + dy);
+        }
+        coords[sides] = coords[0];
+        LinearRing ring = geometryFactory.createLinearRing(coords);
+        Polygon circle = geometryFactory.createPolygon(ring, null);
+        return circle;
+    }
+
+    private boolean polygonMatches(Locations location, Point searchCenter, double radiusInDegrees, GeometryFactory geometryFactory) {
+        List<List<Double>> coordinatesList = location.getCoordinates();
+        Coordinate[] coordinates = new Coordinate[coordinatesList.size()];
+        for (int i = 0; i < coordinatesList.size(); i++) {
+            List<Double> point = coordinatesList.get(i);
+            coordinates[i] = new Coordinate(point.get(0), point.get(1)); // Longitude, Latitude
+        }
+        Polygon polygon = geometryFactory
+                .createPolygon(new LinearRing(new CoordinateArraySequence(coordinates), geometryFactory), null);
+        return polygon.intersects(searchCenter.buffer(radiusInDegrees));
+    }
+```
+
+### Documantation
+
+**Explanation:** While I have not yet created inherent documentation, I am in the process of composing a comprehensive user and system manual. This manual will specifically cater to the customers.
