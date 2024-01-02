@@ -659,3 +659,95 @@ Throughout the project, I have actively participated in several key developments
     - **Code Description:** new Flag was not functionong correctly for activities. Tis has been fixed.
 - [Improve Home page loading performance #124](https://github.com/SWE574-G3/Living-Stories-App/issues/124)
     - **Code Description:** Improved the performance of the loadıing for home page.
+### Demo
+I implemented activity stream. This was the most challaging piece of code for this project.
+
+'''   
+
+	@GetMapping
+    public ResponseEntity<List<Activity>> getActivityStream(HttpServletRequest request){
+
+        Long id = userService.isUserLoggedIn(request);
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            List<Long> followingIds = user.getFollowing().stream().map(User::getId).collect(Collectors.toList());
+            List<Activity> activities = new ArrayList<>();
+            Date lastDate = user.getLatestSeenActivityTime();
+
+            for (Long followingId : followingIds) {
+                List<Activity> activitiesByUserId = activityRepository.findByUserId(followingId);
+
+                activitiesByUserId.forEach(activity -> {
+                    if (lastDate != null && !activity.getAction_timestamp().after(lastDate)) {
+                        activity.setNewFlag("N");
+                    } else {
+                        activity.setNewFlag("Y");
+                    }
+                });
+                activities.addAll(activitiesByUserId);
+            }
+            activities.sort(Comparator.comparing(Activity::getAction_timestamp).reversed());
+
+            if (!activities.isEmpty()) {
+                user.setLatestSeenActivityTime(activities.get(0).getAction_timestamp());
+                userRepository.save(user);
+            }
+            return ResponseEntity.ok(activities);
+        }
+
+        return ResponseEntity.notFound().build();
+    }'''
+    
+### Pull Request
+I made all the commits to the branches thus did not use any Pull requests. I handled this case with merges.
+
+### Issues
+
+
+| **Issue #** | **Title**                                                     | **Status**             | **Milestone**          | **Assignees**                                  |
+|-------------|---------------------------------------------------------------|------------------------|------------------------|------------------------------------------------|
+| [#171](https://github.com/SWE574-G3/Living-Stories-App/issues/171) | FollowerList Endpoint backend                                | Closed 3 hours ago     | Milestone 3 Review     | @yavuzsa, @BurakKocak99                         |
+| [#159](https://github.com/SWE574-G3/Living-Stories-App/issues/159)   | Modify activity when it is about the my user backend enhancement priority: high | Closed 2 hours ago | Milestone 3 Review                           | @yavuzsa, @BurakKocak99                           |
+| [#158](https://github.com/SWE574-G3/Living-Stories-App/issues/158)   | Create liked user list backend enhancement priority: low         | Closed last week        | Milestone 3 Review                           | @yavuzsa, @BurakKocak99                           |
+| [#147](https://github.com/SWE574-G3/Living-Stories-App/issues/147)   | Addressing Recommendation Tab Display Issue bug bug-fix frontend priority: high Recommendation-Engine | Closed last week        | Milestone 3 Review                           | @BurakKocak99, @JohnsL-U, @Ali-Hakan              |
+| [#142](https://github.com/SWE574-G3/Living-Stories-App/issues/142)   | Add endpoint for fetching follower list with detail info backend enhancement | Closed 2 hours ago |                                               | @yavuzsa, @BurakKocak99                           |
+| [#132](https://github.com/SWE574-G3/Living-Stories-App/issues/132)   | Milestone 2 Review Report documentation                          | Closed last month      | Milestone 2 Review                           | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH | 
+| [#128](https://github.com/SWE574-G3/Living-Stories-App/issues/128)   | Fix newflag bug backend bug-fix                                  | Closed last month      | Milestone 2 Review                           | @yavuzsa, @BurakKocak99                           |
+| [#127](https://github.com/SWE574-G3/Living-Stories-App/issues/127)   | Add new flag for activities backend enhancement                  | Closed last month      | Milestone 2 Review                           | @yavuzsa, @BurakKocak99                           |
+| [#125](https://github.com/SWE574-G3/Living-Stories-App/issues/125)   | Improve Recommendation engine performance backend improvement Recommendation-Engine | Closed 3 weeks ago | Milestone 3 Review                           | @BurakKocak99, @JohnsL-U                          |
+| [#124](https://github.com/SWE574-G3/Living-Stories-App/issues/124)   | Improve Home page loading performance backend bug improvement    | Closed 4 hours ago     | Milestone 3 Review                           | @yavuzsa, @BurakKocak99                           |
+| [#104](https://github.com/SWE574-G3/Living-Stories-App/issues/104)   | Name Similarities of Stored Data for Different Models in Database backend priority: high Recommendation-Engine | Closed on Dec 3, 2023 | Recommendation Engine                  | @BurakKocak99, @JohnsL-U                           |
+| [#99](https://github.com/SWE574-G3/Living-Stories-App/issues/99)     | Unable to Fetch User Story Likes backend priority: high Recommendation-Engine | Closed on Dec 3, 2023 | Recommendation Engine                  | @BurakKocak99, @JohnsL-U                           |
+| [#98](https://github.com/SWE574-G3/Living-Stories-App/issues/98)     | Header Search Bug bug priority: high                              | Closed last week        | Milestone 3 Review                           | @sananeminli, @yavuzsa, @BurakKocak99, @Ali-Hakan |
+| [#93](https://github.com/SWE574-G3/Living-Stories-App/issues/93)     | Review and Provide Feedback on Alternative Recommendation Engine backend improvement priority: high Recommendation-Engine | Closed last month | Recommendation Engine                  | @sananeminli, @yavuzsa, @BurakKocak99              |
+| [#91](https://github.com/SWE574-G3/Living-Stories-App/issues/91)     | Determine Database Choice Based on Recommendation Engine Logic architecture backend priority: high Recommendation-Engine | Closed on Nov 29, 2023 | Recommendation Engine          | @yavuzsa, @BurakKocak99, @JohnsL-U                  |
+| [#90](https://github.com/SWE574-G3/Living-Stories-App/issues/90)     | Update Backend Service for Correct Flask App URL in Docker Environment architecture backend priority: high Recommendation-Engine | Closed on Nov 27, 2023 | Recommendation Engine          | @yavuzsa, @BurakKocak99, @JohnsL-U                  |
+| [#87](https://github.com/SWE574-G3/Living-Stories-App/issues/87)     | Integration Testing for Python Recommendation Engine and Java/Spring Backend API architecture backend priority: high Recommendation-Engine | Closed on Dec 3, 2023 | Recommendation Engine          | @yavuzsa, @BurakKocak99, @JohnsL-U                  |
+| [#84](https://github.com/SWE574-G3/Living-Stories-App/issues/84)     | Finalize activity endpoint and provide example request and response. architecture backend enhancement | Closed on Nov 13, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#74](https://github.com/SWE574-G3/Living-Stories-App/issues/74)     | Add Story Post Timestamp architecture backend enhancement      | Closed on Nov 13, 2023 |                                               | @yavuzsa, @BurakKocak99                           |
+| [#72](https://github.com/SWE574-G3/Living-Stories-App/issues/72)     | Research Optimal Model for Recommendation Engine architecture backend Recommendation-Engine | Closed on Nov 23, 2023 | Recommendation Engine          | @yavuzsa, @BurakKocak99, @JohnsL-U                  |
+| [#71](https://github.com/SWE574-G3/Living-Stories-App/issues/71)     | Record Follow Activity to the Activity table. architecture backend documentation enhancement | Closed on Nov 3, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#70](https://github.com/SWE574-G3/Living-Stories-App/issues/70)     | Record Comment Activity to the Activity table. architecture backend documentation enhancement | Closed on Nov 3, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#69](https://github.com/SWE574-G3/Living-Stories-App/issues/69)     | Record Post Activity to the Activity table. architecture backend documentation enhancement    | Closed on Nov 3, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#68](https://github.com/SWE574-G3/Living-Stories-App/issues/68)     | Record Like activity to the Activity table. architecture backend documentation enhancement    | Closed on Nov 1, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#67](https://github.com/SWE574-G3/Living-Stories-App/issues/67)     | Modify "/activity" endpoint to read from Activity table. architecture backend enhancement improvement | Closed on Nov 13, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#66](https://github.com/SWE574-G3/Living-Stories-App/issues/66)     | Record activities to the Activity table. architecture backend enhancement improvement | Closed on Nov 13, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#65](https://github.com/SWE574-G3/Living-Stories-App/issues/65)     | Identify places in code where actions we count as "Activity" is performed. architecture backend enhancement | Closed on Nov 1, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#64](https://github.com/SWE574-G3/Living-Stories-App/issues/64)     | Create an Activity entity that stores activities of users. architecture backend improvement | Closed on Oct 31, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#46](https://github.com/SWE574-G3/Living-Stories-App/issues/46)     | Release Pre-release Version of the Software backend frontend improvement priority: high | Closed on Nov 1, 2023 | Milestone Review 1                          | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
+| [#45](https://github.com/SWE574-G3/Living-Stories-App/issues/45)     | Prepare Milestone Review Report documentation priority: high        | Closed on Nov 2, 2023 | Milestone Review 1                          | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
+| [#39](https://github.com/SWE574-G3/Living-Stories-App/issues/39)     | Software Design Documents UML documentation priority: high          | Closed on Oct 30, 2023 | Milestone Review 1                          | @BurakKocak99                                   |
+| [#20](https://github.com/SWE574-G3/Living-Stories-App/issues/20)     | Initiate "like" endpoint for activity stream backend                  | Closed on Oct 22, 2023 | Back-End: Finalized Activity Stream Feature | @BurakKocak99                                   |
+| [#19](https://github.com/SWE574-G3/Living-Stories-App/issues/19)     | Add a basic endpoint for getting activity stream based on actions of followed users. backend enhancement | Closed on Oct 21, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#18](https://github.com/SWE574-G3/Living-Stories-App/issues/18)     | Decide on how to handle activity stream. backend enhancement         | Closed on Oct 21, 2023 | Back-End: Finalized Activity Stream Feature | @yavuzsa, @BurakKocak99                           |
+| [#9](https://github.com/SWE574-G3/Living-Stories-App/issues/9)       | Getting familiar with the base project. good first issue              | Closed on Oct 23, 2023 |                                              | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
+| [#7](https://github.com/SWE574-G3/Living-Stories-App/issues/7)       | Prepare Responsibility Assignment Matrix. documentation priority: high | Closed on Oct 14, 2023 |                                              | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
+| [#6](https://github.com/SWE574-G3/Living-Stories-App/issues/6)       | Align with group members on Integration Method for Recommendation Engine architecture priority: high | Closed on Oct 14, 2023 |                                       | @yavuzsa, @BurakKocak99, @JohnsL-U                 |
+| [#4](https://github.com/SWE574-G3/Living-Stories-App/issues/4)       | Align with group members on how to handle the UI and mobile application aspect. architecture | Closed on Oct 16, 2023 |                                  | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
+| [#3](https://github.com/SWE574-G3/Living-Stories-App/issues/3)       | Align with group members on backend and database technologies to be used for the project. architecture | Closed on Oct 16, 2023 |                              | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
+| [#2](https://github.com/SWE574-G3/Living-Stories-App/issues/2)       | Create custom issue labels.                                         | Closed on Dec 3, 2023 |                              | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
+
+
+
