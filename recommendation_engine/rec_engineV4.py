@@ -21,12 +21,19 @@ db_config = {
 }
 
 def connect_to_database():
-    return psycopg2.connect(**db_config)
+    try:
+        return psycopg2.connect(**db_config)
+    except psycopg2.DatabaseError as e:
+        print(f"Database connection error: {e}")
 
 def fetch_data(query):
-    with connect_to_database() as conn:
-        return pd.read_sql_query(query, conn)
-
+    try:
+        with connect_to_database() as conn:
+            return pd.read_sql_query(query, conn)
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return pd.DataFrame()
+    
 def fetch_users():
     return fetch_data("SELECT * FROM users")
 
@@ -85,9 +92,14 @@ def cluster_stories(X):
     return kmeans.fit_predict(X)
 
 def fetch_most_liked_stories(top_l):
-    stories_df['like_count'] = stories_df['likes'].apply(len)
-    most_liked_stories = stories_df.sort_values(by='like_count', ascending=False).head(top_l)
-    return most_liked_stories
+    try:
+        stories_df['like_count'] = stories_df['likes'].apply(len)
+        most_liked_stories = stories_df.sort_values(by='like_count', ascending=False).head(top_l)
+        return most_liked_stories
+    except Exception as e:
+        print(f"Error in fetching most liked stories: {e}")
+        return pd.DataFrame() 
+
 
 def calculate_label_similarity(user_id, stories_df):
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['id']
@@ -199,12 +211,21 @@ def recommend_stories(user_id, top_r):
     # If there are no preferred cluster, use it without
     return top_recommendations[['id','Recommendation Reason']]
 
+def fetch_all_data():
+    users = fetch_users()
+    stories = fetch_stories()
+    locations = fetch_locations()
+    followers = fetch_followers()
+    comments = fetch_comments()
+    return users, stories, locations, followers, comments
+
+
 @app.route('/recommendations', methods=['GET'])
 def get_recommendations():
     user_id = request.args.get('user_id', type=int)
     if not user_id:
         return jsonify({"error": "User ID is required"}), 400
-
+    users_df, stories_df, locations_df, followers_df, comments_df = fetch_all_data()
     if user_id not in users_df['id'].values:
         return jsonify({"error": "User does not exist"}), 404
 
@@ -217,11 +238,32 @@ def get_recommendations():
     user_read_stories_count = len(fetch_read_stories(user_id))
 
     user_interactions = user_likes_count + followed_users_count + user_comments_count + user_read_stories_count
+    user_has_created_stories = stories_df['user_id'].eq(user_id).any()
 
+    liked_story_ids = set(stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['id'])
+    
     if user_interactions < cold_start_threshold:
+        # Recommend top liked stories for users below the cold start threshold
         most_liked_stories = fetch_most_liked_stories(top_liked_stories)
         most_liked_stories['Recommendation Reason'] = 'Most Liked Stories'
         return jsonify(most_liked_stories[['id', 'Recommendation Reason']].to_dict(orient='records'))
+    elif user_interactions >= cold_start_threshold and not user_has_created_stories:
+        # Recommend based on social interactions for users above the cold start threshold who haven't created stories
+        liked_user_ids = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['user_id'].unique()
+        followed_user_ids = followers_df[followers_df['follower_id'] == user_id]['following_id'].unique()
+        relevant_user_ids = np.union1d(liked_user_ids, followed_user_ids)
+        relevant_stories = stories_df[stories_df['user_id'].isin(relevant_user_ids)]
+        relevant_stories['like_count'] = relevant_stories['likes'].apply(len)
+        relevant_stories.loc[:, 'Recommendation Reason'] = 'Social Interactions'
+        top_recommendations = relevant_stories.sort_values(by='like_count', ascending=False).drop_duplicates(subset='id').head(top_liked_stories)
+        if len(top_recommendations) < top_liked_stories:
+            additional_stories_needed = top_liked_stories - len(top_recommendations)
+            most_liked_stories = fetch_most_liked_stories(additional_stories_needed + user_likes_count)
+            most_liked_stories = most_liked_stories[~most_liked_stories['id'].isin(liked_story_ids | set(top_recommendations['id']))].head(additional_stories_needed)
+            most_liked_stories['Recommendation Reason'] = 'Most Liked Stories'
+            top_recommendations = pd.concat([top_recommendations, most_liked_stories]).head(top_liked_stories)
+            
+        return jsonify(top_recommendations[['id', 'Recommendation Reason']].to_dict(orient='records'))
     else:
         recommendations = recommend_stories(user_id, top_r=3)
         if isinstance(recommendations, pd.Series):

@@ -14,6 +14,7 @@ services:
       - db
     networks:
       - app-network
+    restart: unless-stopped 
 
   frontend:
     build: 
@@ -27,6 +28,7 @@ services:
       - backend
     networks:
       - app-network
+    restart: unless-stopped 
 
   db:
     image: postgres
@@ -51,6 +53,7 @@ services:
       - backend
     networks:
       - app-network
+    restart: unless-stopped 
     
 volumes:
   backend-data:

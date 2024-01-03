@@ -600,7 +600,7 @@ const Timeline: React.FC = () => {
                                                     <Input
                                                         maxLength={50}
                                                         showCount
-                                                        onBlur={() => onSearch()}
+                                                        onChange={() => onSearch()}
                                                         style={{ width: "250px" }}>
                                                     </Input>
                                                 </Form.Item>

@@ -39,6 +39,7 @@ interface Story {
 }
 const HomePage: React.FC = () => {
   const [stories, setStories] = useState<Story[]>([]);
+  const [storiesRecommended, setStoriesRecommended] = useState<Story[]>([]);
   const [storySimilarity, setStorySimilarity] = useState<any[] | null>([]);
   const [selectedOption, setSelectedOption] = useState<string>("all");
   const nav = useNavigate();
@@ -75,7 +76,7 @@ const HomePage: React.FC = () => {
             storyIds: response.data.map((item) => item.id),
           }
         );
-        setStories(secondResponse.data);
+        setStoriesRecommended(secondResponse.data);
         setStorySimilarity(response.data);
       } else {
         let url =
@@ -123,7 +124,7 @@ const HomePage: React.FC = () => {
           />
         </Row>
         <div className="flex flex-col mx-auto items-center">
-          {stories
+          {(selectedOption === "recommended" ? storiesRecommended : stories)
             .slice()
             .reverse()
             .map((story: Story) => (
@@ -140,7 +141,7 @@ const HomePage: React.FC = () => {
             ))}
         </div>
       </div>
-      {stories.length === 0 && (
+      {(selectedOption === "recommended" ? storiesRecommended.length === 0 : stories.length === 0) && (
         <h2 className="text-white text-5xl mt-12 text-center">
           Getting Stories ...
           <div className="flex justify-center items-center mt-4">
