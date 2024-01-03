@@ -1438,6 +1438,8 @@ We have identified the places where we have to call a new methods to insert acti
 
 During this project, the most time consuming and intellectually challenging part of this project for me was implementing the Activity Stream Feature. The difficulty of this feature did not come come from the actual complexity of the code (like most software products) but rather from the architectural design decisions and communication with other domains, with strong emphasis on communication. 
 The codes for this feature can be found in [ActivityController](https://github.com/SWE574-G3/Living-Stories-App/blob/main/living_stories/src/main/java/com/swe573/living_stories/Controllers/ActivityController.java) and [ActivityService](https://github.com/SWE574-G3/Living-Stories-App/blob/main/living_stories/src/main/java/com/swe573/living_stories/Services/ActivityService.java). There are of couse code changes in other files too but therese are the main ones where one can navigate through the project.
+Also, the part that requires significant attention was to make sure that we were following good code development standarts while planning the features. We did not want to make the code just work, we wanted to have a clean architecture that was open to extensions in the future.
+This approach required extensive research before adding new features which was challenging but really rewarding in terms of personal development.
 
 
 ![activity_bellicon](https://github.com/SWE574-G3/Living-Stories-App/assets/64078926/7a2a5804-a5b4-473e-b5f1-bb5f1d658b91)
