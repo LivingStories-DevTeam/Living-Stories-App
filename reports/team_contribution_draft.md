@@ -1339,7 +1339,7 @@ All the commits are done by me does not required a pull request. I took part of 
 | Issue Number | Issue Name                                                   | Assigned By   | Assigned To                                         |
 |--------------|--------------------------------------------------------------|---------------|-----------------------------------------------------|
 | [#168](https://github.com/SWE574-G3/Living-Stories-App/issues/168) | Web page UI testing frontend UAT                             | erhan-yasar   | erhan-yasar                                  |
-| [#167](https://github.com/SWE574-G3/Living-Stories-App/issues/167) | Add Followers and Likes List on Web App frontend improvement | Omar4GH       | erhan-yasar                                  |
+| [#167](https://github.com/SWE574-G3/Living-Stories-App/issues/167) | Add Followers and Likes List on Web App frontend improvement | Omar4GH       | erhan-yasar, Omar4GH                                  |
 | [#145](https://github.com/SWE574-G3/Living-Stories-App/issues/145) | Redesign Web App Frontend                                    | Omar4GH       | erhan-yasar, Omar4GH                                   |
 | [#132](https://github.com/SWE574-G3/Living-Stories-App/issues/132) | Milestone 2 Review Report documentation                      | JohnsL-U      | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
 | [#92](https://github.com/SWE574-G3/Living-Stories-App/issues/92)   | Create Data for Testing Recommendation Engine Performance   | JohnsL-U      | erhan-yasar                                         |
