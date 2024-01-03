@@ -240,6 +240,8 @@ def get_recommendations():
     user_interactions = user_likes_count + followed_users_count + user_comments_count + user_read_stories_count
     user_has_created_stories = stories_df['user_id'].eq(user_id).any()
 
+    liked_story_ids = set(stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['id'])
+    
     if user_interactions < cold_start_threshold:
         # Recommend top liked stories for users below the cold start threshold
         most_liked_stories = fetch_most_liked_stories(top_liked_stories)
