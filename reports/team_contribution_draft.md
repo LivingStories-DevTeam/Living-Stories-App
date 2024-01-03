@@ -1647,7 +1647,6 @@ We believe this is a better way of ensuring that bugs and unintended behaviours 
 | #175         | PyTest unable to locate file                                | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/175)    |
 | #179         | Inconsistencies in Recommendation Responses for New Users                                | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/179)    |
 | #182         | Recommendation Reasoning bias                                | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/182)    |
-Recommendation Reasoning bias
 
 
 
@@ -1754,7 +1753,13 @@ This feature involved several complex coding parts:
 
 This part of the recommendation engine is complex due to the need to handle natural language data, implement machine learning algorithms effectively, and ensure that the clustering and scoring mechanisms are both accurate and efficient. Additionally, it requires a deep understanding of the domain and user behavior to tune the parameters and weights for the similarity calculations appropriately.
 
+***New User with Cold Start***
 ![Image](https://github.com/SWE574-G3/Living-Stories-App/assets/93824716/8a385cea-fbde-4b7c-838b-79137bc52fe5)
+<br>
+***Regular Recommendation***
+<img width="1037" alt="Screenshot 2024-01-03 at 3 45 46 PM" src="https://github.com/SWE574-G3/Living-Stories-App/assets/93824716/ef28153e-621f-4e7e-b05d-17020fecfed6">
+
+
 
 
 ### Documentation
