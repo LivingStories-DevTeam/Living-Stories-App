@@ -254,6 +254,13 @@ def get_recommendations():
         relevant_stories['like_count'] = relevant_stories['likes'].apply(len)
         relevant_stories.loc[:, 'Recommendation Reason'] = 'Social Interactions'
         top_recommendations = relevant_stories.sort_values(by='like_count', ascending=False).drop_duplicates(subset='id').head(top_liked_stories)
+        if len(top_recommendations) < top_liked_stories:
+            additional_stories_needed = top_liked_stories - len(top_recommendations)
+            most_liked_stories = fetch_most_liked_stories(additional_stories_needed + user_likes_count)
+            most_liked_stories = most_liked_stories[~most_liked_stories['id'].isin(liked_story_ids | set(top_recommendations['id']))].head(additional_stories_needed)
+            most_liked_stories['Recommendation Reason'] = 'Most Liked Stories'
+            top_recommendations = pd.concat([top_recommendations, most_liked_stories]).head(top_liked_stories)
+            
         return jsonify(top_recommendations[['id', 'Recommendation Reason']].to_dict(orient='records'))
     else:
         recommendations = recommend_stories(user_id, top_r=3)
