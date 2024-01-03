@@ -8,6 +8,7 @@ import Tooltip from "@mui/material/Tooltip";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CommentIcon from "@mui/icons-material/Comment";
+import { Space } from "antd";
 interface Story {
   id: number;
 
@@ -99,11 +100,13 @@ const StoryComponent: React.FC<StoryProps> = ({ story, similarity }) => {
             <div className="flex justify-between">
               <p className="text-gray-700 flex text-sm mb-2">
                 <LocationOnIcon fontSize="small" className="mr-1" />
+                <Space>
                 {(story as any).locationsAdvanced?.map((location: any) => (
                   <p
                     key={location.id}
                   >{`${location.city} / ${location.country}  `}</p>
                 ))}
+                </Space>
               </p>
               {similarity && (
                 <div>
