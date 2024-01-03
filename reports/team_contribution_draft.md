@@ -290,6 +290,12 @@ Consider splitting StoryService in the future.
 
 #### Selenium Tests:
 
+Selenium test cases are created for easily repeatable testing for web application. 
+
+For more details, users can [follow](https://github.com/SWE574-G3/Living-Stories-App/tree/main/selenium_test_cases) the instructions and try it themselves.
+
+Test results of the screenshot is shared below.
+
 #### Manual Tests:
 
 Every team member tested the functionalties that we have implemented in the production environment with real users. 
