@@ -18,7 +18,14 @@ Related to the submission of all the project deliverables for the SWE 574 2023 F
 - We have prepared this material collaboratively as a group, without the assistance of anyone else outside of our group, with the exception of permitted peer assistance which we have explicitly disclosed in this report.
 
 **Signed,**
+
+* Burak Koçak <br>
 ![image](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/8e7820d3-14b7-4dd3-86a7-e876ba04329c)
+
+* Salih Yavuz <br>
+![image](https://github.com/SWE574-G3/Living-Stories-App/assets/64078926/205e1c4a-293c-473a-aca1-3069381302ed)
+
+
 
 **Group 3**
 
