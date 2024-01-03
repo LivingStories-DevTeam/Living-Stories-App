@@ -1209,4 +1209,164 @@ In Mobile Search Page, we found a calendar component for choosing a full date, b
 5. **Milestones**:
    - Documents significant phases and achievements in the project lifecycle, detailing the progress and goals met at each stage.
    - [Milestones](https://github.com/SWE574-G3/Living-Stories-App/milestones?state=closed)
+# Individual Contributions
+
+## Erhan Yaşar
+
+### Executive Summary
+
+Throughout the project, I have focused on documentation, taking notes for the meetings and classes, and testing for web application, mobile application and recommendation engine.
+
+- **Documentation:** Thorough the semester, I took most of the meeting notes and shared with our discord group and wiki collaborating with Cansel.
+- **Initial mock-ups for mobile:** At the start of the semester, I create 9 mobile pages using figma. Senan and Omar upgrade them with better images. Added scenario for these images.
+- **System testing:** I created a set of 10 users and 20 stories on the web app to test the performance of both application and recommendation engine. Some of the improvements are done after these test such as reducing file size of profile pictures due to heavy load on system.
+- **End-user Web Application Testing:** I created 22 test cases using Selenium IDE to test the web application to test the changes of web UI much faster.
+- **Follower List,Like List:** I did the web front-end part of the follower list and like list.
+- **First version of User Manual:** I took new screenshots for both mobile and web application and add them to the Senan's existing user manual. Ali Hakan finalized it with fresh new instructions.
+
+
+### Detailed Contributions
+
+#### Like List and Follow List
+
+**Related Requirements:** 
+
+- [1.1.12](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+
+**Related Issues:**
+- [Add Followers and Likes List on Web App #167](https://github.com/SWE574-G3/Living-Stories-App/issues/167)
+
+    - **Code Description:** Implemented follower list and story likes list for the web application which lets users to see who liked a specific story and who are the followers of a user.
+
+#### Selenium tests of web application
+
+**Related Issues:**
+- [Web page UI testing #168](https://github.com/SWE574-G3/Living-Stories-App/issues/198)
+	- **Code Description:** Commited code includes ".side" file which lets user the test the web application with written test cases. This helps the developer who made changes to see if he/she break something or not much faster.
+
+#### Generated synthetic data to test the performance of the system
+
+**Related Issues:**
+- [Create Data for Testing Recommendation Engine Performance #92](https://github.com/SWE574-G3/Living-Stories-App/issues/92)
+	- **Description:** Created a set of 10 users and 20 stories with different dates and location on the web app to test the performance of both application and recommendation engine.
+
+#### Mock-ups and scenarios
+
+- [Create Mock-Up pages #15](https://github.com/SWE574-G3/Living-Stories-App/issues/15)
+    - **Description:** Created 9 mobile images using figma and upload it to wiki.
+- [Add scenarios to mock-ups #40](https://github.com/SWE574-G3/Living-Stories-App/issues/40)
+    - **Description:** Created a scenario for the updated mock-ups
+
+    
+### Demo
+I implemented the followers list and story likes for front-end web application. Using new technologies like react-modal, react-cards and tailwind was a great challange and great experience for me.
+
+![Screenshot 2024-01-03 114101](https://github.com/SWE574-G3/Living-Stories-App/assets/115476700/c6582209-7b3a-45ef-bb08-fe9c1807f849)
+
+
+'''   
+
+	  <Modal
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                          >
+                            <Box className="w-fit border-customGreen border-solid border-3 absolute top-1/2 left-1/2 bg-green-50 transform -translate-x-1/2 -translate-y-1/2 w-400 bg-background-paper border-2 shadow-lg p-4">
+                              <h1 className="mb-4 text-2xl font-extrabold text-gray-900 dark:text-black md:text-3xl lg:text-4xl">
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                                  {user.name}'s
+                                </span>{" "}
+                                Followers
+                              </h1>
+                              <div>
+                                {followerList &&
+                                  followerList.reverse().map((user, index) => (
+                                    <Card
+                                      sx={{
+                                        maxWidth: 350,
+                                        minWidth: 300,
+                                        width: "100%",
+                                        height: "100%",
+                                      }}
+                                      className="shadow-md mx-auto m-4 h-fit transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
+                                    >
+                                      <div className="p-4">
+                                        <Link to={`/user/${user.name}`}>
+                                          <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center">
+                                              <Avatar
+                                                sx={{ width: 75, height: 75 }}
+                                                alt={user.name}
+                                                className="mr-2"
+                                              />
+                                              <span className="text-black text-base font-semibold">
+                                                {user.name}
+                                              </span>
+                                            </div>
+                                            <p className="text-black text-sm mb-2">
+                                              <HistoryEduIcon
+                                                fontSize="large"
+                                                className="mx-1"
+                                              />
+                                              {user.stories?.length}
+                                              <PeopleIcon
+                                                fontSize="large"
+                                                className="mx-1"
+                                              />
+                                              {user.followers?.length}
+                                            </p>
+                                          </div>
+                                        </Link>
+                                      </div>
+                                    </Card>
+                                  ))}
+                              </div>
+                            </Box>
+                          </Modal>
+                          <PeopleIcon
+                            fontSize="large"
+                            className="cursor-pointer hover:text-blue-500"
+                            onClick={handleOpen}
+                          />{" "}
+                          {user.followers.length}
+    
+### Pull Request
+All the commits are done by me does not required a pull request. I took part of the final merge in our final meeting.
+
+### Issues
+
+| Issue Number | Issue Name                                                   | Assigned By   | Assigned To                                         |
+|--------------|--------------------------------------------------------------|---------------|-----------------------------------------------------|
+| [#168](https://github.com/SWE574-G3/Living-Stories-App/issues/168) | Web page UI testing frontend UAT                             | erhan-yasar   | Closed 2 days ago                                   |
+| [#167](https://github.com/SWE574-G3/Living-Stories-App/issues/167) | Add Followers and Likes List on Web App frontend improvement | Omar4GH       | Closed 2 days ago                                   |
+| [#145](https://github.com/SWE574-G3/Living-Stories-App/issues/145) | Redesign Web App Frontend                                    | Omar4GH       | Closed last week                                    |
+| [#132](https://github.com/SWE574-G3/Living-Stories-App/issues/132) | Milestone 2 Review Report documentation                      | JohnsL-U      | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
+| [#92](https://github.com/SWE574-G3/Living-Stories-App/issues/92)   | Create Data for Testing Recommendation Engine Performance   | JohnsL-U      | erhan-yasar                                         |
+| [#46](https://github.com/SWE574-G3/Living-Stories-App/issues/46)   | Release Pre-release Version of the Software                 | JohnsL-U      | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
+| [#45](https://github.com/SWE574-G3/Living-Stories-App/issues/45)   | Prepare Milestone Review Report documentation               | JohnsL-U      | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
+| [#44](https://github.com/SWE574-G3/Living-Stories-App/issues/44)   | Maintain Weekly Reports and Archive Meeting Notes           | JohnsL-U      | JohnsL-U, erhan-yasar                              |
+| [#40](https://github.com/SWE574-G3/Living-Stories-App/issues/40)   | Add scenarios to mock-ups                                   | erhan-yasar   | erhan-yasar                                         |
+| [#16](https://github.com/SWE574-G3/Living-Stories-App/issues/16)   | Share the missing meeting notes and agenda documentation     | JohnsL-U      | erhan-yasar                                         |
+| [#15](https://github.com/SWE574-G3/Living-Stories-App/issues/15)   | Create Mock-Up pages                                         | erhan-yasar   | erhan-yasar                                         |
+| [#9](https://github.com/SWE574-G3/Living-Stories-App/issues/9)     | Getting familiar with the base project                       | yavuzsa       | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
+| [#7](https://github.com/SWE574-G3/Living-Stories-App/issues/7)     | Prepare Responsibility Assignment Matrix                      | yavuzsa       | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
+| [#4](https://github.com/SWE574-G3/Living-Stories-App/issues/4)     | Align with group members on UI and mobile app aspect         | yavuzsa       | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
+| [#3](https://github.com/SWE574-G3/Living-Stories-App/issues/3)     | Align with group members on backend and database technologies| yavuzsa       | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
+| [#2](https://github.com/SWE574-G3/Living-Stories-App/issues/2)     | Create custom issue labels                                   | yavuzsa       | Closed on Dec 3, 2023                               |
+
+
+### Documentation
+- I've gathered meeting notes for most of the group meetings and classes and shared them in discord group page. Shared some of meeting notes within group's wiki page collaborating with Cansel.
+- Created mock-up pages and scenario.
+- I've Worked on my Individual contribution for every Milestone.
+- Gathered new screenshots for both mobile and web for User Manual.
+
+### Challenges
+- Most difficult challenge was balancing work and school while living away from home for the half of the semester.
+- Repeating SWE73 class with this class at the same semester.
+- Being not experienced as other team members, trying to catch up to them was exhausting for me.
+- Trying to understand new technologies used in the project.
+- Repeatedly enter information to test the system.
+
 
