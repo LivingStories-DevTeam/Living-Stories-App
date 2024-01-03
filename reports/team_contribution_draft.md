@@ -232,6 +232,10 @@ Every team member tested the functionalties that we have implemented in the prod
 No serious bugs have been observed so far in the current state of the project.
 
 # Individual Contributions
+
+
+
+
 ## SANAN EMINLI
 
 ## Contrubitions
@@ -242,22 +246,30 @@ Through this project, I took on the task of creating a mobile app from scratch. 
     
     
 
-* **Creating the mobile infrastructure:** I have created important React Native folders and also implemented authentication, which is the most fundamental thing in the social media mobile app. This helps the app to have JWT authentication for user login and registration. 
+* **Creating the mobile infrastructure:** I established crucial React Native folders and implemented fundamental authentication features, which are essential for a social media mobile app. This includes integrating JWT authentication for user login and registration. To enhance security, I stored the JWT token on the device using the Expo SecureStore library, ensuring that the token cannot be accessed from outside the app.
+
+	Moreover, I utilized React Native context for managing the JWT token, allowing for seamless sharing of authentication credentials across various screens. This context-driven approach enables us to easily determine and track user authentication status throughout the app.
     * **Issues:** [#26](https://github.com/SWE574-G3/Living-Stories-App/issues/26), [#29](https://github.com/SWE574-G3/Living-Stories-App/issues/29), [#34](https://github.com/SWE574-G3/Living-Stories-App/issues/34)
     * [**Related Requirements:**](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 1.2.18, 1.2.19, 1.2.20
 
-* **Creating navigation in mobile app**: Creating navigation inside the mobile app using React Native Navigation. This helps in changing screens and having a bottom tab bar.  
+* **Creating navigation in mobile app**: To using navigation within the mobile app, I used React Native Navigation. With React Native Navigation, we can create a stack, allowing us to push new screens onto the stack and gain control over the user's navigation experience within the app. Additionally, I used bottom tabs that are always visible to the user, providing quick access to key features like the home page, posting a new story, and viewing the user's profile.
+
+    I integrated  with the existing JWT authentication system. The app checks whether the user has a JWT token stored on their device. Based on this information, the app dynamically determines which screens to display. If the user lacks a JWT token, only the login and registration screens are shown. Once the user logs in successfully, the app presents other screens while excluding the login and registration screens from the view.
     * **Issues:** [#24](https://github.com/SWE574-G3/Living-Stories-App/issues/24), [#25](https://github.com/SWE574-G3/Living-Stories-App/issues/25) 
 
-* **Created main screens for mobile app:** Creating *post story, story page, my profile, feed screen* with basic functionalities like API calls and data fetching. These screens had design changes afterwards.
+* **Created main screens for mobile app:** Creating *post story, story page, my profile, and feed screen* with basic functionalities such as API calls and data fetching. This entails necessary data, such as recent stories, user names, photos, and comments, all coming in through API connections and working as intended. Additionally, all these screens are added to the React Native navigation stack navigator route. Design changes, like displaying incoming data to the users, will be addressed later by me and my teammate, Omar.
     * **Issues:**  [#30](https://github.com/SWE574-G3/Living-Stories-App/issues/30), [#31](https://github.com/SWE574-G3/Living-Stories-App/issues/31), [#32](https://github.com/SWE574-G3/Living-Stories-App/issues/32), [#33](https://github.com/SWE574-G3/Living-Stories-App/issues/33) 
     * [**Related Requirements:**](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 1.2.16
 
-* **Adding a map to the story page:** In here, I have added a map to the story page. Users can see the map and marker on top of the screen where stories took place. Map located on top of the story so user can see much more clearly. 
+* **Adding a map to the story page:** In this instance, I have incorporated a map into the story page. Users can view the map and marker positioned at the top of the screen, indicating the locations where stories unfolded. Placing the map at the top of the story enhances visibility for the user. Initially, I installed the necessary libraries for map integration; in this case, I utilized the react-native-maps library. With React Native maps, we have the flexibility to use different map providers such as Apple Maps or Google Maps. We opted for Google Maps as it is more familiar to most users, and Apple Maps may encounter compatibility issues on Android phones. After selecting the provider, we obtained a Google API key. On this screen, we specify the marker's latitude and longitude to accurately display the locations. 
     * **Issues:** [#38](https://github.com/SWE574-G3/Living-Stories-App/issues/38)
     * [**Related Requirements:**](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 1.1.17, 1.2.13
 
-* **Like Story:** Added like button component to the code. When user press it it will send API request that user liked the story. Afterwards like updated. 
+* **Like Story:** I added a like button component to the code. Since there are two things to like—stories and comments—I created a component for it, following the 'Don't Repeat Yourself' (DRY) principle. Using a component for liking allows us to reuse the code for both stories and comments, avoiding duplication.
+
+    When a user presses the like button, the component checks whether it is for a comment or a story, as the endpoint differs. Upon pressing the button, it sends an API request indicating that the user liked the story or comment, updating the like count and the liked icon accordingly.
+
+    For each displayed story or comment, the component checks whether the user has liked it previously. If it has been liked, the filled version of the icon is shown, indicating that the story or comment was liked by the logged-in user. Pressing the button again unlikes the comment, immediately updating the icon and like count.
     * **Issues:** [#80](https://github.com/SWE574-G3/Living-Stories-App/issues/80)
     * [**Related Requirements:**](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 1.2.6
 
@@ -269,46 +281,95 @@ Through this project, I took on the task of creating a mobile app from scratch. 
     * **Issues:** [#94](https://github.com/SWE574-G3/Living-Stories-App/issues/94) 
     * [**Related Requirements:**](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 1.1.5, 1.1.6, 1.1.7, 1.1.8, 1.1.9, 1.1.10, 1.1.11
  
-* **Location selection for story create and search:** I have added map selection to the search and create story. I created two seperate map screens for each purpose. I used pop up screen for rendering the map. When user select locatios alert is shown that indicates location selection was successiful. User can press OK button pop up screen to close.  Also added getting the user's location from the device and its user permissions. When user press get my location it is getting user's device location. 
+* **Location selection for story create and search:** I have implemented map selection for both the search and story creation functionalities. Two separate map screens were created, utilizing a pop-up screen for rendering the map. In the story creation map, when a user presses a location on the map, it retrieves latitude and longitude data and gathers additional necessary information such as the name of the location, city, and country from the Google Maps Places API. After obtaining this information, it is added to an array of selected locations, which is then displayed to the user with location names atop the map.
+
+    In the story create map, a delete button has been included, allowing users to remove selected locations easily. When a user presses the red bin icon, the associated location is removed, and the selected locations array is updated.
+
+    To provide a slightly different experience in the search map, it also features autocomplete functionality. However, users can select only one location here. Additionally, a radius slider is placed at the bottom of the screen, indicating the distance in kilometers that the user wishes to see results from the search query.
+
+    Moreover, I've integrated Google Autocomplete location search functionality into both maps. This feature provides autocomplete results from the Google API as the user types a location. Upon selecting a result, it retrieves the location's latitude and longitude information and gathers the necessary details mentioned above from the Google Geolocations API.
+
+    Upon completing the location selection, if the user presses the 'Select Locations' button, an alert is displayed indicating the successful location selection. Pressing 'OK' on the alert closes the pop-up screen. Additionally, I have incorporated the ability to retrieve the user's location from the device, including handling necessary user permissions. When the user presses 'Get My Location,' the application fetches the user's device location.
     * **Issues:** [#95](https://github.com/SWE574-G3/Living-Stories-App/issues/95), [#97](https://github.com/SWE574-G3/Living-Stories-App/issues/97) 
     * [**Related Requirements:**](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 1.1.9, 1.2.20
 
-* **Activity Stream:** I have created an activity stream screen and button on top th e feed. When new activity happens backend send the number of new activities and I show the number of new activites on top of button. When user press the bell icon to go activity new activities will shown red dot on top of them. 
+* **Activity Stream:** I have implemented an activity stream screen with a corresponding button located at the top of the feed. When a new activity occurs, the backend sends the number of new activities, and I display this count on top of the button. Users can press the bell icon to navigate to the activity screen, where new activities are marked with a red dot.
+
+    Each activity is assigned a specific meaning based on its type, as indicated by the endpoint. For instance, if the activity involves liking or commenting on a story, users can press the corresponding text on the screen to navigate directly to the related story and comment section. Similarly, if the activity pertains to a user's follower following another user, pressing the text allows the user to navigate to the profile page of the other user. 
     * **Issues:** [#100](https://github.com/SWE574-G3/Living-Stories-App/issues/100)
     * [**Related Requirements:**](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 1.1.19, 1.2.21
 
-* **Initial timeline:** Created an initial timeline page with basic design and functionality with endpoints and routes.Added falling leaf animation to the view. 
+* **Initial timeline:** Created an initial timeline page with basic design and functionality with endpoints and routes. Added falling leaf animation to the view. 
     * **Issues:** [#131](https://github.com/SWE574-G3/Living-Stories-App/issues/131)
     * [**Related Requirements:**](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 1.1.18
 
-* **Follower list:** Added a follower list to the profile page. When user press to the followers button can see the which user following the particular user. 
+* **Follower list:** I added a follower list to the profile page. When a user presses the 'followers' button, they can see which users are following the particular user. 
     * **Issues:**  [#156](https://github.com/SWE574-G3/Living-Stories-App/issues/156) 
 
-* **Like List:** Added a liked user list to the story page. Users can see which users liked particular story. 
+* **Like List:** I added a liked user list to the story page. Users can now see which users liked a particular story. 
     * **Issues:**  [#160](https://github.com/SWE574-G3/Living-Stories-App/issues/160) 
 
  
- ### Important Bug fixes and code improvements
- 
-* **Solving case-sensitive email issue:** Before the solution users can not log in their accounts because emails stored in lower case on the database and it caused error. Solved it by converting all input string to the lowercase.
-    * **Issues:**   [#48](https://github.com/SWE574-G3/Living-Stories-App/issues/48)  
-    * [see commit](https://github.com/SWE574-G3/Living-Stories-App/commit/ceecd33d4b415ee82fccc81be9364761987bb237)
+### Important Bug Fixes and Code Improvements
 
-* **Solving radius problem on search:** Radius was stored in meters on search map screen. Solving this bug with dividing meters value by 1000 to convert meter to kilometer. Because in backend we are calculating it with kilometers.  
-    * [see commit](https://github.com/SWE574-G3/Living-Stories-App/commit/fdcad3dd6219d71f98b0559f4af9174aa8d43187)
+* **Solving Case-Sensitive Email Issue:** Before the solution, users could not log in to their accounts because emails were stored in lowercase in the database, causing an error. We solved it by converting all input strings to lowercase.
+  * **Issues:** [#48](https://github.com/SWE574-G3/Living-Stories-App/issues/48)
+  * [See commit](https://github.com/SWE574-G3/Living-Stories-App/commit/ceecd33d4b415ee82fccc81be9364761987bb237)
 
-* **Creating native edit story instead of webview:** We initiallty make edit story on mobile webview. But this cause several issues like increased loading time and not responsive user interface. Therefore we removed the webview and add native edit story screen. 
-    * [See commit](https://github.com/SWE574-G3/Living-Stories-App/commit/08a545da717e4de6f903dd77a7548206f4ef4ee8)
+* **Solving Radius Problem on Search:** Radius was stored in meters on the search map screen. We fixed this bug by dividing the meter value by 1000 to convert meters to kilometers because in the backend, we are calculating it with kilometers.
+  * [See commit](https://github.com/SWE574-G3/Living-Stories-App/commit/fdcad3dd6219d71f98b0559f4af9174aa8d43187)
+
+* **Creating Native Edit Story Instead of WebView:** Initially, we made the edit story on mobile WebView. However, this caused several issues, such as increased loading time and a non-responsive user interface. Therefore, we removed the WebView and added a native edit story screen.
+  * [See commit](https://github.com/SWE574-G3/Living-Stories-App/commit/08a545da717e4de6f903dd77a7548206f4ef4ee8)
+
+* **Modify the Post Story Endpoint to Be Compatible with the Advanced Post Story Endpoint:** We used the old create story endpoint for creating stories, causing problems such as not having the required locations field for the timeline. That's why we changed the endpoint and added a new field for creating stories.
+  * **Issues:** [#165](https://github.com/SWE574-G3/Living-Stories-App/issues/165)
+  * [See commit](https://github.com/SWE574-G3/Living-Stories-App/commit/e6d8eacf44b1af9adf5507037a88ed63037b26be)
+
+* **Major UI Improvements:** Changed the design of the search and activity buttons, feed tab, and added a header for search screens.
+  * [See commit](https://github.com/SWE574-G3/Living-Stories-App/commit/07099e7939dba8c2214eb7e89589801889167668)
+
+
+## Executive Summary
+I have provided the necessary information for my project and assisted the corresponding teams in understanding both the code and database design. From the outset, I've helped form teams aligned with their areas of interest and abilities. In the mobile team, I was responsible for choosing the framework for our project, opting for React Native based on our team members' skill sets. Additionally, I collaborated with teammates, making changes and ensuring a well-crafted UI.
+
+## Demo
+This is the map selection for creating stories. Location selection can be accomplished in various ways, such as redirecting the user to another screen. Previously, we followed this approach where users would select locations and then return to the story creation page. However, in order to enhance the user experience, I have implemented a modal – a pop-up screen.
+
+<img src="https://github.com/SWE574-G3/Living-Stories-App/assets/57816597/f8955bf9-0dea-4e60-ac0c-bc39e33ec91d" width="360" height="700">
 
 
 
-* **Modify the post story endpoint to be compatible with the advanced post story endpoint:** We used old create story endpoint for creating stories. And this was causing some problems like not having required locations field for timeline. That is why we have changed the endpoint and add new field for creating stories.  
-    * **Issues:**  [#165](https://github.com/SWE574-G3/Living-Stories-App/issues/165) 
-    *  [see commit](https://github.com/SWE574-G3/Living-Stories-App/commit/e6d8eacf44b1af9adf5507037a88ed63037b26be)
+Within this modal, when the user presses on a location, it is selected. I have personally designed the map inside the modal. Upon selecting a location, the app retrieves information about that place, including latitude, longitude, the name of the location, city, and country. This data is then stored in an array, and the names of the locations are presented to the user.
 
-* **Major UI improvements:** Changing design of the search and activity button, feed tab, add header for search screens. [see commit](https://github.com/SWE574-G3/Living-Stories-App/commit/07099e7939dba8c2214eb7e89589801889167668)
+To further empower users, I've added a button for deleting a location in case the user wishes to remove it. Additionally, there's a 'Get My Location' functionality on this page. When the user presses the 'Get My Location' button, the app fetches the user's geolocation information and displays it. This feature allows users to effortlessly select and create a story based on their current location.
 
- 
+### Challenge
+During the implementation, the primary challenge was designing the inside of the modal. Since modal sizes can vary from one phone to another, and button positions may shift accordingly, I had to use percentages from the edges of the modal screen for a responsive layout. Additionally, retrieving the location city name posed a challenge. The inconsistency arises because sometimes it is referred to as the city, while in other instances, it is labeled as administrative area level 2. Consequently, I needed to iterate through each detail to identify the city accurately.
+
+
+
+## Documentation 
+I collaborate with my teammate, Omar, to document mobile meeting notes. In addition to that, I am responsible for drafting various mobile requirements.
+
+## Pull requests
+[#59](https://github.com/SWE574-G3/Living-Stories-App/pull/59): Adding mobile development folder and codes to the main. We have tested the code in the test branch and then merged it into the main branch.
+
+[#63](https://github.com/SWE574-G3/Living-Stories-App/pull/63): Adding executable living_stories.apk file to the main repository.  I added apk deliverables to the main branch.
+
+
+
+## Code review
+**Merging Mobile Post Story to the mobile branch** 
+
+During our code review, Omar and I made some changes to how the post story works. Initially, we used a WebView, but it caused problems with the user interface. So, we decided to switch to a more straightforward, native way of handling the post story.
+
+In the code review, I moved to the branch with these changes. I looked through the code to find any initial bugs or issues. After checking everything carefully, I started the emulator to test the post story with different types of data. If I found any problems, I let the team know on Discord.
+
+Once I was sure that everything was working well, I gave the green light on the pull request. This meant we could combine the branch with the post story changes into the main mobile branch, so everyone could use the updated code.
+[(See the pull request)](https://github.com/SWE574-G3/Living-Stories-App/pull/163)
+
+Generally, my code review is about the mobile app. When I review the code, I initially pull the changes to my local machine to look for initial bugs or anything crucial to our app's main function. If the code seems okay, I proceed with mobile user acceptance testing. However, if I find a bug, I immediately notify my mobile team member, Omar, about the issue through the instant messaging app called Discord. Additionally, we leverage **SonarCloud** for this project. We also check the SonarCloud quality analysis when we merge, which contains insights into code quality, bugs, and other aspects like security and etc. If there are crucial issues we missed, SonarCloud highlights them, and we correct them immediately.
  
 
 # Issues
@@ -353,7 +414,7 @@ Through this project, I took on the task of creating a mobile app from scratch. 
 
 
 
-## Assing to Me
+## Assigned To Me
 | Issue Number | Title                                                           | Assigned By   | Assigned To                      | Status            |
 |--------------|-----------------------------------------------------------------|---------------|----------------------------------|-------------------|
 | [#2](https://github.com/SWE574-G3/Living-Stories-App/issues/2)      | Create custom issue labels                                        | yavuzsa       | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH | :white_check_mark:|
@@ -378,27 +439,12 @@ Through this project, I took on the task of creating a mobile app from scratch. 
 | [#132](https://github.com/SWE574-G3/Living-Stories-App/issues/132)  | Milestone 2 Review Report                                          | JohnsL-U      | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH | :white_check_mark:|
 
 
-## Executive Summary
-I have provided necessary information for my project and assisted the corresponding teams in understanding both the code and database design. From the outset, I've helped form teams aligned with their areas of interest and abilities. In the mobile team, I was responsible for choosing the framework for our project, opting for React Native based on our team members' skillsets. Additionally, I collaborated with teammates, making changes and ensuring a well-crafted UI.
-
-## Demo
-This is the map selection for creating stories. Location selection can be accomplished in various ways, such as redirecting the user to another screen. Previously, we followed this approach where users would select locations and then return to the story creation page. However, in order to enhance the user experience, I have implemented a modal – a pop-up screen.
-
-Within this modal, when the user presses on a location, it is selected. I have personally designed the map inside the modal. Upon selecting a location, the app retrieves information about that place, including latitude, longitude, the name of the location, city, and country. This data is then stored in an array, and the names of the locations are presented to the user.
-
-To further empower users, I've added a button for deleting a location in case the user wishes to remove it. Additionally, there's a 'Get My Location' functionality on this page. When the user presses the 'Get My Location' button, the app fetches the user's geolocation information and displays it. This feature allows users to effortlessly select and create a story based on their current location.
-
-### Challanges
-During the implementation, the primary challenge was designing the inside of the modal. Since modal sizes can vary from one phone to another, and button positions may shift accordingly, I had to use percentages from the edges of the modal screen for a responsive layout. Additionally, retrieving the location city name posed a challenge. The inconsistency arises because sometimes it is referred to as the city, while in other instances, it is labeled as administrative area level 2. Consequently, I needed to iterate through each detail to identify the city accurately.
 
 
 
-## Documentation 
-I collaborate with my teammate, Omar, to document mobile meeting notes. In addition to that, I am responsible for drafting various mobile requirements.
 
-## Pull requests
-[#59](https://github.com/SWE574-G3/Living-Stories-App/pull/59): Adding mobile development folder and codes to the main. We have tested the code in the test branch and then merged it into the main branch.
-[#63](https://github.com/SWE574-G3/Living-Stories-App/pull/63): Adding executable living_stories.apk file to the main repository.  I added apk deliverables to the main branch.
+
+
 
 ## Ali Hakan Özen
 
