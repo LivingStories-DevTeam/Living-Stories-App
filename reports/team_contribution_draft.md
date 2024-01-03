@@ -25,9 +25,6 @@ Related to the submission of all the project deliverables for the SWE 574 2023 F
 * Salih Yavuz <br>
 ![image](https://github.com/SWE574-G3/Living-Stories-App/assets/64078926/205e1c4a-293c-473a-aca1-3069381302ed)
 
-* Erhan Yaşar <br>
-![Erhan_Yasar](https://github.com/SWE574-G3/Living-Stories-App/assets/115476700/ef57a819-1aef-432b-a8e1-1be9fbd46c97)
-
 
 
 **Group 3**
