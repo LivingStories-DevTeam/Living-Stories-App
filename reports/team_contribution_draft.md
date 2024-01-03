@@ -308,6 +308,13 @@ Consider splitting StoryService in the future.
 
 
 #### Recommendation Engine Unit Tests:
+This test code leverages Python's `pytest` framework and `unittest.mock` for mocking dependencies. Key components include mock database connections and queries, as well as dummy data generation using pandas DataFrames to simulate database tables.
+
+Tests: fetching and processing data from simulated database tables, text extraction from HTML, vectorization and clustering of story data, and computing various similarity scores.
+
+Additionally, the test suite includes API endpoint testing using a Flask test client, validating the server's responses to different scenarios like valid or invalid user requests. 
+
+Please see the following [test code](https://github.com/SWE574-G3/Living-Stories-App/blob/main/recommendation_engine/test_rec_engineV4.py) for details.
 
 #### Selenium Tests:
 
@@ -451,7 +458,7 @@ I collaborate with my teammate, Omar, to document mobile meeting notes. In addit
 
 [#63](https://github.com/SWE574-G3/Living-Stories-App/pull/63): Adding executable living_stories.apk file to the main repository.  I added apk deliverables to the main branch.
 
-
+[#181](https://github.com/SWE574-G3/Living-Stories-App/pull/181): Final merge of the production ready software into the main branch.
 
 ## Code review
 **Merging Mobile Post Story to the mobile branch** 
@@ -1571,4 +1578,189 @@ We believe this is a better way of ensuring that bugs and unintended behaviours 
 | [#2](https://github.com/SWE574-G3/Living-Stories-App/issues/2) | Create custom issue labels. | yavuzsa | sananeminli, BurakKocak99, JohnsL-U, Omar4GH |
 | [#1](https://github.com/SWE574-G3/Living-Stories-App/issues/1) | Each instance of a meeting note should have its own page under "Meeting Notes". documentation | yavuzsa | JohnsL-U |
 
+***
+
+## Individual Contribution: Cansel Uzun
+### Executive Summary
+
+- **Recommendation Engine Development**: I established the Flask application and integrated it with a PostgreSQL database, laying the foundation for the recommendation engine. I implemented text processing using BeautifulSoup and TF-IDF Vectorization, followed by K-Means clustering to group stories by content similarity. The core of the engine involved developing personalized recommendation logic based on user-specific metrics like label similarity and user interactions. I also tackled the cold start problem by initially recommending popular stories to new users, ensuring early engagement. This dynamic recommendation system continuously adapts to changing user preferences, maintaining relevance and personalization. As a final touch, I have also added recommendation reasoning to be displayed along each respective recommended story. This not only added more transparancy but also improved UX.
+- **Wiki and Documentation:** I played a key role in creating and maintaining the project Wiki, especially for meeting notes, ensuring that all team communications and decisions were properly documented and accessible.
+- **Communication and Planning:** I developed the Communication Plan and Responsibility Assignment Matrix, which streamlined our team coordination and clarified roles and responsibilities.
+- **UI Feedback and Testing:** My manual testing of the app and direct feedback to the frontend team significantly improved the UI, enhancing user experience.
+- **Milestone Reports:** I contributed to writing the general parts of the first two milestone reports, providing a comprehensive overview of our project's progress and achievements.
+
+### Related Functional Requirements
+
+| Requirement ID | Description | Status |
+|----------------|-------------|--------|
+| 1.1.13 | The users shall receive story or user recommendations based on their activity and interests. | Completed |
+
+### Issues
+
+| Issue Number | Title | Created by me | Assigned to me | URL |
+|--------------|------------|---------------|----------------|-----|
+| #1 | Each instance of a meeting note should have its own page under "Meeting Notes" | | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/1) |
+| #2 | Create custom issue labels | | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/2) |
+| #3 | Align with group members on backend and database technologies to be used for the project | | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/3) |
+| #4 | Align with group members on how to handle the UI and mobile application aspect | | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/4) |
+| #6 | Align with group members on Integration Method for Recommendation Engine | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/6) |
+| #7 | Prepare Responsibility Assignment Matrix | | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/7) |
+| #8 | Write short descriptions for Main Tasks in the Wiki | | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/8) |
+| #9 | Getting familiar with the base project | | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/9) |
+| #42 | Complete the Software Requirements Specification Document | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/42) |
+| #43 | Create Project Plan, Communication Plan, and Responsibility Assignment Matrix | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/43) |
+| #44 | Maintain Weekly Reports and Archive Meeting Notes | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/44) |
+| #45 | Prepare Milestone Review Report | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/45) |
+| #46 | Release Pre-release Version of the Software | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/46) |
+| #47 | Create Branch for Recommendation Engine Development | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/47) |
+| #72 | Research Optimal Model for Recommendation Engine | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/72) |
+| #87 | Integration Testing for Python Recommendation Engine and Java/Spring Backend API | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/87) |
+| #90 | Update Backend Service for Correct Flask App URL in Docker Environment | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/90) |
+| #91 | Determine Database Choice Based on Recommendation Engine Logic | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/91) |
+| #99 | Unable to Fetch User Story Likes | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/99) |
+| #103 | KeyError: 'like_count' | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/103) |
+| #104 | Name Similarities of Stored Data for Different Models in Database | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/104) |
+| #108 | KeyError for 'like_count' in DataFrame Operations | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/108) |
+| #110 | Duplicate Story Recommendations | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/110) |
+| #111 | Backend and Recommendation Engine Would Not Run on Docker | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/111) |
+| #115 | API Endpoint Return Type Change Request | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/115) |
+| #118 | Improvements on Recommendation Engine | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/118) |
+| #123 | Fix Data Manipulation Issues in Recommendation Engine | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/123) |
+| #125 | Improve Recommendation engine performance | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/125) |
+| #132 | Milestone 2 Review Report | ✅ | | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/132) |
+| #134 | Parse rich text data from story to get only content without media file | | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/134) |
+| #147 | Addressing Recommendation Tab Display Issue | | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/147) |
+| #154 | Enhance Story Recommendation System with Explanation Feature | ✅ | ✅ | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/154) |
+| #177         | Database Synchronization Issue in Recommendation Engine     | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/177)    |
+| #175         | PyTest unable to locate file                                | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/175)    |
+| #179         | Inconsistencies in Recommendation Responses for New Users                                | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/179)    |
+
+
+
+### Pull Requests
+
+| Pull Request | Title                                           |
+|--------------|-------------------------------------------------|
+| #180         | Fixed recommendation logic for new users with no stories |
+| #178         | Fetch Latest User Data in Recommendations Endpoint for Database Sync |
+| #176         | Recommendation Engine: Enhance Stability with Error Handling and Test File Naming Fix |
+| #155         | Implement Recommendation Explanation Feature for Issue #154 |
+| #137         | Add Project Completion Strategy section         |
+| #135         | Add Milestone 2 Review Report                   |
+| #73          | Merge reports Folder for Milestone 1            |
+
+
+### Explanation of the code
+
+1. **Imports and Flask Setup**
+- **Flask-related imports**: `Flask` to create the Flask app, `request` to access request data, and `jsonify` to convert Python dictionaries to JSON responses.
+- **Data manipulation tools**: `pandas` (as `pd`) and `numpy` (as `np`) are used for handling and processing data.
+- **PostgreSQL adapter**: `psycopg2` is used for connecting to and executing queries on a PostgreSQL database.
+- **Machine Learning tools**: `TfidfVectorizer` for transforming text data into TF-IDF feature vectors, `KMeans` for clustering, and `silhouette_score` for evaluating clustering performance.
+- **Cross-Origin Resource Sharing (CORS)**: `flask_cors` allows the server to accept requests from different origins, which is essential for web applications.
+- **HTML parsing**: `BeautifulSoup` from `bs4` for parsing HTML content and extracting text.
+
+2. **Database Connection and Data Fetching**
+- **Database Configuration**: A dictionary `db_config` holds the connection parameters for the PostgreSQL database.
+- **Connection Function**: `connect_to_database` establishes a connection to the database using the configuration.
+- **Data Retrieval Functions**: Functions like `fetch_data`, `fetch_users`, etc., are defined to retrieve different types of data from the database. They use pandas' `read_sql_query` function to execute SQL queries and return the results as pandas DataFrames.
+
+> - Issue #91 ([Determine Database Choice Based on Recommendation Engine Logic](https://github.com/SWE574-G3/Living-Stories-App/issues/91)): Related to decisions about the database structure and schema.
+
+3. **Data Preprocessing and Clustering**
+- **Text Extraction**: `extract_text_from_html` uses BeautifulSoup to parse HTML content and extract text from paragraph tags (`<p>`).
+- **Story Data Fetching**: `fetch_stories` fetches story data and processes HTML content to plain text.
+- **TF-IDF Vectorization**: `vectorize_stories` applies TF-IDF vectorization to the text data of stories.
+- **Clustering**: `cluster_stories` uses K-means clustering on the TF-IDF vectors. It also determines the best number of clusters using silhouette scores, a measure of how similar an object is to its own cluster compared to other clusters.
+
+> - Issue #72 ([Research Optimal Model for Recommendation Engine](https://github.com/SWE574-G3/Living-Stories-App/issues/72)): Pertains to machine learning tools and clustering methods used in this section.
+> - Issue #104 ([Name Similarities of Stored Data for Different Models in Database](https://github.com/SWE574-G3/Living-Stories-App/issues/104)): Could involve data preprocessing steps for data consistency.
+
+4. **Recommendation Logic**
+- **Top Liked Stories**: `fetch_most_liked_stories` returns stories sorted by their like counts.
+- **Similarity Calculations**: 
+    - `calculate_label_similarity` computes how similar a story's labels are to the labels of stories liked by a user.
+    - `calculate_location_similarity` compares story locations to locations of stories liked by a user.
+    - `calculate_followed_users_likes_scores` checks if stories are liked by users followed by the given user.
+- **Story Recommendation**: `recommend_stories` aggregates these similarity scores to recommend stories. It uses a combination of label similarity, location similarity, and likes from followed users. The function also handles user preferences by considering stories in the user's preferred content cluster.
+
+> - Issue #6 ([Align with group members on Integration Method for Recommendation Engine](https://github.com/SWE574-G3/Living-Stories-App/issues/6)), #45 ([Prepare Milestone Review Report](https://github.com/SWE574-G3/Living-Stories-App/issues/45)), #125 ([Improve Recommendation engine performance](https://github.com/SWE574-G3/Living-Stories-App/issues/125)), and #147 ([Addressing Recommendation Tab Display Issue](https://github.com/SWE574-G3/Living-Stories-App/issues/147)): All related to improving the recommendation system.
+> - Issue #154 ([Enhance Story Recommendation System with Explanation Feature](https://github.com/SWE574-G3/Living-Stories-App/issues/154)): Involves refining the recommendation logic.
+
+5. **Flask Routes and Application Logic**
+- **Recommendation Endpoint (`/recommendations`)**: 
+    - It retrieves recommendations based on the provided user ID.
+    - Handles the cold start problem by recommending popular stories to new users.
+    - For regular users, it offers personalized recommendations based on their interactions and preferences.
+
+- **User Interaction Tracking**: The route calculates the total number of interactions (likes, comments, follows, reads) to identify new users (for the cold start scenario).
+- **Error Handling**: Includes checks for missing user IDs and non-existent users.
+
+> - Issue #87 ([Integration Testing for Python Recommendation Engine and Java/Spring Backend API](https://github.com/SWE574-G3/Living-Stories-App/issues/87)): Concerns the integration and functioning of the entire Flask application.
+> - Issue #99 ([Unable to Fetch User Story Likes](https://github.com/SWE574-G3/Living-Stories-App/issues/99)): Related to user interaction tracking and likes retrieval.
+
+### Challanges
+
+**Data Structures and Pandas Challenges**:
+   - Difficulties in manipulating Pandas data structures, particularly with Series and DataFrames conversions, and dealing with `SettingWithCopyWarning` during slicing.
+
+**Error Handling, Debugging, and Variable Scopes**:
+   - Challenges in debugging issues like `UnboundLocalError` and `KeyError`, pointing to complexities in managing variable scopes.
+
+**Data Flow in Recommendation Systems**:
+   - Ensuring consistent data type and structure in the `recommend_stories` function and combining different recommendation criteria.
+
+**Flask Application Structure and Routing**:
+   - Integrating recommendation logic within Flask's routing and handling request parameters and JSON responses correctly.
+
+**Database Interaction and Data Retrieval**:
+   - Managing database connections using psycopg2 and optimizing data retrieval for performance.
+
+**Cold Start Problem in User Recommendations**:
+   - Difficulty in providing personalized recommendations to new users with no interaction history.
+
+**Dynamic User Interaction Tracking**:
+   - Capturing various user interactions to accurately reflect preferences.
+
+**Content-Based Clustering for Recommendations**:
+   - Meaningful grouping of stories for content-based recommendations.
+
+### Demo
+The most challenging aspect was the implementation of personalized story clustering and similarity scoring. 
+This feature involved several complex coding parts:
+
+1. **Vectorization and Clustering of Stories:**
+   - Transforming text data into a numerical format using TF-IDF vectorization.
+   - Applying clustering algorithms (like KMeans) to these vectors to group similar stories.
+
+2. **Calculating Similarity Scores:**
+   - Developing algorithms to calculate various similarity scores (label similarity, location similarity, and likes by followed users).
+   - Integrating these scores to form a composite score that influences the final recommendation.
+
+This part of the recommendation engine is complex due to the need to handle natural language data, implement machine learning algorithms effectively, and ensure that the clustering and scoring mechanisms are both accurate and efficient. Additionally, it requires a deep understanding of the domain and user behavior to tune the parameters and weights for the similarity calculations appropriately.
+
+![Image](https://github.com/SWE574-G3/Living-Stories-App/assets/93824716/8a385cea-fbde-4b7c-838b-79137bc52fe5)
+
+
+### Documentation
+
+1. **Wiki Home Page**:
+   - The central hub for all project-related documentation. It offers an overview and easy navigation to various documentation sections.
+   - [Wiki Home Page](https://github.com/SWE574-G3/Living-Stories-App/wiki)
+
+2. **Communication Plan**: 
+   - Outlines strategies and protocols for effective communication among team members.
+   - [Communication Plan](https://github.com/SWE574-G3/Living-Stories-App/wiki/Communication-Plan)
+
+3. **Responsibility Assignment Matrix (RAM)**:
+   - Provides a detailed breakdown of responsibilities assigned to each team member, guiding individual roles and accountability.
+   - [Responsibility Assignment Matrix](https://github.com/SWE574-G3/Living-Stories-App/wiki/Responsibility-Assignment-Matrix-(RAM))
+
+4. **Meeting Notes**:
+   - Documents discussions, decisions, and action items from team meetings, crucial for tracking progress and ensuring team alignment.
+   - [Meeting Notes](https://github.com/SWE574-G3/Living-Stories-App/wiki/Meeting-Notes)
+
+5. **Milestones**:
+   - Documents significant phases and achievements in the project lifecycle, detailing the progress and goals met at each stage.
+   - [Milestones](https://github.com/SWE574-G3/Living-Stories-App/milestones?state=closed)
 
