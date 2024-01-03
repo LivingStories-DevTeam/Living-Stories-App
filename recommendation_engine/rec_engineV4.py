@@ -164,8 +164,18 @@ def recommend_stories(user_id, top_r):
     non_user_stories.loc[:, 'location similarity'] = calculate_location_similarity(user_id, non_user_stories, locations_df)
     non_user_stories.loc[:, 'followed user likes'] = calculate_followed_users_likes_scores(user_id, non_user_stories)
 
-    scores = non_user_stories[['label similarity', 'location similarity', 'followed user likes']]
-    non_user_stories['Recommendation Reason'] = scores.idxmax(axis=1)
+    significance_threshold = 0.2
+
+    max_label_score = non_user_stories['label similarity'].max()
+    max_location_score = non_user_stories['location similarity'].max()
+    max_followed_score = non_user_stories['followed user likes'].max()
+
+    non_user_stories.loc[:, 'label similarity'] /= max_label_score if max_label_score else 1
+    non_user_stories.loc[:, 'location similarity'] /= max_location_score if max_location_score else 1
+    non_user_stories.loc[:, 'followed user likes'] /= max_followed_score if max_followed_score else 1
+
+    non_user_stories.loc[:, 'Recommendation Reason'] = non_user_stories[['label similarity', 'location similarity', 'followed user likes']].idxmax(axis=1)
+    non_user_stories.loc[non_user_stories.max(axis=1) < significance_threshold, 'Recommendation Reason'] = 'Balanced Recommendation'
 
     non_user_stories.loc[:, 'combined_score'] = non_user_stories['label similarity'] + non_user_stories['location similarity'] + non_user_stories['followed user likes']
     max_score = non_user_stories['combined_score'].max()
@@ -254,6 +264,13 @@ def get_recommendations():
         relevant_stories.loc[:, 'normalized_score'] = 1
         relevant_stories['Recommendation Reason'] = 'Social Interactions'
         top_recommendations = relevant_stories.sort_values(by='like_count', ascending=False).drop_duplicates(subset='id').head(top_liked_stories)
+        if len(top_recommendations) < top_liked_stories:
+            additional_stories_needed = top_liked_stories - len(top_recommendations)
+            most_liked_stories = fetch_most_liked_stories(additional_stories_needed + user_likes_count)
+            most_liked_stories = most_liked_stories[~most_liked_stories['id'].isin(liked_story_ids | set(top_recommendations['id']))].head(additional_stories_needed)
+            most_liked_stories['Recommendation Reason'] = 'Most Liked Stories'
+            top_recommendations = pd.concat([top_recommendations, most_liked_stories]).head(top_liked_stories)
+            
         return jsonify(top_recommendations[['id', 'Recommendation Reason']].to_dict(orient='records'))
     else:
         recommendations = recommend_stories(user_id, top_r=3)
