@@ -9,6 +9,20 @@
 
 #### Deployment URL: http://livingstories.online
 
+# Honor Code for SWE 574 - Group 3
+
+Related to the submission of all the project deliverables for the SWE 574 2023 Fall semester project reported in this document, we, Group 3, collectively declare that:
+
+- We are students in the Software Engineering MS program at Bogazici University and are registered for SWE 574 course during the Fall 2023 semester.
+- All the material that we are submitting related to our project (including but not limited to the project repository, the final project report, and supplementary documents) has been exclusively prepared by ourselves as a group.
+- We have prepared this material collaboratively as a group, without the assistance of anyone else outside of our group, with the exception of permitted peer assistance which we have explicitly disclosed in this report.
+
+**Signed,**
+![image](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/8e7820d3-14b7-4dd3-86a7-e876ba04329c)
+
+**Group 3**
+
+
 ## Table of content
 
 - [Deliverables](#deliverables)
