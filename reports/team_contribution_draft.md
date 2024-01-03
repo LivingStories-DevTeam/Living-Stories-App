@@ -296,6 +296,9 @@ For more details, users can [follow](https://github.com/SWE574-G3/Living-Stories
 
 Test results of the screenshot is shared below.
 
+![Screenshot of tests](https://github.com/SWE574-G3/Living-Stories-App/assets/115476700/06ca8da3-64de-4392-ad7d-e2b636ba5c09)
+
+
 #### Manual Tests:
 
 Every team member tested the functionalties that we have implemented in the production environment with real users. 
