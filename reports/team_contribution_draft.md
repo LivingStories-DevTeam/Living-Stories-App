@@ -1,5 +1,5 @@
 # Living Stories
-#### Members: Sanan Eminli, Burak Koçak, Cansel Uzun, Ali Hakan Özen, Salih Yavuz, Erhan Yaşar
+#### Members: Sanan Eminli, Burak Koçak, Cansel Uzun, Ali Hakan Özen, Salih Yavuz, Erhan Yaşar, Omar Ghamrawi
 
 #### Date: 01/02/2024
 ### Course: SWE 574 - Fall 2023 - Term Project
