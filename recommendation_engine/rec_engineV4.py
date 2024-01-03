@@ -21,12 +21,19 @@ db_config = {
 }
 
 def connect_to_database():
-    return psycopg2.connect(**db_config)
+    try:
+        return psycopg2.connect(**db_config)
+    except psycopg2.DatabaseError as e:
+        print(f"Database connection error: {e}")
 
 def fetch_data(query):
-    with connect_to_database() as conn:
-        return pd.read_sql_query(query, conn)
-
+    try:
+        with connect_to_database() as conn:
+            return pd.read_sql_query(query, conn)
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return pd.DataFrame()
+    
 def fetch_users():
     return fetch_data("SELECT * FROM users")
 
@@ -85,9 +92,14 @@ def cluster_stories(X):
     return kmeans.fit_predict(X)
 
 def fetch_most_liked_stories(top_l):
-    stories_df['like_count'] = stories_df['likes'].apply(len)
-    most_liked_stories = stories_df.sort_values(by='like_count', ascending=False).head(top_l)
-    return most_liked_stories
+    try:
+        stories_df['like_count'] = stories_df['likes'].apply(len)
+        most_liked_stories = stories_df.sort_values(by='like_count', ascending=False).head(top_l)
+        return most_liked_stories
+    except Exception as e:
+        print(f"Error in fetching most liked stories: {e}")
+        return pd.DataFrame() 
+
 
 def calculate_label_similarity(user_id, stories_df):
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['id']
@@ -199,12 +211,21 @@ def recommend_stories(user_id, top_r):
     # If there are no preferred cluster, use it without
     return top_recommendations[['id','Recommendation Reason']]
 
+def fetch_all_data():
+    users = fetch_users()
+    stories = fetch_stories()
+    locations = fetch_locations()
+    followers = fetch_followers()
+    comments = fetch_comments()
+    return users, stories, locations, followers, comments
+
+
 @app.route('/recommendations', methods=['GET'])
 def get_recommendations():
     user_id = request.args.get('user_id', type=int)
     if not user_id:
         return jsonify({"error": "User ID is required"}), 400
-
+    users_df, stories_df, locations_df, followers_df, comments_df = fetch_all_data()
     if user_id not in users_df['id'].values:
         return jsonify({"error": "User does not exist"}), 404
 

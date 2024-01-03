@@ -91,7 +91,7 @@ const ProfileStoryComponent: React.FC<StoryProps> = ({ story }) => {
           <LocationOnIcon fontSize="small" className="mr-1" /> {(story as any).locationsAdvanced?.map((location: any) => (
                 <p
                   key={location.id}
-                >{`${location.city} / ${location.country}`}</p>
+                >&nbsp;{ `${location.city} / ${location.country}` }&nbsp;</p>
               ))}
             </p>
             <p className="text-gray-700 text-sm mb-2">
