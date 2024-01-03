@@ -73,8 +73,7 @@ const HomePage: React.FC = () => {
         const secondResponse = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/activity/recommendedstories`,
           {
-            //storyIds: response.data.map((item) => item.id),
-            storyIds: [1,2,3]
+            storyIds: response.data.map((item) => item.id),
           }
         );
         setStoriesRecommended(secondResponse.data);
