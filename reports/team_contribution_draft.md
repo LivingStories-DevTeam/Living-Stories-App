@@ -189,18 +189,80 @@ In summary we have delivered the following:
 | [1.2.21](#12-system-requirements)     |**Completed**|
 | [2.1](#2-non-functional-requirements) | **Not completed**    |
 
-### System Manual
-#### Requirements
-- Git for pulling the code
-- Docker for running the web application manually
-- Android for mobile applicaiton
+## System Manual
+## Web App
 
-#### Installation instructions
+To run the web project on your local machine, follow these steps:
 
-- Clone the repository into your local using "**git clone https://github.com/SWE574-G3/Living-Stories-App.git**" command.
-- Open the **Living-Stories-App** directory
-- Run command "**docker-compose -f docker-compose-deploy.yml build**"
-- After everything is done run command "**docker-compose -f docker-compose-yml up -d**". This will start the application in your device. You can the status from Docker desktop too.
+1. Install Docker on the system.
+    [How to install Docker engine](https://docs.docker.com/engine/install/)
+1. Clone the project repository.
+`git clone https://github.com/SWE574-G3/Living-Stories-App.git`
+1. Place the environment file (env) inside the Living-Stories-App/front.end folder. 
+```
+POSTGRES_USER: PostgreSQL database username.
+POSTGRES_PASSWORD: Password for the PostgreSQL user.
+POSTGRES_DB: Name of the PostgreSQL database.
+VITE_BACKEND_URL: Base URL for the backend service in a front-end application.
+VITE_GOOGLE_API_KEY: Google API key for accessing Google services.
+DB_PASSWORD: Password for connecting to the PostgreSQL database.
+DB_URL: JDBC URL for connecting to the PostgreSQL database.
+DB_USERNAME: Username for connecting to the PostgreSQL database.
+VITE_BACKEND_PYTHON_URL: Base URL for a Python backend service in the application.
+```
+3. Navigate to the Living-Stories-App folder using the command line.
+ `cd Living-Stories-App`
+3. Run the following command to start the project:
+
+    `docker compose build`
+This command will automatically install the necessary dependencies and build images.
+1. Run 
+     `docker compose up -d`
+     This command will run images.
+     
+Once the process is complete, user can visit http://localhost:3000 to use the website.
+
+## Mobile App
+1. **Install Node.js:** Download and install Node.js from the official website: [Node.js Downloads](https://nodejs.org/).
+
+2. **Install Expo CLI:** Open a terminal and run the following command to install Expo CLI globally:
+
+    ```
+    npm install -g expo-cli
+    ```
+
+3. **Clone the GitHub repository:** Open a terminal and run the following command to clone the repository to the local machine:
+
+    ```
+    git clone https://github.com/SWE574-G3/Living-Stories-App.git
+    ```
+
+4. **Navigate to the "mobile" folder:** Change into the "mobile" folder of the cloned repository using the cd command:
+
+    ```
+    cd Living-Stories-App/mobile
+    ```
+
+5. **Install project dependencies:** Inside the "mobile" folder, install the project dependencies using:
+
+    ```
+    npm install
+    ```
+
+6. **Start the Expo development server:** Run the following command to start the Expo development server:
+
+    ```
+    expo start
+    ```
+
+7. **Open Expo app on the device:**
+
+    - For iOS, use the Expo Go app from the App Store.
+    - For Android, use the Expo Go app from the Google Play Store.
+
+8. **Scan the QR code:** Open the Expo Go app on the device and use it to scan the QR code displayed in the terminal or on the Expo DevTools webpage.
+
+9. **Wait for the app to build:** Expo will now build the project, and the user should see the app running on the device.
 
 
 ### User Manual
