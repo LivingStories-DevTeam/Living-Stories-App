@@ -211,12 +211,21 @@ def recommend_stories(user_id, top_r):
     # If there are no preferred cluster, use it without
     return top_recommendations[['id','Recommendation Reason']]
 
+def fetch_all_data():
+    users = fetch_users()
+    stories = fetch_stories()
+    locations = fetch_locations()
+    followers = fetch_followers()
+    comments = fetch_comments()
+    return users, stories, locations, followers, comments
+
+
 @app.route('/recommendations', methods=['GET'])
 def get_recommendations():
     user_id = request.args.get('user_id', type=int)
     if not user_id:
         return jsonify({"error": "User ID is required"}), 400
-    users_df = fetch_users()
+    users_df, stories_df, locations_df, followers_df, comments_df = fetch_all_data()
     if user_id not in users_df['id'].values:
         return jsonify({"error": "User does not exist"}), 404
 
