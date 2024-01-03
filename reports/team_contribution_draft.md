@@ -1,13 +1,33 @@
 # Living Stories
-#### Members: Sanan Eminli, Burak Koçak, Cansel Uzun, Ali Hakan Özen, Salih Yavuz, Erhan Yaşar, Omar Ghamrawi
 
-#### Date: 01/02/2024
-### Course: SWE 574 - Fall 2023 - Term Project
-#### Git Repository: https://github.com/SWE574-G3/Living-Stories-App
+### Team Members
+- Salih Yavuz
+- Cansel Uzun
+- Sanan Eminli
+- Burak Koçak
+- Erhan Yaşar
+- Ali Hakan Özen
 
-#### Git Tag Version: !!!!
+### Course
+SWE 574
 
-#### Deployment URL: http://livingstories.online
+### Date
+03/01/2024
+
+### Project Name
+Living Stories
+
+### Git Repository
+https://github.com/SWE574-G3/Living-Stories-App
+
+### Git Tag
+Final Release
+
+### Version
+1.0.0
+
+### Deployment URL
+http://livingstories.online
 
 # Honor Code for SWE 574 - Group 3
 
@@ -16,16 +36,6 @@ Related to the submission of all the project deliverables for the SWE 574 2023 F
 - We are students in the Software Engineering MS program at Bogazici University and are registered for SWE 574 course during the Fall 2023 semester.
 - All the material that we are submitting related to our project (including but not limited to the project repository, the final project report, and supplementary documents) has been exclusively prepared by ourselves as a group.
 - We have prepared this material collaboratively as a group, without the assistance of anyone else outside of our group, with the exception of permitted peer assistance which we have explicitly disclosed in this report.
-
-**Signed,**
-
-* Burak Koçak <br>
-![image](https://github.com/SWE574-G3/Living-Stories-App/assets/78790662/8e7820d3-14b7-4dd3-86a7-e876ba04329c)
-
-* Salih Yavuz <br>
-![image](https://github.com/SWE574-G3/Living-Stories-App/assets/64078926/205e1c4a-293c-473a-aca1-3069381302ed)
-
-
 
 **Group 3**
 
@@ -43,13 +53,20 @@ Related to the submission of all the project deliverables for the SWE 574 2023 F
         + [1.1 User Requirements](#11-user-requirements)
         + [1.2 System Requirements](#12-system-requirements)
         + [2. Non-Functional Requirements](#2-non-functional-requirements)
-    * [Design (Software & Mockups)](#design--software---mockups-)
+    * [Design (Software & Mockups)](#design-software--mockups)
     * [Status of the project](#status-of-the-project)
     * [System Manual](#system-manual)
-        + [Requirements](#requirements)
-        + [Installation instructions](#installation-instructions)
+        + [Web App](#web-app)
+        + [Mobile App](#mobile-app)
     * [User Manual](#user-manual)
     * [Test Results](#test-results)
+- [Individual Contributions](#individual-contributions)
+    * [Sanan Eminli](#sanan-eminli)
+    * [Salih Yavuz](#salih-yavuz)
+    * [Cansel Uzun](#cansel-uzun)
+    * [Burak Koçak](#burak-koçak)
+    * [Erhan Yaşar](#erhan-yaşar)
+    * [Ali Hakan Özen](#ali-hakan-özen)
 
 
 ## Deliverables
@@ -334,9 +351,6 @@ No serious bugs have been observed so far in the current state of the project.
 
 # Individual Contributions
 
-
-
-
 ## SANAN EMINLI
 
 ## Contrubitions
@@ -546,9 +560,7 @@ Generally, my code review is about the mobile app. When I review the code, I ini
 **Read and Liked stories table and endpoints:** I have created a new database table and necessary endpoints for storing users' read stories and liked stories lists, collaborating with Ali Hakan through pair programming. This table will aid in developing a recommendation engine. Storing read stories will enhance the accuracy and insightfulness of recommendations provided to the user.
 * [See commit](https://github.com/SWE574-G3/Living-Stories-App/commit/8758948288a58394ab80cbc5e4407e5422704d53)
 
-
-
-
+***
 
 ## Ali Hakan Özen
 
@@ -781,7 +793,7 @@ To address the problem, I used geolocational ray tracing, harnessing the capabil
 **Explanation:** While I have not yet created inherent documentation, I am in the process of composing a comprehensive user and system manual. This manual will specifically cater to the customers.
 
 
-# Individual Contributions
+***
 
 ## Burak Koçak
 
@@ -921,8 +933,7 @@ I made all the commits to the branches thus did not use any Pull requests. I han
 | [#3](https://github.com/SWE574-G3/Living-Stories-App/issues/3)       | Align with group members on backend and database technologies to be used for the project. architecture | Closed on Oct 16, 2023 |                              | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
 | [#2](https://github.com/SWE574-G3/Living-Stories-App/issues/2)       | Create custom issue labels.                                         | Closed on Dec 3, 2023 |                              | @sananeminli, @yavuzsa, @BurakKocak99, @JohnsL-U, @Omar4GH |
 
-
-# Individual Contributions
+***
 
 ## Omar Ghamrawi
 
@@ -1237,7 +1248,8 @@ In Mobile Search Page, we found a calendar component for choosing a full date, b
 5. **Milestones**:
    - Documents significant phases and achievements in the project lifecycle, detailing the progress and goals met at each stage.
    - [Milestones](https://github.com/SWE574-G3/Living-Stories-App/milestones?state=closed)
-# Individual Contributions
+
+***
 
 ## Erhan Yaşar
 
@@ -1580,7 +1592,7 @@ We believe this is a better way of ensuring that bugs and unintended behaviours 
 
 ***
 
-## Individual Contribution: Cansel Uzun
+## Cansel Uzun
 ### Executive Summary
 
 - **Recommendation Engine Development**: I established the Flask application and integrated it with a PostgreSQL database, laying the foundation for the recommendation engine. I implemented text processing using BeautifulSoup and TF-IDF Vectorization, followed by K-Means clustering to group stories by content similarity. The core of the engine involved developing personalized recommendation logic based on user-specific metrics like label similarity and user interactions. I also tackled the cold start problem by initially recommending popular stories to new users, ensuring early engagement. This dynamic recommendation system continuously adapts to changing user preferences, maintaining relevance and personalization. As a final touch, I have also added recommendation reasoning to be displayed along each respective recommended story. This not only added more transparancy but also improved UX.
@@ -1634,6 +1646,8 @@ We believe this is a better way of ensuring that bugs and unintended behaviours 
 | #177         | Database Synchronization Issue in Recommendation Engine     | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/177)    |
 | #175         | PyTest unable to locate file                                | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/175)    |
 | #179         | Inconsistencies in Recommendation Responses for New Users                                | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/179)    |
+| #182         | Recommendation Reasoning bias                                | ✅             | ✅              | [Link](https://github.com/SWE574-G3/Living-Stories-App/issues/182)    |
+Recommendation Reasoning bias
 
 
 
@@ -1641,6 +1655,7 @@ We believe this is a better way of ensuring that bugs and unintended behaviours 
 
 | Pull Request | Title                                           |
 |--------------|-------------------------------------------------|
+| #183         | Fixes for Recommendation Reasoning Issues |
 | #180         | Fixed recommendation logic for new users with no stories |
 | #178         | Fetch Latest User Data in Recommendations Endpoint for Database Sync |
 | #176         | Recommendation Engine: Enhance Stability with Error Handling and Test File Naming Fix |
