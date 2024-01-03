@@ -1392,7 +1392,13 @@ My contributions can be summerized as development of backend rest endpoints, ser
 During this project, the most time consuming and intellectually challenging part of this project for me was implementing the Activity Stream Feature. The difficulty of this feature did not come come from the actual complexity of the code (like most software products) but rather from the architectural design decisions and communication with other domains, with strong emphasis on communication. 
 The codes for this feature can be found in [ActivityController](https://github.com/SWE574-G3/Living-Stories-App/blob/main/living_stories/src/main/java/com/swe573/living_stories/Controllers/ActivityController.java) and [ActivityService](https://github.com/SWE574-G3/Living-Stories-App/blob/main/living_stories/src/main/java/com/swe573/living_stories/Services/ActivityService.java). There are of couse code changes in other files too but therese are the main ones where one can navigate through the project.
 
-    Insert Screenshots
+
+![activity_bellicon](https://github.com/SWE574-G3/Living-Stories-App/assets/64078926/7a2a5804-a5b4-473e-b5f1-bb5f1d658b91)
+![activity-bell-icon-with-number](https://github.com/SWE574-G3/Living-Stories-App/assets/64078926/70ce6be9-0e5c-400f-849d-06f63dd9f833)
+![activities-seen-all](https://github.com/SWE574-G3/Living-Stories-App/assets/64078926/be5256f9-b40a-4b5e-a40b-f0a170721bf2)
+![activity-with-new-badge](https://github.com/SWE574-G3/Living-Stories-App/assets/64078926/75f05953-2a6f-49a7-8e95-58551cebc432)
+
+
 
 As seen in the screenshots above the bell icon has a number near it that shows the number of new activities that the user has not seen before. We have implemented a seperate endpoint (/activity/newactivitycount) to fetch the "new activity count" so that we can handle only new activity count request seperately from fetching all activities. Also, when Activity page is opened, new Activities have a badge indicating that the specific Activity is new and has not been seen by the user before. We define "seen" as opening the activity page. Once the user exits the activity page, we consider those activities "seen", which makes them "old".
 To achieve this we are storing a field called "newFlag" in our Activity entity. This newFlag is used both for counting the number of new activities for the bell icon and also for showing a badge that indicates the "new" status at the whole activity page.
@@ -1447,6 +1453,10 @@ I also looked at all the PRs once they are opened to make sure that the developm
 
 ### Pull Request
 
+Almost all of our developments have been done either in seperate feature branch or directly to mobile branch. 
+Once we have concluded that the changes were safe and throughly tested we merged the feature branches into main. So we, as a team do not have pull requests for every small commit, rahter we open pull requests to main once a sufficent amount of developmnet has been done and tested.
+We believe this is a better way of ensuring that bugs and unintended behaviours dont end up in main branch. We can also deploy any branch we want to the production environment which made testing easier.
+
 | Pull Request Number | Pull Request Name                                           |
 |----------------------|------------------------------------------------------------|
 | [#174](https://github.com/SWE574-G3/Living-Stories-App/pull/174) | Merge branch 'Mobile' into 'Main' backend enhancement frontend improvement Recommendation-Engine unit test |
@@ -1466,23 +1476,23 @@ I also looked at all the PRs once they are opened to make sure that the developm
 
 | Issue Number | Issue Name | Assigned By | Assigned To |
 |--------------|------------|-------------|-------------|
-| [#169](https://github.com/SWE574-G3/Living-Stories-App/issues/169) | Complete unit tests for all available backend services. backend improvement unit test | yavuzsa | |
-| [#143](https://github.com/SWE574-G3/Living-Stories-App/issues/143) | Remove duplicate dependencies in pom.xml backend improvement | yavuzsa | |
+| [#169](https://github.com/SWE574-G3/Living-Stories-App/issues/169) | Complete unit tests for all available backend services. backend improvement unit test | yavuzsa | yavuzsa |
+| [#143](https://github.com/SWE574-G3/Living-Stories-App/issues/143) | Remove duplicate dependencies in pom.xml backend improvement | yavuzsa | yavuzsa |
 | [#142](https://github.com/SWE574-G3/Living-Stories-App/issues/142) | Add endpoint for fetching follower list with detail info backend enhancement | yavuzsa | BurakKocak99 |
 | [#140](https://github.com/SWE574-G3/Living-Stories-App/issues/140) | Profile images uploaded by user should be reduced in size frontend help wanted improvement mobile UI | yavuzsa | sananeminli, Omar4GH, Ali-Hakan |
-| [#85](https://github.com/SWE574-G3/Living-Stories-App/issues/85) | Merge feature/activity-stream branch to main | yavuzsa | |
+| [#85](https://github.com/SWE574-G3/Living-Stories-App/issues/85) | Merge feature/activity-stream branch to main | yavuzsa | yavuzsa |
 | [#84](https://github.com/SWE574-G3/Living-Stories-App/issues/84) | Finalize activity endpoint and provide example request and response. architecture backend enhancement | yavuzsa | BurakKocak99 |
-| [#75](https://github.com/SWE574-G3/Living-Stories-App/issues/75) | ActivityService should have individual methods for each type of activity. architecture backend improvement | yavuzsa | |
+| [#75](https://github.com/SWE574-G3/Living-Stories-App/issues/75) | ActivityService should have individual methods for each type of activity. architecture backend improvement | yavuzsa | yavuzsa |
 | [#67](https://github.com/SWE574-G3/Living-Stories-App/issues/67) | Modify "/activity" endpoint to read from Activity table. architecture backend enhancement improvement | yavuzsa | BurakKocak99 |
 | [#66](https://github.com/SWE574-G3/Living-Stories-App/issues/66) | Record activities to the Activity table. architecture backend enhancement improvement | yavuzsa | BurakKocak99 |
 | [#65](https://github.com/SWE574-G3/Living-Stories-App/issues/65) | Identify places in code where actions we count as "Activity" is performed. architecture backend enhancement | yavuzsa | BurakKocak99 |
 | [#64](https://github.com/SWE574-G3/Living-Stories-App/issues/64) | Create an Activity entity that stores activities of users. architecture backend improvement | yavuzsa | BurakKocak99 |
-| [#56](https://github.com/SWE574-G3/Living-Stories-App/issues/56) | Commits that are not present in "test" branch's history should not be able to merge into "main" improvement wontfix | yavuzsa | |
-| [#54](https://github.com/SWE574-G3/Living-Stories-App/issues/54) | Refactor activity stream controller to communicate with a single endpoint. backend improvement | yavuzsa | |
-| [#53](https://github.com/SWE574-G3/Living-Stories-App/issues/53) | Add unit test for new comment service method improvement | yavuzsa | |
+| [#56](https://github.com/SWE574-G3/Living-Stories-App/issues/56) | Commits that are not present in "test" branch's history should not be able to merge into "main" improvement wontfix | yavuzsa | yavuzsa |
+| [#54](https://github.com/SWE574-G3/Living-Stories-App/issues/54) | Refactor activity stream controller to communicate with a single endpoint. backend improvement | yavuzsa | yavuzsa |
+| [#53](https://github.com/SWE574-G3/Living-Stories-App/issues/53) | Add unit test for new comment service method improvement | yavuzsa | yavuzsa |
 | [#19](https://github.com/SWE574-G3/Living-Stories-App/issues/19) | Add a basic endpoint for getting activity stream based on actions of followed users. backend enhancement | yavuzsa | BurakKocak99 |
 | [#18](https://github.com/SWE574-G3/Living-Stories-App/issues/18) | Decide on how to handle activity stream. backend enhancement | yavuzsa | BurakKocak99 |
-| [#10](https://github.com/SWE574-G3/Living-Stories-App/issues/10) | Prepare code standards for Java development. documentation | yavuzsa | |
+| [#10](https://github.com/SWE574-G3/Living-Stories-App/issues/10) | Prepare code standards for Java development. documentation | yavuzsa | yavuzsa |
 | [#9](https://github.com/SWE574-G3/Living-Stories-App/issues/9) | Getting familiar with the base project. good first issue | yavuzsa | sananeminli, Omar4GH |
 | [#8](https://github.com/SWE574-G3/Living-Stories-App/issues/8) | Write short descriptions for Main Tasks in the Wiki. documentation | yavuzsa | JohnsL-U |
 | [#7](https://github.com/SWE574-G3/Living-Stories-App/issues/7) | Prepare Responsibility Assignment Matrix. documentation priority: high | yavuzsa | sananeminli, BurakKocak99, JohnsL-U, Omar4GH |
