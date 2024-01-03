@@ -164,8 +164,18 @@ def recommend_stories(user_id, top_r):
     non_user_stories.loc[:, 'location similarity'] = calculate_location_similarity(user_id, non_user_stories, locations_df)
     non_user_stories.loc[:, 'followed user likes'] = calculate_followed_users_likes_scores(user_id, non_user_stories)
 
-    scores = non_user_stories[['label similarity', 'location similarity', 'followed user likes']]
-    non_user_stories['Recommendation Reason'] = scores.idxmax(axis=1)
+    significance_threshold = 0.2
+
+    max_label_score = non_user_stories['label similarity'].max()
+    max_location_score = non_user_stories['location similarity'].max()
+    max_followed_score = non_user_stories['followed user likes'].max()
+
+    non_user_stories.loc[:, 'label similarity'] /= max_label_score if max_label_score else 1
+    non_user_stories.loc[:, 'location similarity'] /= max_location_score if max_location_score else 1
+    non_user_stories.loc[:, 'followed user likes'] /= max_followed_score if max_followed_score else 1
+
+    non_user_stories.loc[:, 'Recommendation Reason'] = non_user_stories[['label similarity', 'location similarity', 'followed user likes']].idxmax(axis=1)
+    non_user_stories.loc[non_user_stories.max(axis=1) < significance_threshold, 'Recommendation Reason'] = 'Balanced Recommendation'
 
     non_user_stories.loc[:, 'combined_score'] = non_user_stories['label similarity'] + non_user_stories['location similarity'] + non_user_stories['followed user likes']
     max_score = non_user_stories['combined_score'].max()
@@ -174,7 +184,7 @@ def recommend_stories(user_id, top_r):
     top_recommendations = non_user_stories.sort_values(by='normalized_score', ascending=False).head(top_r)
     
     columns_to_drop = [col for col in top_recommendations.columns if isinstance(top_recommendations[col].iloc[0], list)]
-    top_recommendations = top_recommendations.drop(columns=columns_to_drop) 
+    top_recommendations = top_recommendations.drop(columns=columns_to_drop)
     
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)].copy()
     user_liked_stories = convert_lists_to_tuples(user_liked_stories)
