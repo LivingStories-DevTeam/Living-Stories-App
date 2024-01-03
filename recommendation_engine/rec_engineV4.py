@@ -238,11 +238,23 @@ def get_recommendations():
     user_read_stories_count = len(fetch_read_stories(user_id))
 
     user_interactions = user_likes_count + followed_users_count + user_comments_count + user_read_stories_count
+    user_has_created_stories = stories_df['user_id'].eq(user_id).any()
 
     if user_interactions < cold_start_threshold:
+        # Recommend top liked stories for users below the cold start threshold
         most_liked_stories = fetch_most_liked_stories(top_liked_stories)
         most_liked_stories['Recommendation Reason'] = 'Most Liked Stories'
         return jsonify(most_liked_stories[['id', 'Recommendation Reason']].to_dict(orient='records'))
+    elif user_interactions >= cold_start_threshold and not user_has_created_stories:
+        # Recommend based on social interactions for users above the cold start threshold who haven't created stories
+        liked_user_ids = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['user_id'].unique()
+        followed_user_ids = followers_df[followers_df['follower_id'] == user_id]['following_id'].unique()
+        relevant_user_ids = np.union1d(liked_user_ids, followed_user_ids)
+        relevant_stories = stories_df[stories_df['user_id'].isin(relevant_user_ids)]
+        relevant_stories.loc[:, 'normalized_score'] = 1
+        relevant_stories['Recommendation Reason'] = 'Social Interactions'
+        top_recommendations = relevant_stories.sort_values(by='like_count', ascending=False).drop_duplicates(subset='id').head(top_liked_stories)
+        return jsonify(top_recommendations[['id', 'Recommendation Reason']].to_dict(orient='records'))
     else:
         recommendations = recommend_stories(user_id, top_r=3)
         if isinstance(recommendations, pd.Series):
