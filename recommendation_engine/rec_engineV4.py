@@ -216,7 +216,7 @@ def get_recommendations():
     user_id = request.args.get('user_id', type=int)
     if not user_id:
         return jsonify({"error": "User ID is required"}), 400
-
+    users_df = fetch_users()
     if user_id not in users_df['id'].values:
         return jsonify({"error": "User does not exist"}), 404
 
