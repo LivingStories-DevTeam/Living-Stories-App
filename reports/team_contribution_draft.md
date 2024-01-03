@@ -1370,3 +1370,125 @@ All the commits are done by me does not required a pull request. I took part of 
 - Repeatedly enter information to test the system.
 
 
+***
+
+## Salih Yavuz
+
+### Executive Summary
+My contributions can be summerized as development of backend rest endpoints, services and database relational tables for new features. The key features we have implemented are the Activity Stream and Recommendation Engine with some smaller scope features on the side. Had critical role in planning and deciding the architecture for integration of new features. This required close communitaion with developers of other domains and knowledge on technology stack of that domain. I was also responsible for managing git branches and commits, making sure that the team was on the right track and utilizing git efficiently. By regularly transfering knowledge to the team I tried to make sure that everyone is in the same mindset and git operations were flowing smoothly.
+
+
+### 2 - Significant Contributions
+    Code
+    Documentation
+
+### Demo
+
+**Related Requirements:**
+- [1.1.19](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+- [1.2.8](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+- [1.2.21](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+
+During this project, the most time consuming and intellectually challenging part of this project for me was implementing the Activity Stream Feature. The difficulty of this feature did not come come from the actual complexity of the code (like most software products) but rather from the architectural design decisions and communication with other domains, with strong emphasis on communication. 
+The codes for this feature can be found in [ActivityController](https://github.com/SWE574-G3/Living-Stories-App/blob/main/living_stories/src/main/java/com/swe573/living_stories/Controllers/ActivityController.java) and [ActivityService](https://github.com/SWE574-G3/Living-Stories-App/blob/main/living_stories/src/main/java/com/swe573/living_stories/Services/ActivityService.java). There are of couse code changes in other files too but therese are the main ones where one can navigate through the project.
+
+    Insert Screenshots
+
+As seen in the screenshots above the bell icon has a number near it that shows the number of new activities that the user has not seen before. We have implemented a seperate endpoint (/activity/newactivitycount) to fetch the "new activity count" so that we can handle only new activity count request seperately from fetching all activities. Also, when Activity page is opened, new Activities have a badge indicating that the specific Activity is new and has not been seen by the user before. We define "seen" as opening the activity page. Once the user exits the activity page, we consider those activities "seen", which makes them "old".
+To achieve this we are storing a field called "newFlag" in our Activity entity. This newFlag is used both for counting the number of new activities for the bell icon and also for showing a badge that indicates the "new" status at the whole activity page.
+
+```java
+
+    for (Long followingId : followingIds) {
+        List<Activity> activitiesByUserId = activityRepository.findByUserId(followingId);
+
+        activitiesByUserId.forEach(activity -> {
+            if (lastDate != null && !activity.getAction_timestamp().after(lastDate)) {
+                activity.setNewFlag("N");
+            } else {
+                activity.setNewFlag("Y");
+            }
+        });
+        activities.addAll(activitiesByUserId);
+    }
+    activities.sort(Comparator.comparing(Activity::getAction_timestamp).reversed());
+
+```
+
+The significant code block for activity stream can be seen above. This is where we fetch the activies and handle the state of the new flag.
+Also, another tricky part was to record the activities to the database. For this we first had to indentify what we consider as an activity.
+
+```java
+
+activityService.recordCommentActivity(optionalStory.getId(),optionalUser.get().getId());
+
+```
+
+An example code can be seen above where we are recording a comment activity into the activity table when a post request comes to "/stories/comments" endpoint. We have seperate methods in [ActivityService](https://github.com/SWE574-G3/Living-Stories-App/blob/main/living_stories/src/main/java/com/swe573/living_stories/Services/ActivityService.java) for recording different types of activities since they are handled differently by us.
+
+Then in code, we had to go through every place where an activity is performed and insert an entry to the activity table with fields filled according to the characteristics of that activity, whether it is a like activity, follow activity etc. This was necessary because the way we show information about of activities in the UI is distinct for different types of activities. We have had close communication with front end developer so that they would be able to put meaning behind the response that we are returning to their request.
+
+
+### Challenges
+
+Working with a team was by far the most challenging but also rewarding part of this project. Not everyone develops software the same way, everyone has a different "yoğurt yiyiş". We had to find a common ground to be able to make decisions about the trajectory of the app. 
+
+Building on top of an already existing repository was also a challenge. Had to refactor and optimize some code blocks in order to be able to extend them with new functionalities.
+
+We also had to understand both the UI and Recommondation Engine codes in order to implement the integration of
+new features. This could be considered a minor challange both because I had previous experiences in both fields and also because as a team we had a philosophy that encouraged the transfer of knowledge to every member as much as possible so that everyone would have easier time when tring to learn a field that they have not been exposed to before.
+
+### Code Review
+
+We have almost always done reviews in person or in Discord since we as backend team come together twice every week to discuss our changes and even do pair programming sessions together phsically. This way was more convenient and instructive for us since our schedules were most of the time aligned.
+We followed the weekly meetings pretty strictly while also doing additional meetings so we were almost instantly aware of the changes we are planning to do in the code. Since we had a great team dynamics and frinedships in the team, informing eachother did not have any friction.
+We tried to minimize disjoint work as much as possible except in bug fixes since most of the time the backend tasks were not parallelizeable in our case meaning that doing development seperately wont speed up the work.
+I also looked at all the PRs once they are opened to make sure that the development has been done in the correct branch and was being merged in the correct branch. I was responsible for assisting in solving conflicts that may arise during merging of different branches.
+
+### Pull Request
+
+| Pull Request Number | Pull Request Name                                           |
+|----------------------|------------------------------------------------------------|
+| [#174](https://github.com/SWE574-G3/Living-Stories-App/pull/174) | Merge branch 'Mobile' into 'Main' backend enhancement frontend improvement Recommendation-Engine unit test |
+| [#173](https://github.com/SWE574-G3/Living-Stories-App/pull/173) | Merge branch 'Mobile" into 'Main'                             |
+| [#172](https://github.com/SWE574-G3/Living-Stories-App/pull/172) | Remove duplicate dependency                                   |
+| [#170](https://github.com/SWE574-G3/Living-Stories-App/pull/170) | Add unit test for service methods                             |
+| [#153](https://github.com/SWE574-G3/Living-Stories-App/pull/153) | Add id filed to followerResponse                               |
+| [#152](https://github.com/SWE574-G3/Living-Stories-App/pull/152) | Add followerlist endpoint                                     |
+| [#136](https://github.com/SWE574-G3/Living-Stories-App/pull/136) | Update m2_group3.md documentation                              |
+| [#116](https://github.com/SWE574-G3/Living-Stories-App/pull/116) | Merge Mobile to main                                           |
+| [#105](https://github.com/SWE574-G3/Living-Stories-App/pull/105) | Changes related to activity stream endpoint                  |
+| [#86](https://github.com/SWE574-G3/Living-Stories-App/pull/86)   | Merge "feature/activity stream" into "main"                  |
+| [#60](https://github.com/SWE574-G3/Living-Stories-App/pull/60)   | Merge branch "test" into "main"                                |
+
+
+### Issues
+
+| Issue Number | Issue Name | Assigned By | Assigned To |
+|--------------|------------|-------------|-------------|
+| [#169](https://github.com/SWE574-G3/Living-Stories-App/issues/169) | Complete unit tests for all available backend services. backend improvement unit test | yavuzsa | |
+| [#143](https://github.com/SWE574-G3/Living-Stories-App/issues/143) | Remove duplicate dependencies in pom.xml backend improvement | yavuzsa | |
+| [#142](https://github.com/SWE574-G3/Living-Stories-App/issues/142) | Add endpoint for fetching follower list with detail info backend enhancement | yavuzsa | BurakKocak99 |
+| [#140](https://github.com/SWE574-G3/Living-Stories-App/issues/140) | Profile images uploaded by user should be reduced in size frontend help wanted improvement mobile UI | yavuzsa | sananeminli, Omar4GH, Ali-Hakan |
+| [#85](https://github.com/SWE574-G3/Living-Stories-App/issues/85) | Merge feature/activity-stream branch to main | yavuzsa | |
+| [#84](https://github.com/SWE574-G3/Living-Stories-App/issues/84) | Finalize activity endpoint and provide example request and response. architecture backend enhancement | yavuzsa | BurakKocak99 |
+| [#75](https://github.com/SWE574-G3/Living-Stories-App/issues/75) | ActivityService should have individual methods for each type of activity. architecture backend improvement | yavuzsa | |
+| [#67](https://github.com/SWE574-G3/Living-Stories-App/issues/67) | Modify "/activity" endpoint to read from Activity table. architecture backend enhancement improvement | yavuzsa | BurakKocak99 |
+| [#66](https://github.com/SWE574-G3/Living-Stories-App/issues/66) | Record activities to the Activity table. architecture backend enhancement improvement | yavuzsa | BurakKocak99 |
+| [#65](https://github.com/SWE574-G3/Living-Stories-App/issues/65) | Identify places in code where actions we count as "Activity" is performed. architecture backend enhancement | yavuzsa | BurakKocak99 |
+| [#64](https://github.com/SWE574-G3/Living-Stories-App/issues/64) | Create an Activity entity that stores activities of users. architecture backend improvement | yavuzsa | BurakKocak99 |
+| [#56](https://github.com/SWE574-G3/Living-Stories-App/issues/56) | Commits that are not present in "test" branch's history should not be able to merge into "main" improvement wontfix | yavuzsa | |
+| [#54](https://github.com/SWE574-G3/Living-Stories-App/issues/54) | Refactor activity stream controller to communicate with a single endpoint. backend improvement | yavuzsa | |
+| [#53](https://github.com/SWE574-G3/Living-Stories-App/issues/53) | Add unit test for new comment service method improvement | yavuzsa | |
+| [#19](https://github.com/SWE574-G3/Living-Stories-App/issues/19) | Add a basic endpoint for getting activity stream based on actions of followed users. backend enhancement | yavuzsa | BurakKocak99 |
+| [#18](https://github.com/SWE574-G3/Living-Stories-App/issues/18) | Decide on how to handle activity stream. backend enhancement | yavuzsa | BurakKocak99 |
+| [#10](https://github.com/SWE574-G3/Living-Stories-App/issues/10) | Prepare code standards for Java development. documentation | yavuzsa | |
+| [#9](https://github.com/SWE574-G3/Living-Stories-App/issues/9) | Getting familiar with the base project. good first issue | yavuzsa | sananeminli, Omar4GH |
+| [#8](https://github.com/SWE574-G3/Living-Stories-App/issues/8) | Write short descriptions for Main Tasks in the Wiki. documentation | yavuzsa | JohnsL-U |
+| [#7](https://github.com/SWE574-G3/Living-Stories-App/issues/7) | Prepare Responsibility Assignment Matrix. documentation priority: high | yavuzsa | sananeminli, BurakKocak99, JohnsL-U, Omar4GH |
+| [#4](https://github.com/SWE574-G3/Living-Stories-App/issues/4) | Align with group members on how to handle the UI and mobile application aspect. architecture | yavuzsa | sananeminli, BurakKocak99, JohnsL-U, Omar4GH |
+| [#3](https://github.com/SWE574-G3/Living-Stories-App/issues/3) | Align with group members on backend and database technologies to be used for the project. architecture | yavuzsa | sananeminli, BurakKocak99, JohnsL-U, Omar4GH |
+| [#2](https://github.com/SWE574-G3/Living-Stories-App/issues/2) | Create custom issue labels. | yavuzsa | sananeminli, BurakKocak99, JohnsL-U, Omar4GH |
+| [#1](https://github.com/SWE574-G3/Living-Stories-App/issues/1) | Each instance of a meeting note should have its own page under "Meeting Notes". documentation | yavuzsa | JohnsL-U |
+
+
