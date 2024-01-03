@@ -61,9 +61,11 @@ URL: http://livingstories.online
 ### Dockerization Status
 The application is fully dockerized. Each part of the application (Back End, Front End, Database and reccomendation engine) are containerized individually.
 
-
+### Demo videos 
+[Mobile Demo video](https://www.youtube.com/watch?v=fRT3WcLz9Qk)
+[Web Demo video](https://www.youtube.com/watch?v=n-zY_CPTbWg)
 ### Project Overview
-In order to satisfy the requriments of this project, we needed to develop a fully functioning web application which is for sharing stories. The stories should be location, date and tag based with other supportive functionalities. We have delivered an web application with all the capabilities to satisfy the requirements. It lets user to interact with each other, share stories and interact wit hother stories. The other requirement to be delivered was to have an functional mobile applicaiton. We have delivered the mobile application with all the requirements specified. Also, we utilized the benefits of mobile application like camera and live location. Lastly, we wnated to build a recommendation engine. It needed use different aspects of stories like labels, locations, content similiarty and such. We have also delivered a fully functioning transparent recommendation engine which utilizes the location, labels, user interactions, and content similiarty. We also wanted to keep all of the projected structure in Github, at the and, we have github page with multiple branches for multiple development efforts.
+In order to satisfy the requriments of this project, we needed to develop a fully functioning web application which is for sharing stories. The stories should be location, date and tag based with other supportive functionalities. We have delivered an web application with all the capabilities to satisfy the requirements. It lets user to interact with each other, share stories and interact wit hother stories. The other requirement to be delivered was to have an functional mobile applicaiton. We have delivered the mobile application with all the requirements specified. Also, we utilized the benefits of mobile application like camera and live location. Lastly, we wanted to build a recommendation engine. It needed use different aspects of stories like labels, locations, content similiarty and such. We have also delivered a fully functioning transparent recommendation engine which utilizes the location, labels, user interactions, and content similiarty. We also wanted to keep all of the projected structure in Github, at the and, we have github page with multiple branches for multiple development efforts.
 
 In summary we have delivered the following:
 
@@ -502,7 +504,10 @@ Generally, my code review is about the mobile app. When I review the code, I ini
 
 
 
+## Other
 
+**Read and Liked stories table and enpoints:** I have created a new database and necessary endpoints table for storing users' read stories and liked stories lists, collaborating with Ali Hakan through pair coding. This will aid in developing a recommendation engine. Storing read stories will enhance the accuracy and insightfulness of recommendations provided to the user.
+* [See commit](https://github.com/SWE574-G3/Living-Stories-App/commit/8758948288a58394ab80cbc5e4407e5422704d53)
 
 
 
