@@ -1,5 +1,5 @@
 # Living Stories
-#### Members: Senan Eminli, Burak Koçak, Cansel Uzun, Ali Hakan Özen, Salih Yavuz, Erhan Yaşar
+#### Members: Sanan Eminli, Burak Koçak, Cansel Uzun, Ali Hakan Özen, Salih Yavuz, Erhan Yaşar
 
 #### Date: 01/02/2024
 ### Course: SWE 574 - Fall 2023 - Term Project
@@ -70,7 +70,7 @@ In order to satisfy the requriments of this project, we needed to develop a full
 In summary we have delivered the following:
 
 -  Fully functioning web application
--  Mobile applicaiton
+-  Mobile application
 -  recommendation engine
 -  Well orginized github page
 
