@@ -506,7 +506,7 @@ Generally, my code review is about the mobile app. When I review the code, I ini
 
 ## Other
 
-**Read and Liked stories table and enpoints:** I have created a new database and necessary endpoints table for storing users' read stories and liked stories lists, collaborating with Ali Hakan through pair coding. This will aid in developing a recommendation engine. Storing read stories will enhance the accuracy and insightfulness of recommendations provided to the user.
+**Read and Liked stories table and endpoints:** I have created a new database table and necessary endpoints for storing users' read stories and liked stories lists, collaborating with Ali Hakan through pair programming. This table will aid in developing a recommendation engine. Storing read stories will enhance the accuracy and insightfulness of recommendations provided to the user.
 * [See commit](https://github.com/SWE574-G3/Living-Stories-App/commit/8758948288a58394ab80cbc5e4407e5422704d53)
 
 
