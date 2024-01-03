@@ -1378,9 +1378,56 @@ All the commits are done by me does not required a pull request. I took part of 
 My contributions can be summerized as development of backend rest endpoints, services and database relational tables for new features. The key features we have implemented are the Activity Stream and Recommendation Engine with some smaller scope features on the side. Had critical role in planning and deciding the architecture for integration of new features. This required close communitaion with developers of other domains and knowledge on technology stack of that domain. I was also responsible for managing git branches and commits, making sure that the team was on the right track and utilizing git efficiently. By regularly transfering knowledge to the team I tried to make sure that everyone is in the same mindset and git operations were flowing smoothly.
 
 
-### 2 - Significant Contributions
-    Code
-    Documentation
+### Significant Contributions
+
+#### Activity Stream
+
+*Related Requirements:*
+[1.1.19](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+[1.2.8](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+[1.2.21](https://github.com/SWE574-G3/Living-Stories-App/wiki/Requirements) 
+
+*Related Issues:*
+- [Finalize activity endpoint and provide example request and reponse. #84](https://github.com/SWE574-G3/Living-Stories-App/issues/84)
+
+    Implemented the endpoint and service for fetching activity data for the requested user. This development allowed us to return the activities of specific user to the frontend in a format that we have agreed on.
+
+- [Add activity count endpoint on back-end #126](https://github.com/SWE574-G3/Living-Stories-App/issues/126)
+    Seperate endpoint for fetching only the number of new activities was needed so that a request can be made to the backend to only fetch activity count instead of whole activity entities.
+
+- [Record activities to the Activity table. #66](https://github.com/SWE574-G3/Living-Stories-App/issues/66)
+    During this development we have used our new methods that we have implemented in ActivityService to the places where we have identified that an Activity is being performed.
+
+- [Identify places in code where actions we count as "Activity" is perofmed. #65](https://github.com/SWE574-G3/Living-Stories-App/issues/65)
+We have identified the places where we have to call a new methods to insert activities into activity table.
+
+#### Like List
+
+- [Create liked user list #158](https://github.com/SWE574-G3/Living-Stories-App/issues/158)
+    This development allowed us to return users that have liked a story by providing the ID of the story. This way we became able to return all the information inside user enetity such as followers, stories and their counts which we were able to fetch from database. 
+
+#### Follow List
+- [FollowerList Endpoint #171](https://github.com/SWE574-G3/Living-Stories-App/issues/171)
+    Similar to like list but instead of fetching likes from story entity, we get follower list from user entity.
+
+#### Bug fixes
+- [Fix newflag bug #128](https://github.com/SWE574-G3/Living-Stories-App/issues/128)
+    There was an off by one error in our way of handling the new flag of activities. We have made required fixes to the code
+
+#### Performance Improvements
+- [Improve Home page loading performance #124](https://github.com/SWE574-G3/Living-Stories-App/issues/124)
+    Tried to improve the loading times of the app, especially the home page by reducing the size of the payload and responses.
+
+#### Recommendation Engine
+- Implement an endpoint that returns stroies from the IDs returned by the recommendation engine.
+    Recommendation engine returns a list of story IDs that are the recommended stories. We apply our own logic on top of that end provide an endpoint for frontend to send request to and recieve a list of stories that are recommended for that specific user.
+
+#### Unit Tests
+- [Complete unit tests for all available backend services. #169](https://github.com/SWE574-G3/Living-Stories-App/issues/169)
+    Wrote unit test for backend services. Some of them are written from scratch and some of them were improvements  over the original ones, making them more clear and increase the coverage.
+
+#### Documentation
+- My major contribution for the documentation was the testing section of the report which I drafted the bulletpoints and followed through with its completion with contributions from my team members. Also contributed to and written some other smaller parts of the documentation along with my team.
 
 ### Demo
 
