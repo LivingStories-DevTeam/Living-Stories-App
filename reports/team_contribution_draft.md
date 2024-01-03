@@ -1338,9 +1338,9 @@ All the commits are done by me does not required a pull request. I took part of 
 
 | Issue Number | Issue Name                                                   | Assigned By   | Assigned To                                         |
 |--------------|--------------------------------------------------------------|---------------|-----------------------------------------------------|
-| [#168](https://github.com/SWE574-G3/Living-Stories-App/issues/168) | Web page UI testing frontend UAT                             | erhan-yasar   | Closed 2 days ago                                   |
-| [#167](https://github.com/SWE574-G3/Living-Stories-App/issues/167) | Add Followers and Likes List on Web App frontend improvement | Omar4GH       | Closed 2 days ago                                   |
-| [#145](https://github.com/SWE574-G3/Living-Stories-App/issues/145) | Redesign Web App Frontend                                    | Omar4GH       | Closed last week                                    |
+| [#168](https://github.com/SWE574-G3/Living-Stories-App/issues/168) | Web page UI testing frontend UAT                             | erhan-yasar   | erhan-yasar                                  |
+| [#167](https://github.com/SWE574-G3/Living-Stories-App/issues/167) | Add Followers and Likes List on Web App frontend improvement | Omar4GH       | erhan-yasar                                  |
+| [#145](https://github.com/SWE574-G3/Living-Stories-App/issues/145) | Redesign Web App Frontend                                    | Omar4GH       | erhan-yasar, Omar4GH                                   |
 | [#132](https://github.com/SWE574-G3/Living-Stories-App/issues/132) | Milestone 2 Review Report documentation                      | JohnsL-U      | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
 | [#92](https://github.com/SWE574-G3/Living-Stories-App/issues/92)   | Create Data for Testing Recommendation Engine Performance   | JohnsL-U      | erhan-yasar                                         |
 | [#46](https://github.com/SWE574-G3/Living-Stories-App/issues/46)   | Release Pre-release Version of the Software                 | JohnsL-U      | sananeminli, yavuzsa, BurakKocak99, JohnsL-U, Omar4GH |
