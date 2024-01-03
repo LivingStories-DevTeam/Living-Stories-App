@@ -21,12 +21,19 @@ db_config = {
 }
 
 def connect_to_database():
-    return psycopg2.connect(**db_config)
+    try:
+        return psycopg2.connect(**db_config)
+    except psycopg2.DatabaseError as e:
+        print(f"Database connection error: {e}")
 
 def fetch_data(query):
-    with connect_to_database() as conn:
-        return pd.read_sql_query(query, conn)
-
+    try:
+        with connect_to_database() as conn:
+            return pd.read_sql_query(query, conn)
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        return pd.DataFrame()
+    
 def fetch_users():
     return fetch_data("SELECT * FROM users")
 
@@ -85,9 +92,14 @@ def cluster_stories(X):
     return kmeans.fit_predict(X)
 
 def fetch_most_liked_stories(top_l):
-    stories_df['like_count'] = stories_df['likes'].apply(len)
-    most_liked_stories = stories_df.sort_values(by='like_count', ascending=False).head(top_l)
-    return most_liked_stories
+    try:
+        stories_df['like_count'] = stories_df['likes'].apply(len)
+        most_liked_stories = stories_df.sort_values(by='like_count', ascending=False).head(top_l)
+        return most_liked_stories
+    except Exception as e:
+        print(f"Error in fetching most liked stories: {e}")
+        return pd.DataFrame() 
+
 
 def calculate_label_similarity(user_id, stories_df):
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['id']
