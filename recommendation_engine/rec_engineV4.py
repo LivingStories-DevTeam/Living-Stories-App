@@ -251,8 +251,8 @@ def get_recommendations():
         followed_user_ids = followers_df[followers_df['follower_id'] == user_id]['following_id'].unique()
         relevant_user_ids = np.union1d(liked_user_ids, followed_user_ids)
         relevant_stories = stories_df[stories_df['user_id'].isin(relevant_user_ids)]
-        relevant_stories.loc[:, 'normalized_score'] = 1
-        relevant_stories['Recommendation Reason'] = 'Social Interactions'
+        relevant_stories['like_count'] = relevant_stories['likes'].apply(len)
+        relevant_stories.loc[:, 'Recommendation Reason'] = 'Social Interactions'
         top_recommendations = relevant_stories.sort_values(by='like_count', ascending=False).drop_duplicates(subset='id').head(top_liked_stories)
         return jsonify(top_recommendations[['id', 'Recommendation Reason']].to_dict(orient='records'))
     else:
