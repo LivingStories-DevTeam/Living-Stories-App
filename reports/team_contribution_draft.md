@@ -2,6 +2,7 @@
 
 ### Team Members
 - Salih Yavuz
+- Omar Ghamrawi
 - Cansel Uzun
 - Sanan Eminli
 - Burak Koçak
@@ -62,6 +63,7 @@ Related to the submission of all the project deliverables for the SWE 574 2023 F
     * [Test Results](#test-results)
 - [Individual Contributions](#individual-contributions)
     * [Sanan Eminli](#sanan-eminli)
+    * [Omar Ghamrawi](#omar-ghamrawi)
     * [Salih Yavuz](#salih-yavuz)
     * [Cansel Uzun](#cansel-uzun)
     * [Burak Koçak](#burak-koçak)
