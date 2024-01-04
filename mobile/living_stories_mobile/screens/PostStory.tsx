@@ -465,13 +465,7 @@ const PostStory = ({ navigation }: any) => {
   ////////////////////// SUBMIT
 
   const submitStory = async () => {
-    setSelectedPlaces(
-      selectedPlaces.map((item) => ({
-        ...item,
-        coordinates: [[item.lng, item.lat]],
-        type: "Point",
-      }))
-    );
+
     const storyRequest = {
       text: "",
       header,
