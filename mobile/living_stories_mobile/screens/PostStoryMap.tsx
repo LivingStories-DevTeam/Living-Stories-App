@@ -23,6 +23,8 @@ interface Location {
   lng: number;
   city?:string;
   country?:string;
+  type : string;
+  coordinates:any [][]
 }
 
 
@@ -114,6 +116,8 @@ const getLocationDetails = async (latitude: number, longitude: number): Promise<
       lng: longitude,
       city: city,
       country: country,
+      type : "Point",
+      coordinates: [[longitude  ,latitude]]
     };
   } catch (error) {
     console.error("Error fetching location details:", error);
@@ -123,6 +127,8 @@ const getLocationDetails = async (latitude: number, longitude: number): Promise<
       lng: longitude,
       city: "Unnamed location",
       country: "Unnamed location",
+      type : "Point",
+      coordinates: [[longitude  ,latitude]]
     };
   }
 };
@@ -158,6 +164,10 @@ const getLocationDetails = async (latitude: number, longitude: number): Promise<
             const lng = location.lng;
             setRegion({ latitude: lat, longitude: lng });
             console.log(lat);
+            const locationDetails = await getLocationDetails(lat, lng);
+            console.log(locationDetails);
+            setSelectedPlaces([...selectedPlaces, { latitude: lat, longitude: lng }]);
+            setFinalPlaces([...finalPlaces, locationDetails]);
           }}
           onFail={(error) => console.error(error)}
           enablePoweredByContainer={false}

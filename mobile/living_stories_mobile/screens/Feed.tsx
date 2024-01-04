@@ -150,7 +150,8 @@ const Feed = ({ navigation }: any) => {
             {selectedIndex === 0 && (
               <>
                 {responseData &&
-                  responseData.map((item: any, index: any) => (
+                  responseData.slice() // create a shallow copy to avoid mutating the original array
+                  .reverse().map((item: any, index: any) => (
                     <>
                       <TouchableOpacity
                         onPress={() => handleCardPress(item.id)}

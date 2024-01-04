@@ -164,8 +164,18 @@ def recommend_stories(user_id, top_r):
     non_user_stories.loc[:, 'location similarity'] = calculate_location_similarity(user_id, non_user_stories, locations_df)
     non_user_stories.loc[:, 'followed user likes'] = calculate_followed_users_likes_scores(user_id, non_user_stories)
 
-    scores = non_user_stories[['label similarity', 'location similarity', 'followed user likes']]
-    non_user_stories['Recommendation Reason'] = scores.idxmax(axis=1)
+    significance_threshold = 0.2
+
+    max_label_score = non_user_stories['label similarity'].max()
+    max_location_score = non_user_stories['location similarity'].max()
+    max_followed_score = non_user_stories['followed user likes'].max()
+
+    non_user_stories.loc[:, 'label similarity'] /= max_label_score if max_label_score else 1
+    non_user_stories.loc[:, 'location similarity'] /= max_location_score if max_location_score else 1
+    non_user_stories.loc[:, 'followed user likes'] /= max_followed_score if max_followed_score else 1
+
+    non_user_stories.loc[:, 'Recommendation Reason'] = non_user_stories[['label similarity', 'location similarity', 'followed user likes']].idxmax(axis=1)
+    non_user_stories.loc[non_user_stories.max(axis=1) < significance_threshold, 'Recommendation Reason'] = 'Balanced Recommendation'
 
     non_user_stories.loc[:, 'combined_score'] = non_user_stories['label similarity'] + non_user_stories['location similarity'] + non_user_stories['followed user likes']
     max_score = non_user_stories['combined_score'].max()
@@ -174,7 +184,7 @@ def recommend_stories(user_id, top_r):
     top_recommendations = non_user_stories.sort_values(by='normalized_score', ascending=False).head(top_r)
     
     columns_to_drop = [col for col in top_recommendations.columns if isinstance(top_recommendations[col].iloc[0], list)]
-    top_recommendations = top_recommendations.drop(columns=columns_to_drop) 
+    top_recommendations = top_recommendations.drop(columns=columns_to_drop)
     
     user_liked_stories = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)].copy()
     user_liked_stories = convert_lists_to_tuples(user_liked_stories)
@@ -238,11 +248,32 @@ def get_recommendations():
     user_read_stories_count = len(fetch_read_stories(user_id))
 
     user_interactions = user_likes_count + followed_users_count + user_comments_count + user_read_stories_count
+    user_has_created_stories = stories_df['user_id'].eq(user_id).any()
 
+    liked_story_ids = set(stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['id'])
+    
     if user_interactions < cold_start_threshold:
+        # Recommend top liked stories for users below the cold start threshold
         most_liked_stories = fetch_most_liked_stories(top_liked_stories)
         most_liked_stories['Recommendation Reason'] = 'Most Liked Stories'
         return jsonify(most_liked_stories[['id', 'Recommendation Reason']].to_dict(orient='records'))
+    elif user_interactions >= cold_start_threshold and not user_has_created_stories:
+        # Recommend based on social interactions for users above the cold start threshold who haven't created stories
+        liked_user_ids = stories_df[stories_df['likes'].apply(lambda likes: user_id in likes)]['user_id'].unique()
+        followed_user_ids = followers_df[followers_df['follower_id'] == user_id]['following_id'].unique()
+        relevant_user_ids = np.union1d(liked_user_ids, followed_user_ids)
+        relevant_stories = stories_df[stories_df['user_id'].isin(relevant_user_ids)]
+        relevant_stories['like_count'] = relevant_stories['likes'].apply(len)
+        relevant_stories.loc[:, 'Recommendation Reason'] = 'Social Interactions'
+        top_recommendations = relevant_stories.sort_values(by='like_count', ascending=False).drop_duplicates(subset='id').head(top_liked_stories)
+        if len(top_recommendations) < top_liked_stories:
+            additional_stories_needed = top_liked_stories - len(top_recommendations)
+            most_liked_stories = fetch_most_liked_stories(additional_stories_needed + user_likes_count)
+            most_liked_stories = most_liked_stories[~most_liked_stories['id'].isin(liked_story_ids | set(top_recommendations['id']))].head(additional_stories_needed)
+            most_liked_stories['Recommendation Reason'] = 'Most Liked Stories'
+            top_recommendations = pd.concat([top_recommendations, most_liked_stories]).head(top_liked_stories)
+            
+        return jsonify(top_recommendations[['id', 'Recommendation Reason']].to_dict(orient='records'))
     else:
         recommendations = recommend_stories(user_id, top_r=3)
         if isinstance(recommendations, pd.Series):
