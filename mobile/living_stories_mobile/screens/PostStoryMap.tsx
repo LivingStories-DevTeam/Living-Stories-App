@@ -164,6 +164,10 @@ const getLocationDetails = async (latitude: number, longitude: number): Promise<
             const lng = location.lng;
             setRegion({ latitude: lat, longitude: lng });
             console.log(lat);
+            const locationDetails = await getLocationDetails(lat, lng);
+            console.log(locationDetails);
+            setSelectedPlaces([...selectedPlaces, { latitude: lat, longitude: lng }]);
+            setFinalPlaces([...finalPlaces, locationDetails]);
           }}
           onFail={(error) => console.error(error)}
           enablePoweredByContainer={false}
