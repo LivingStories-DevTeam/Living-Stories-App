@@ -360,6 +360,8 @@ const Timeline: React.FC = () => {
                     const document = parser.parseFromString(item.richText, "text/html");
                     const image = document.querySelectorAll("img");
                     image.forEach(image => image.remove());
+                    if (!imageDataList?.length)
+                        imageDataList.push("NO_IMAGE")
                     return {
                         ...item,
                         text: document.body.textContent,

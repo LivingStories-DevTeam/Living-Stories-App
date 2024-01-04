@@ -127,21 +127,19 @@ const Story: React.FC = () => {
     year: "YYYY",
   };
 
-  const combinedStartDateTimeString = `${
-    startDate && startTime && selectedOption === "exact-year"
+  const combinedStartDateTimeString = `${startDate && startTime && selectedOption === "exact-year"
       ? dayjs(
-          `${startDate.format("YYYY-MM-DD")}T${startTime.format("HH:mm:ss")}`
-        ).format("DD/MM/YYYY HH:mm:ss")
+        `${startDate.format("YYYY-MM-DD")}T${startTime.format("HH:mm:ss")}`
+      ).format("DD/MM/YYYY HH:mm:ss")
       : startDate?.format(dateFormats[selectedOption])
-  }`;
+    }`;
 
-  const combinedEndDateTimeString = `${
-    endtDate && endTime && selectedOptionEnd === "exact-year"
+  const combinedEndDateTimeString = `${endtDate && endTime && selectedOptionEnd === "exact-year"
       ? dayjs(
-          `${endtDate.format("YYYY-MM-DD")}T${endTime.format("HH:mm:ss")}`
-        ).format("DD/MM/YYYY HH:mm:ss")
+        `${endtDate.format("YYYY-MM-DD")}T${endTime.format("HH:mm:ss")}`
+      ).format("DD/MM/YYYY HH:mm:ss")
       : endtDate?.format(dateFormats[selectedOptionEnd])
-  }`;
+    }`;
 
   const onRadioChange = (e: RadioChangeEvent) => {
     setSelectedOption(e.target.value);
@@ -279,7 +277,7 @@ const Story: React.FC = () => {
               withCredentials: true,
             }
           );
-        } catch (error) {}
+        } catch (error) { }
       }
     }
     postData();
@@ -412,8 +410,7 @@ const Story: React.FC = () => {
     setDrawnItems((prevDrawnItems) => [...prevDrawnItems, event.overlay]);
     try {
       const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${
-          (locationData as any).latitude
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${(locationData as any).latitude
         },${(locationData as any).longitude}&key=${api_key}`
       );
       const { results } = response.data;
@@ -1114,11 +1111,11 @@ const Story: React.FC = () => {
                       }}
                     />
                   </Autocomplete><div className="justify-center text-center items-center my-auto">
-                  <MyLocationIcon
-                    onClick={handleGetUserLocation}
-                    fontSize="large"
-                    style={{ marginLeft: "5px", cursor: "pointer" }}
-                  /></div>
+                    <MyLocationIcon
+                      onClick={handleGetUserLocation}
+                      fontSize="large"
+                      style={{ marginLeft: "5px", cursor: "pointer" }}
+                    /></div>
                 </div>
                 <div
                   className="align-items-center"
@@ -1153,9 +1150,10 @@ const Story: React.FC = () => {
                         style={{
                           cursor: "pointer",
                         }}
-                        onClick={() =>
-                          setLocations(locations.filter((_, i) => i !== index))
-                        }
+                        onClick={() => {
+                          setLocations(locations.filter((_, i) => i !== index));
+                          setLocationsBackend(locationsBackend.filter((_, i) => i !== index));
+                        }}
                       />
                     </div>
                   ))}
