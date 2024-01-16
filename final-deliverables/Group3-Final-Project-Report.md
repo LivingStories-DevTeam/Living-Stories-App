@@ -75,7 +75,7 @@ Related to the submission of all the project deliverables for the SWE 574 2023 F
 
 | #   | Deliverable description                                         | Status     |Deliverable|
 |-----|-----------------------------------------------------------------|------------|---------|
-| 1   | Fully functioning mobile app.                                          | Completed |[URL](https://drive.google.com/file/d/14t52eKsXTRMrHQjzubn7DViDqTnRoCe0/view?usp=sharing)       |
+| 1   | Fully functioning mobile app.                                          | Completed |[URL](https://drive.google.com/file/d/1foYI9kfw0P4PNhkZ9gb4tCM7SWz6-VP9/view?usp=sharing)       |
 | 2   | Fully functioning web application.                                    | Completed |[URL](http://livingstories.online)       |
 | 3   | Github Repository                                               | Completed |[URL](https://github.com/SWE574-G3/Living-Stories-App)       |
 | 4   | Project Report                                                  | Completed |[URL](https://github.com/SWE574-G3/Living-Stories-App/tree/main/reports)       |
